@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Proposta</title>
+<link rel="icon" type="image/png" href="icone.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap">
+<style>
+  :root{--red:#0071E3;--red-d:#0077ED;--ink:#111111;--muted:#6B6B6B;--line:#E6E6E6;--soft:#F5F5F5;--ok:#19A33B;--bg:#F2F2F2;
+    --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",system-ui,"Segoe UI",Roboto,Arial,sans-serif;--assina:"Caveat","Segoe Script","Brush Script MT",cursive}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--font);-webkit-text-size-adjust:100%}
+  a{color:inherit}
+  .topo{background:linear-gradient(135deg,#1D1D1F 0%,#2C2C2E 100%);color:#fff;padding:22px 16px 74px}
+  .topo-in{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+  .topo img{height:34px;width:auto;display:block}
+  .topo .nome-emp{font:900 24px var(--font)}
+  .topo .eyebrow{font:800 11px var(--font);letter-spacing:.16em;text-transform:uppercase;color:#64ACFF;margin:0}
+  .topo h1{margin:4px 0 0;font:900 clamp(26px,5vw,38px)/1.08 var(--font);letter-spacing:-.02em}
+  .topo p{margin:6px 0 0;color:#D6D6D6}
+  main{max-width:760px;margin:-54px auto 0;padding:0 16px 60px;display:flex;flex-direction:column;gap:14px}
+  .card{background:#fff;border-radius:18px;padding:22px;box-shadow:0 18px 40px -28px rgba(0,0,0,.35);border:1px solid var(--line)}
+  .passos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;list-style:none;margin:0;padding:0;counter-reset:p}
+  .passos li{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;font:600 12px var(--font);color:var(--muted);position:relative}
+  .passos li::before{counter-increment:p;content:counter(p);width:32px;height:32px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--line);background:#fff;color:var(--muted);font:800 13px var(--font);position:relative;z-index:1}
+  .passos li::after{content:"";position:absolute;top:16px;left:calc(50% + 18px);right:calc(-50% + 18px);height:2px;background:var(--line)}
+  .passos li:last-child::after{display:none}
+  .passos li.feito{color:var(--ink)}
+  .passos li.feito::before{content:"✓";background:var(--ok);border-color:var(--ok);color:#fff}
+  .passos li.feito::after{background:var(--ok)}
+  .passos li.atual{color:var(--ink)}
+  .passos li.atual::before{border-color:var(--red);color:var(--red);box-shadow:0 0 0 4px rgba(0,113,227,.15)}
+  h2{margin:0 0 4px;font:800 20px/1.25 var(--font);letter-spacing:-.01em}
+  .sub{margin:0 0 14px;color:var(--muted);font-size:14px}
+  .itens{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+  .itens li{display:grid;grid-template-columns:1fr auto;gap:2px 14px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .itens li:last-child{border-bottom:0}
+  .itens b{font-size:15px}
+  .itens small{color:var(--muted);font-size:13px;grid-column:1}
+  .itens .v{grid-row:1/span 2;grid-column:2;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .itens .v small{display:block}
+  .tots{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+  .tots div{display:flex;justify-content:space-between;font-size:14px}
+  .tots .t{background:#1D1D1F;color:#fff;border-radius:12px;padding:14px 16px;margin-top:6px;align-items:baseline}
+  .tots .t span{font:800 11px var(--font);letter-spacing:.14em;text-transform:uppercase}
+  .tots .t b{font:900 26px var(--font);letter-spacing:-.01em}
+  .blocos{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+  .bloco{background:var(--soft);border-radius:12px;padding:12px 14px}
+  .bloco h3{margin:0 0 3px;font:800 10.5px var(--font);letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+  .bloco p{margin:0;font-size:14px;white-space:pre-line}
+  .bloco.largo{grid-column:1/-1}
+  label{display:block;font:600 13px var(--font);margin:0 0 6px}
+  input[type=text],input[type=email],input[type=tel],textarea{width:100%;font:500 16px var(--font);padding:13px 14px;border:1.5px solid #D4D4D4;border-radius:12px;background:#fff;color:var(--ink)}
+  input:focus,textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(0,0,0,.08)}
+  .campos{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .campos .largo{grid-column:1/-1}
+  .check{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer;font-size:14.5px}
+  .check input{width:22px;height:22px;margin:1px 0 0;accent-color:var(--red);flex:none}
+  .check.ok{border-color:var(--ok);background:#F1FAF3}
+  .acoes{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:18px}
+  .b{appearance:none;border:1.5px solid #D4D4D4;background:#fff;color:var(--ink);font:700 15px var(--font);padding:13px 22px;border-radius:999px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;min-height:48px}
+  .b.pri{background:var(--red);border-color:var(--red);box-shadow:0 8px 20px -8px rgba(0,113,227,.55);color:#fff}
+  .b.pri:hover{background:var(--red-d)}
+  .b.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+  .b[disabled]{opacity:.5;cursor:not-allowed}
+  .link{background:none;border:0;color:var(--muted);text-decoration:underline;font:500 14px var(--font);cursor:pointer;padding:8px 4px}
+  .erro{color:var(--red);font-size:14px;margin:10px 0 0;min-height:1em}
+  .assina{margin-top:14px;border:1.5px dashed #BDBDBD;border-radius:14px;padding:18px 16px 10px;background:#FCFCFC}
+  .assina .nome{font:700 clamp(32px,7vw,44px)/1.1 var(--assina);color:#1A2B6B;min-height:48px;border-bottom:1.5px solid #9A9A9A;padding-bottom:6px;overflow-wrap:anywhere}
+  .assina small{display:block;color:var(--muted);font-size:12px;margin-top:6px}
+  .cert{border:2px solid var(--ok);border-radius:16px;padding:18px;background:#F1FAF3}
+  .cert h2{color:#0E7A2A}
+  .cert dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:12px 0 0;font-size:14px}
+  .cert dt{color:var(--muted)}
+  .cert dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+  .cert .nome{font:700 34px/1.1 var(--assina);color:#1A2B6B;margin-top:10px}
+  .msg{text-align:center}
+  .aviso{background:#FFF7E6;border:1px solid #F5C26B;border-radius:12px;padding:12px 14px;font-size:14px}
+  .rodape{text-align:center;color:var(--muted);font-size:12.5px;padding:10px}
+  [hidden]{display:none!important}
+  @media (max-width:600px){.card{padding:18px}.campos,.blocos{grid-template-columns:1fr}.passos li{font-size:11px}.acoes .b{flex:1 1 auto;justify-content:center}}
+  @media print{body{background:#fff}.topo{background:#0A0A0A!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding-bottom:24px}main{margin-top:12px}.acoes,.passos,.nao-imprime{display:none!important}.card{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<header class="topo"><div class="topo-in">
+  <div id="logo"><img src="logo-escuro.png" alt="" onerror="this.parentNode.innerHTML='<span class=nome-emp>GUXTA</span>'"></div>
+  <div><p class="eyebrow" id="eyebrow">Proposta</p><h1 id="titulo">Carregando a proposta…</h1><p id="sub"></p></div>
+</div></header>
+<main id="main" aria-live="polite"><section class="card msg">Carregando…</section></main>
+<p class="rodape" id="rodape"></p>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(async function(){
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const N=v=>Number(v)||0;
+  const brl=v=>N(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+  const qtd=v=>N(v).toLocaleString("pt-BR",{maximumFractionDigits:2});
+  const dmy=iso=>{if(!iso)return"";const [y,m,d]=String(iso).slice(0,10).split("-");return d+"/"+m+"/"+y};
+  const quando=iso=>{const d=new Date(iso);return d.toLocaleDateString("pt-BR")+" às "+d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})};
+  const nro=n=>String(n||0).padStart(4,"0");
+  const sp=t=>String(t||"").trim().replace(/[.;\s]+$/,"");
+  const cfg=window.GLARA_CONFIG||{};
+  const urlSupabase=u=>{u=String(u||"").trim();let m=u.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);if(m)return "https://"+m[1]+".supabase.co";m=u.match(/^(?:https?:\/\/)?([a-z0-9-]+\.supabase\.(?:co|in))/i);if(m)return "https://"+m[1].toLowerCase();return u.replace(/\/+$/,"")};
+  const main=$("#main");
+  const msg=(t,h)=>{$("#titulo").textContent=t;main.innerHTML=`<section class="card msg">${h||""}</section>`};
+  const token=new URLSearchParams(location.search).get("t")||"";
+  if(!window.supabase||!cfg.supabaseUrl)return msg("Proposta indisponível","Não foi possível carregar agora. Tente de novo em alguns minutos.");
+  if(!/^[0-9a-f-]{36}$/i.test(token))return msg("Link incompleto","Confira se você copiou o link inteiro que recebeu.");
+  const sb=window.supabase.createClient(urlSupabase(cfg.supabaseUrl),String(cfg.supabaseAnonKey||"").trim(),{auth:{persistSession:false}});
+  const {data:o,error}=await sb.rpc("proposta_ver",{p_token:token});
+  if(error||!o)return msg("Proposta não encontrada","Este link não está mais ativo. Fale com quem enviou a proposta para receber um novo.");
+  const e=o.empresa||{}, emp=e.nome||cfg.marca||"GUXTA";
+  document.title=`Proposta Nº ${nro(o.numero)} · ${emp}`;
+  $("#eyebrow").textContent=`Proposta Nº ${nro(o.numero)} · ${emp}`;
+  $("#titulo").textContent=o.titulo||"Sua proposta";
+  $("#sub").textContent=`Para ${o.cliente_nome||"você"}${o.validade?" · válida até "+dmy(o.validade):""}`;
+  $("#rodape").innerHTML=[`<b>${esc(emp)}</b>`,e.documento,e.telefone,e.email,e.site].filter(Boolean).map(x=>x.startsWith("<b>")?x:esc(x)).join(" · ");
+
+  let passo=1;const dados={nome:"",documento:"",email:"",telefone:"",empresa:"",endereco:""};let aceite=false;
+  const PASSOS=["Proposta","Aceite","Seus dados","Assinatura"];
+  const passosHTML=()=>`<ol class="passos" aria-label="Etapas">${PASSOS.map((t,k)=>`<li class="${k+1<passo?"feito":k+1===passo?"atual":""}"${k+1===passo?' aria-current="step"':""}>${t}</li>`).join("")}</ol>`;
+  const resumoHTML=()=>`<ul class="itens">${(o.itens||[]).map(i=>`<li><b>${esc(i.nome)}</b>${i.descricao?`<small>${esc(i.descricao)}</small>`:""}
+      <span class="v"><b>${brl(N(i.qtd)*N(i.preco))}</b><small>${qtd(i.qtd)} ${esc(i.unidade||"")} × ${brl(i.preco)}</small></span></li>`).join("")}</ul>
+    <div class="tots">${N(o.desconto)?`<div><span>Subtotal</span><b>${brl(o.subtotal)}</b></div><div><span>Desconto</span><b>− ${brl(o.desconto)}</b></div>`:""}
+      <div class="t"><span>Total</span><b>${brl(o.total)}</b></div></div>
+    <div class="blocos">
+      ${o.condicoes?`<div class="bloco"><h3>Pagamento</h3><p>${esc(o.condicoes)}</p></div>`:""}
+      ${o.prazo_entrega?`<div class="bloco"><h3>Prazo de entrega</h3><p>${esc(o.prazo_entrega)}</p></div>`:""}
+      ${o.observacoes?`<div class="bloco largo"><h3>Observações</h3><p>${esc(o.observacoes)}</p></div>`:""}
+    </div>`;
+  const docFmt=d=>{d=String(d||"").replace(/\D/g,"");if(d.length===11)return d.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,"$1.$2.$3-$4");if(d.length===14)return d.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,"$1.$2.$3/$4-$5");return d};
+  function cpfOk(c){c=c.replace(/\D/g,"");if(c.length!==11||/^(\d)\1+$/.test(c))return false;let s=0;for(let i=0;i<9;i++)s+=+c[i]*(10-i);let d=(s*10)%11%10;if(d!==+c[9])return false;s=0;for(let i=0;i<10;i++)s+=+c[i]*(11-i);d=(s*10)%11%10;return d===+c[10]}
+  function cnpjOk(c){c=c.replace(/\D/g,"");if(c.length!==14||/^(\d)\1+$/.test(c))return false;const calc=n=>{let s=0,p=n-7;for(let i=0;i<n;i++){s+=+c[i]*p--;if(p<2)p=9}const r=s%11;return r<2?0:11-r};return calc(12)===+c[12]&&calc(13)===+c[13]}
+  const docOk=d=>{d=String(d||"").replace(/\D/g,"");return d.length===11?cpfOk(d):d.length===14?cnpjOk(d):false};
+
+  function render(){
+    if(o.status==="aprovado"&&o.assinado_em){const a=o.assinatura||{};
+      main.innerHTML=`<section class="card cert"><h2>✓ Proposta assinada</h2><p class="sub" style="margin:0">Obrigado! Já está tudo registrado e a equipe foi avisada.</p>
+        <div class="nome">${esc(a.nome||"")}</div>
+        <dl><dt>Assinado por</dt><dd>${esc(a.nome||"")}</dd><dt>${String(a.documento||"").length>11?"CNPJ":"CPF"}</dt><dd>${esc(a.documento||"")}</dd>
+          ${a.empresa?`<dt>Empresa</dt><dd>${esc(a.empresa)}</dd>`:""}<dt>Data e hora</dt><dd>${quando(o.assinado_em)}</dd><dt>Valor</dt><dd>${brl(o.total)}</dd>
+          <dt>Proposta</dt><dd>Nº ${nro(o.numero)}${o.titulo?" · "+esc(o.titulo):""}</dd></dl>
+        <div class="acoes"><button class="b" type="button" onclick="window.print()">Salvar comprovante (PDF)</button></div></section>
+        <section class="card"><h2>O que foi contratado</h2>${resumoHTML()}</section>`;return}
+    if(o.status==="recusado"){main.innerHTML=`<section class="card msg"><h2>Proposta recusada</h2><p class="sub">Obrigado pelo retorno. Se mudar de ideia, fale com a gente: ${esc(e.telefone||e.email||emp)}.</p></section>`;return}
+    if(o.vencida){main.innerHTML=`<section class="card msg"><h2>Esta proposta venceu</h2><p class="sub">Ela era válida até ${dmy(o.validade)}. Peça uma proposta atualizada: ${esc(e.telefone||e.email||emp)}.</p></section>
+      <section class="card"><h2>O que estava na proposta</h2>${resumoHTML()}</section>`;return}
+    let corpo="";
+    if(passo===1)corpo=`<h2>Confira a proposta</h2><p class="sub">Veja os itens, o valor e as condições. Se estiver tudo certo, siga para aceitar.</p>${resumoHTML()}
+      <div class="acoes"><button class="b pri" data-ir="2">Aceitar a proposta →</button><button class="link" data-recusar>Não tenho interesse</button></div>
+      <div id="recusa" hidden><label for="motivo" style="margin-top:14px">Pode contar o motivo? (opcional)</label><textarea id="motivo" rows="3" placeholder="Ex.: o valor ficou acima do que eu esperava"></textarea>
+        <div class="acoes"><button class="b" data-recusa-ok>Recusar a proposta</button><button class="link" data-recusa-x>Voltar</button></div></div>`;
+    if(passo===2)corpo=`<h2>Aceite</h2><p class="sub">Leia e marque para continuar.</p>
+      <label class="check${aceite?" ok":""}" id="aceite-box"><input type="checkbox" id="aceite" ${aceite?"checked":""}><span>Li e aceito a proposta Nº ${nro(o.numero)} de <b>${esc(emp)}</b>, no valor total de <b>${brl(o.total)}</b>${o.condicoes?`, com pagamento: ${esc(sp(o.condicoes))}`:""}${o.prazo_entrega?`, e prazo de entrega: ${esc(sp(o.prazo_entrega))}`:""}.</span></label>
+      <div class="acoes"><button class="b pri" data-ir="3" ${aceite?"":"disabled"} id="ir3">Continuar →</button><button class="link" data-ir="1">Voltar</button></div>`;
+    if(passo===3)corpo=`<h2>Seus dados</h2><p class="sub">Para registrar a assinatura e emitir a cobrança.</p>
+      <form id="f-dados" class="campos" novalidate>
+        <div class="largo"><label for="d-nome">Nome completo</label><input type="text" id="d-nome" autocomplete="name" value="${esc(dados.nome)}" required></div>
+        <div><label for="d-doc">CPF ou CNPJ</label><input type="text" id="d-doc" inputmode="numeric" value="${esc(docFmt(dados.documento))}" required></div>
+        <div><label for="d-emp">Empresa (se for o caso)</label><input type="text" id="d-emp" autocomplete="organization" value="${esc(dados.empresa)}"></div>
+        <div><label for="d-email">E-mail</label><input type="email" id="d-email" autocomplete="email" value="${esc(dados.email)}"></div>
+        <div><label for="d-tel">WhatsApp</label><input type="tel" id="d-tel" autocomplete="tel" value="${esc(dados.telefone)}"></div>
+        <div class="largo"><label for="d-end">Endereço (para nota e cobrança)</label><input type="text" id="d-end" autocomplete="street-address" value="${esc(dados.endereco)}"></div>
+      </form><p class="erro" id="erro"></p>
+      <div class="acoes"><button class="b pri" data-ir="4">Continuar →</button><button class="link" data-ir="2">Voltar</button></div>`;
+    if(passo===4)corpo=`<h2>Assinatura</h2><p class="sub">Confira como fica a sua assinatura. Ao clicar em Assinar, registramos seu nome, documento, data, hora e o endereço de internet de onde você assinou.</p>
+      <div class="assina"><div class="nome">${esc(dados.nome)}</div><small>${esc(dados.nome)} · ${String(dados.documento).length>11?"CNPJ":"CPF"} ${esc(docFmt(dados.documento))}</small></div>
+      <p class="erro" id="erro"></p>
+      <div class="acoes"><button class="b ok" id="assinar">✍ Assinar a proposta</button><button class="link" data-ir="3">Corrigir meus dados</button></div>`;
+    main.innerHTML=`<section class="card">${passosHTML()}</section><section class="card">${corpo}</section>`;
+  }
+  function lerDados(){const v=id=>($("#"+id)||{}).value||"";Object.assign(dados,{nome:v("d-nome").trim(),documento:v("d-doc").replace(/\D/g,""),empresa:v("d-emp").trim(),email:v("d-email").trim(),telefone:v("d-tel").trim(),endereco:v("d-end").trim()})}
+  main.addEventListener("click",async ev=>{
+    const ir=ev.target.closest("[data-ir]");
+    if(ir){ev.preventDefault();const p=+ir.dataset.ir;
+      if(passo===3&&p===4){lerDados();const er=$("#erro");
+        if(dados.nome.split(/\s+/).filter(Boolean).length<2){er.textContent="Escreva o nome completo.";$("#d-nome").focus();return}
+        if(!docOk(dados.documento)){er.textContent="Confira o CPF ou o CNPJ: o número não está válido.";$("#d-doc").focus();return}
+        if(dados.email&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(dados.email)){er.textContent="Confira o e-mail.";$("#d-email").focus();return}}
+      if(passo===3&&p<3)lerDados();
+      passo=p;render();window.scrollTo({top:0,behavior:"smooth"});return}
+    if(ev.target.closest("[data-recusar]")){$("#recusa").hidden=false;$("#motivo").focus();return}
+    if(ev.target.closest("[data-recusa-x]")){$("#recusa").hidden=true;return}
+    if(ev.target.closest("[data-recusa-ok]")){const b=ev.target.closest("button");b.disabled=true;
+      const r=await sb.rpc("proposta_recusar",{p_token:token,p_motivo:($("#motivo").value||"").trim()});
+      if(r.error){b.disabled=false;alertar("Não deu para registrar agora. Tente de novo.");return}o.status="recusado";render();return}
+    if(ev.target.closest("#assinar")){const b=$("#assinar");b.disabled=true;b.textContent="Assinando…";
+      const r=await sb.rpc("proposta_assinar",{p_token:token,p_nome:dados.nome,p_documento:dados.documento,p_email:dados.email,p_telefone:dados.telefone,p_endereco:dados.endereco,p_empresa:dados.empresa,p_aceite:aceite});
+      if(r.error){b.disabled=false;b.textContent="✍ Assinar a proposta";const m=r.error.message||"";
+        $("#erro").textContent=/ja_assinada/.test(m)?"Esta proposta já foi assinada. Recarregue a página.":/vencida/.test(m)?"A proposta venceu. Peça uma atualizada.":/documento/.test(m)?"Confira o CPF ou CNPJ.":"Não deu para assinar agora. Verifique a internet e tente de novo.";return}
+      const v=await sb.rpc("proposta_ver",{p_token:token});if(!v.error&&v.data)Object.assign(o,v.data);else{o.status="aprovado";o.assinado_em=new Date().toISOString();o.assinatura={nome:dados.nome,documento:"•••"+dados.documento.slice(-4)}}
+      render();window.scrollTo({top:0,behavior:"smooth"});return}
+  });
+  const alertar=t=>{const er=$("#erro");if(er)er.textContent=t};
+  main.addEventListener("change",ev=>{if(ev.target.id==="aceite"){aceite=ev.target.checked;$("#aceite-box").classList.toggle("ok",aceite);$("#ir3").disabled=!aceite}});
+  main.addEventListener("input",ev=>{if(ev.target.id==="d-doc"){const d=ev.target.value.replace(/\D/g,"").slice(0,14);if(d.length===11||d.length===14)ev.target.value=docFmt(d)}});
+  main.addEventListener("submit",ev=>{ev.preventDefault();const b=main.querySelector('[data-ir="4"]');b&&b.click()});
+  render();
+})();
+</script>
+</body>
+</html>

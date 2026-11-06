@@ -1,0 +1,990 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Painel de gestão · Hub de Marketing</title>
+<link rel="icon" type="image/png" href="icone.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="estilo.css">
+<link rel="stylesheet" href="tema-claro.css">
+<link rel="stylesheet" href="tema-escuro.css">
+<link rel="stylesheet" href="componentes.css">
+<link rel="stylesheet" href="apple.css">
+<script src="tema.js"></script>
+<style>
+  .cli-acoes{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .status.ativo{background:#E7F6EC;color:#14783B}
+  .status.ativo::before{content:"";width:7px;height:7px;border-radius:50%;background:#1FA750}
+  .status.inativo{background:#F1F1F3;color:#6E6E73}
+  .icone-lixo{appearance:none;border:1px solid var(--line);background:#FFFFFF;color:#8A8A90;width:36px;height:36px;border-radius:8px;display:grid;place-items:center;cursor:pointer}
+  .icone-lixo:hover{color:#C62A35;border-color:#F3C9CC;background:#FDEEEF}
+  .aviso-inativo{margin:0;padding:10px 14px;border-radius:8px;background:#F4F4F6;color:#4A4A4F;font-size:14px}
+  .cli small{color:#8A8A90;font-weight:500}
+  .wrap{max-width:1240px}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:24px;align-items:start}
+  .layout>*{min-width:0}
+  #main .tabs{flex-wrap:wrap;overflow:visible}#main .tab{font-size:15px;padding:12px 12px}
+  .side{display:flex;flex-direction:column;gap:8px;position:sticky;top:16px}
+  @media (max-width:860px){.layout{grid-template-columns:minmax(0,1fr)}.side{position:static}}
+  .cli{appearance:none;text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:12px 14px;font:500 14px var(--font);text-transform:none;letter-spacing:-.005em;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
+  .cli[aria-current="true"]{background:var(--navy,#0B0E2C);color:#FFFFFF;border-color:var(--navy,#0B0E2C);box-shadow:inset 4px 0 0 var(--accent-2,#6C78FF),0 8px 20px -10px rgba(39,51,230,.6)}
+  .cli small{color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px}
+  .row{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
+  .row > div{flex:1 1 160px;min-width:0}
+  .acessos{display:flex;flex-direction:column;gap:6px}
+  .acesso-bts{display:flex;gap:6px;flex-wrap:wrap}
+  .tag-temp{display:inline-block;font-size:11px;font-weight:700;color:#B45309;background:#FFF8EE;border:1px solid #F3D7B5;border-radius:999px;padding:2px 8px;margin-left:4px}
+  html[data-tema="escuro"] .tag-temp{background:rgba(217,119,6,.14);color:#FBBF24;border-color:rgba(217,119,6,.35)}
+  .acesso{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;flex-wrap:wrap}
+  .linkbox{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .linkbox code{background:var(--soft);padding:8px 10px;border-radius:8px;font-size:13px;word-break:break-all;flex:1 1 280px}
+  .thumbs{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+  .thumb{flex:0 0 auto;width:120px;display:flex;flex-direction:column;gap:6px}
+  .thumb img,.thumb video{width:120px;aspect-ratio:4/5;object-fit:cover;border-radius:8px;background:var(--line);display:block}
+  .thumb video{aspect-ratio:9/16;background:#000;object-fit:contain}
+  .thumb.vid{width:140px}.thumb.vid video{width:140px}
+  .thumb .actions{gap:4px;justify-content:center}
+  .thumb .btn{padding:4px 8px;font-size:12px}
+  .addthumb{width:120px;aspect-ratio:4/5;border:1.5px dashed var(--accent);border-radius:10px;display:grid;place-items:center;text-align:center;font:600 12px var(--font);text-transform:none;letter-spacing:0;color:var(--accent);cursor:pointer;padding:8px}
+  .rows{display:flex;flex-direction:column;gap:8px}
+  .brow{display:grid;grid-template-columns:90px minmax(0,2fr) minmax(0,1fr) auto;gap:8px;align-items:start}
+  .srow{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) auto;gap:8px;align-items:start}
+  @media (max-width:640px){.brow,.srow{grid-template-columns:1fr}}
+  .brow textarea,.srow textarea{min-height:60px}
+  .head{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap}
+  .pill-sm{font-size:12px}
+  .toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--brand);color:var(--on-brand);padding:10px 16px;border-radius:10px;font-weight:600;font-size:14px;z-index:20;max-width:90vw}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brandbar"><img class="logo" src="logo.png" alt="" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='logo.svg'}else{this.remove()}"><span class="eyebrow" id="marca">Hub de Marketing</span></div>
+    <div class="actions"><div class="sino-box av-box" id="av-box" hidden></div><button type="button" class="tema-btn" data-tema-btn></button><div class="actions" id="userbox" hidden><span class="note" id="useremail"></span><button class="btn small" id="sair">Sair</button></div></div>
+  </div>
+  <header class="hero hero-sm"><span class="hero-tag">Uso interno · GUXTA</span><h1>Painel de <mark>gestão</mark></h1><p class="intro" id="hero-sub">Hub de Marketing · clientes, planejamento, aprovações, resultados, anúncios e pedidos num lugar só.</p></header>
+
+  <!-- LOGIN -->
+  <form id="login" class="card" style="max-width:420px" hidden>
+    <h2>Entrar</h2>
+    <div><label class="label" for="email">E-mail</label><input type="email" id="email" autocomplete="username" required></div>
+    <div><label class="label" for="senha">Senha</label><input type="password" id="senha" autocomplete="current-password" required></div>
+    <button class="btn primary" type="submit">Entrar</button>
+    <p class="note" id="login-msg"></p>
+  </form>
+
+  <div id="painel" class="layout" hidden>
+    <aside class="side">
+      <button class="cli cli-tarefas" id="btn-inicio" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Início</button>
+      <button class="cli cli-tarefas" id="btn-tarefas" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Minhas tarefas<span class="badge" id="tk-badge" hidden></span></button>
+      <button class="cli cli-tarefas" id="btn-agenda" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 14h2M12 14h2M16 14h2M8 18h2M12 18h2"/></svg></span>Agenda</button>
+      <button class="cli cli-tarefas" id="btn-crm" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>CRM · Contatos<span class="badge" id="crm-badge" hidden></span></button>
+      <button class="cli cli-tarefas" id="btn-orcamentos" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span>Orçamentos<span class="badge" id="orc-badge" hidden></span></button>
+      <button class="cli cli-tarefas" id="btn-midia" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l15-6v14L3 13z"/><path d="M7 12.5V18a2 2 0 0 0 4 0v-4"/><path d="M21 9v6"/></svg></span>Plano de mídia</button>
+      <button class="cli cli-tarefas" id="btn-financeiro" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg></span>Financeiro<span class="badge" id="fin-badge" hidden></span></button>
+      <button class="cli cli-tarefas" id="btn-notas" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.5z"/><path d="M15 3v6h6M7 13h10M7 17h6"/></svg></span>Notas</button>
+      <button class="cli cli-tarefas" id="btn-avisos" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>Avisos e lembretes<span class="badge calma" id="av-badge" hidden></span></button>
+      <span class="label" style="margin-top:10px">Clientes</span>
+      <div id="clientes" class="list" style="gap:8px"></div>
+      <form id="novo-cliente" class="card" style="padding:14px;gap:8px">
+        <label class="label" for="nc-nome" style="margin:0">Novo cliente</label>
+        <input type="text" id="nc-nome" placeholder="Nome do cliente" required>
+        <button class="btn small primary" type="submit">Adicionar</button>
+      </form>
+    </aside>
+
+    <main class="list" id="main">
+      <div class="empty">Escolha um cliente ou adicione um novo.</div>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script src="config.js"></script>
+<script src="metricas.js"></script>
+<script src="anuncios.js"></script>
+<script src="importar-ads.js"></script>
+<script src="tarefas.js"></script>
+<script src="anel.js"></script>
+<script src="inicio.js"></script>
+<script src="orcamentos.js"></script>
+<script src="crm.js"></script>
+<script src="financeiro.js"></script>
+<script src="pagamentos.js"></script>
+<script src="agenda.js"></script>
+<script src="notas.js"></script>
+<script src="planomidia.js"></script>
+<script src="avisos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const urlSupabase=u=>{u=String(u||"").trim();let m=u.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);if(m)return "https://"+m[1]+".supabase.co";m=u.match(/^(?:https?:\/\/)?([a-z0-9-]+\.supabase\.(?:co|in))/i);if(m)return "https://"+m[1].toLowerCase();return u.replace(/\/+$/,"")};
+  const cfg=window.GLARA_CONFIG||{};
+  const PADRAO_COR=["","#E10600","#EE2B37","#E50914","#C0703A","#3D4BFF","#0F8A4A","#0866FF","#1877F2"];
+  $("#marca").textContent=cfg.plataforma||"Hub de Marketing";$("#hero-sub").textContent=(cfg.plataforma||"Hub de Marketing")+" · clientes, planejamento, aprovações, resultados, anúncios e pedidos num lugar só.";
+  let toastT=null;
+  const toast=m=>{const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)};
+  const falha=(acao,error)=>{console.error(error);toast("Não deu para "+acao+". "+(error&&error.message?error.message:"Tente de novo."))};
+  const portalURL=t=>new URL("index.html?c="+t,location.href).href;
+  const loginURL=()=>new URL("index.html",location.href).href;
+  const fmtQuando=iso=>{try{const d=new Date(iso);return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}catch(e){return""}};
+
+  if(!window.supabase||!cfg.supabaseUrl||/SEU-PROJETO/.test(cfg.supabaseUrl)){
+    $("#main").innerHTML="";$("#login").hidden=false;$("#login-msg").textContent="Preencha o arquivo config.js com o endereço e a chave do Supabase antes de usar o painel.";return}
+  const sb=window.supabase.createClient(urlSupabase(cfg.supabaseUrl),String(cfg.supabaseAnonKey||"").trim());
+
+  let avSino=null, finAbrir=null;
+  let clientes=[], cliAtual=null, ciclos=[], cicloAtual=null, aba="posts", vista="inicio", alertas={clientes:{},tarefas:{}}, pedFiltro="abertos";
+  let posts=[], decisoes={}, roteiros=[], stories=[], pedidos=[], anuncios=[], acessos=[], documentos=[];
+
+  /* ---------- login ---------- */
+  $("#login").addEventListener("submit",async e=>{
+    e.preventDefault();$("#login-msg").textContent="Entrando…";
+    const {error}=await sb.auth.signInWithPassword({email:$("#email").value.trim(),password:$("#senha").value});
+    if(error){const m=String(error.message||"");console.error(error);
+      $("#login-msg").textContent=/invalid login credentials/i.test(m)?"E-mail ou senha incorretos. (Invalid login credentials)"
+        :/not confirmed/i.test(m)?"Este e-mail ainda não foi confirmado no Supabase. (Email not confirmed)"
+        :/api key|apikey|jwt/i.test(m)?"A chave do Supabase no config.js não foi aceita. ("+m+")"
+        :/fetch|network|failed/i.test(m)?"Não consegui falar com o Supabase. Confira o endereço no config.js. ("+m+")"
+        :"Erro do Supabase: "+m;return}
+    iniciar();
+  });
+  $("#sair").addEventListener("click",async()=>{await sb.auth.signOut();location.reload()});
+
+  async function iniciar(){
+    const {data:{session}}=await sb.auth.getSession();
+    if(!session){$("#login").hidden=false;$("#painel").hidden=true;$("#userbox").hidden=true;return}
+    const {data:adm}=await sb.rpc("is_admin");
+    if(!adm){$("#login").hidden=false;$("#login-msg").textContent="Este e-mail não está liberado como administrador. Veja o passo 4 do guia de instalação.";await sb.auth.signOut();return}
+    $("#login").hidden=true;$("#painel").hidden=false;$("#userbox").hidden=false;$("#useremail").textContent=session.user.email;
+    await carregarClientes();
+    await sb.rpc("gerar_recorrencias"); // cria as mensalidades do mês dos planos recorrentes
+    if(vista==="inicio")abrirInicio();
+    if(window.GlaraAvisos&&!avSino)avSino=window.GlaraAvisos.sino($("#av-box"),sb,{clientes:()=>clientes,toast,falha,ir:irDestino});
+    carregarAlertas();setInterval(()=>{if(!document.hidden)carregarAlertas()},60000);
+  }
+
+  /* ---------- avisos (balões vermelhos) ---------- */
+  const bolha=(n,titulo)=>n?`<span class="badge" title="${esc(titulo||"")}">${n>99?"99+":n}</span>`:"";
+  async function carregarAlertas(){
+    if(avSino)avSino.atualizar();
+    sb.rpc("avisos_pendencias").then(({data:pd,error:pe})=>{const ab=$("#av-badge");if(!ab)return;const n=pe?0:(pd||[]).length;ab.hidden=!n;ab.textContent=n;ab.title=n?n+" cliente(s) com aprovação parada":""});
+    const {data,error}=await sb.rpc("admin_alertas");if(error||!data)return;
+    alertas=data;renderClientes();
+    const t=data.tarefas||{}, n=(t.atrasadas||0)+(t.hoje||0), b=$("#tk-badge");
+    b.hidden=!n;b.textContent=n;b.title=`${t.atrasadas||0} atrasadas · ${t.hoje||0} para hoje`;
+    const o=data.orcamentos||{}, no=(o.sem_resposta||0)+(o.aprovados_sem_lancar||0), bo=$("#orc-badge");
+    bo.hidden=!no;bo.textContent=no;bo.title=`${o.sem_resposta||0} enviados há mais de 3 dias sem resposta · ${o.aprovados_sem_lancar||0} aprovados para lançar no financeiro`;
+    const f=data.financeiro||{}, nf=(f.boletos||0)+(f.receber_vencido||0)+(f.pagar_vencido||0), bf=$("#fin-badge");
+    bf.hidden=!nf;bf.textContent=nf;bf.title=`${f.boletos||0} boleto(s) para gerar · ${f.receber_vencido||0} a receber vencido(s) · ${f.pagar_vencido||0} a pagar vencido(s)`;
+    const cr=data.crm||{}, nc=(cr.acoes||0), bc=$("#crm-badge");
+    bc.hidden=!nc;bc.textContent=nc;bc.title=`${cr.acoes||0} retorno(s) para hoje ou atrasado(s) · ${cr.novos||0} contato(s) novo(s)`;
+    const total=Object.values(data.clientes||{}).reduce((s,c)=>s+(c.pedidos||0)+(c.ajustes||0)+(c.alteracoes||0),0)+n+no+nf+nc;
+    document.title=(total?`(${total}) `:"")+"Painel de gestão · "+(cfg.plataforma||"Hub de Marketing");
+  }
+
+  /* ---------- clientes ---------- */
+  async function carregarClientes(){
+    const {data,error}=await sb.from("clientes").select("*").order("nome");
+    if(error)return falha("carregar os clientes",error);
+    clientes=data;renderClientes();
+    if(cliAtual)abrirCliente(cliAtual.id);
+  }
+  function renderClientes(){
+    $("#clientes").innerHTML=clientes.length?clientes.map(c=>{const a=(alertas.clientes||{})[c.id]||{}, n=(a.pedidos||0)+(a.ajustes||0)+(a.alteracoes||0);
+      return `<button class="cli" data-cli="${c.id}" aria-current="${vista==="cliente"&&cliAtual&&cliAtual.id===c.id}"><span class="cli-nome">${esc(c.nome)}</span>${c.ativo?"":"<small>desativado</small>"}${bolha(n,[(a.pedidos?a.pedidos+" pedido(s) novo(s)":""),(a.ajustes?a.ajustes+" ajuste(s) pedido(s)":"")].filter(Boolean).join(" · "))}${a.aprovados_24h&&!n?`<span class="dot-ok" title="${a.aprovados_24h} aprovação(ões) nas últimas 24 h"></span>`:""}</button>`}).join(""):`<p class="note">Nenhum cliente ainda.</p>`;
+    $("#btn-tarefas").setAttribute("aria-current",String(vista==="tarefas"));
+    $("#btn-orcamentos").setAttribute("aria-current",String(vista==="orcamentos"));
+    $("#btn-crm").setAttribute("aria-current",String(vista==="crm"));
+    $("#btn-financeiro").setAttribute("aria-current",String(vista==="financeiro"));
+    $("#btn-agenda").setAttribute("aria-current",String(vista==="agenda"));
+    $("#btn-midia").setAttribute("aria-current",String(vista==="midia"));
+    $("#btn-notas").setAttribute("aria-current",String(vista==="notas"));
+    $("#btn-avisos").setAttribute("aria-current",String(vista==="avisos"));
+    $("#btn-inicio").setAttribute("aria-current",String(vista==="inicio"));
+    document.body.classList.toggle("vista-inicio",vista==="inicio");
+  }
+  $("#clientes").addEventListener("click",e=>{const b=e.target.closest("[data-cli]");if(b){vista="cliente";abrirCliente(b.dataset.cli)}});
+  let quadro=null;
+  function abrirInicio(){vista="inicio";renderClientes();
+    $("#main").innerHTML=`<div id="ini-root" class="list ini"></div>`;
+    window.GlaraInicio.criar($("#ini-root"),sb,{nome:cfg.nomeAdmin||"",plataforma:cfg.plataforma,
+      abrirTarefas:()=>$("#btn-tarefas").click(),
+      ir:d=>{const b=$("#btn-"+d);if(b){b.click();window.scrollTo({top:0,behavior:"smooth"})}},
+      abrirCliente:(id,ab)=>{if(!clientes.find(c=>c.id===id)){toast("Cliente não encontrado.");return}if(ab)aba=ab;vista="cliente";abrirCliente(id);window.scrollTo({top:0,behavior:"smooth"})}});}
+  $("#btn-inicio").addEventListener("click",()=>{abrirInicio();if(window.matchMedia("(max-width:860px)").matches)$("#main").scrollIntoView({block:"start"})});
+  $("#btn-tarefas").addEventListener("click",()=>{vista="tarefas";renderClientes();
+    $("#main").innerHTML=`<div id="tk-root" class="list"></div>`;
+    quadro=window.GlaraTarefas.criar($("#tk-root"),sb,{toast,falha,clientes:()=>clientes,mudou:carregarAlertas,
+      abrirPedido:cid=>{if(!cid||!clientes.some(c=>c.id===cid)){toast("Cliente não encontrado.");return}aba="pedidos";abrirCliente(cid);window.scrollTo({top:0})}});
+    if(window.matchMedia("(max-width:860px)").matches)$("#main").scrollIntoView({block:"start"});});
+  function abrirOrcamentos(extra){vista="orcamentos";renderClientes();
+    $("#main").innerHTML=`<div id="orc-root" class="list"></div>`;
+    window.GlaraOrcamentos.criar($("#orc-root"),sb,Object.assign({toast,falha,clientes:()=>clientes,mudou:carregarAlertas},extra||{}));
+    if(window.matchMedia("(max-width:860px)").matches)$("#main").scrollIntoView({block:"start"});else window.scrollTo({top:0});}
+  $("#btn-orcamentos").addEventListener("click",()=>abrirOrcamentos());
+  $("#btn-crm").addEventListener("click",()=>{vista="crm";renderClientes();
+    $("#main").innerHTML=`<div id="crm-root" class="list"></div>`;
+    window.GlaraCRM.criar($("#crm-root"),sb,{toast,falha,cfg,clientes:()=>clientes,mudou:carregarAlertas,
+      novoOrcamento:c=>abrirOrcamentos({prefill:c}),abrirOrcamento:id=>abrirOrcamentos({abrirId:id}),
+      criarCliente:async nome=>{const {data,error}=await sb.from("clientes").insert({nome}).select().single();if(error){falha("criar o cliente",error);return null}
+        clientes.push(data);clientes.sort((a,b)=>a.nome.localeCompare(b.nome));renderClientes();return data}});
+    if(window.matchMedia("(max-width:860px)").matches)$("#main").scrollIntoView({block:"start"});});
+  $("#btn-financeiro").addEventListener("click",()=>{vista="financeiro";renderClientes();
+    $("#main").innerHTML=`<div id="fin-root" class="list"></div>`;
+    const ab=finAbrir;finAbrir=null;
+    window.GlaraFinanceiro.criar($("#fin-root"),sb,{toast,falha,clientes:()=>clientes,mudou:carregarAlertas,abrirId:ab,portalURL:c=>{const u=new URL("index.html",location.href);if(c&&c.link_ativo!==false&&c.token)u.searchParams.set("c",c.token);u.searchParams.set("aba","pagamentos");return u.href}});
+    if(window.matchMedia("(max-width:860px)").matches)$("#main").scrollIntoView({block:"start"});});
+  const rolarMain=()=>{if(window.matchMedia("(max-width:860px)").matches)$("#main").scrollIntoView({block:"start"});else window.scrollTo({top:0})};
+  function abrirAvisos(){vista="avisos";renderClientes();
+    $("#main").innerHTML=`<div id="av-root" class="list"></div>`;
+    window.GlaraAvisos.criar($("#av-root"),sb,{toast,falha,clientes:()=>clientes,ir:irDestino,mudou:()=>carregarAlertas()});rolarMain()}
+  function irDestino(d){d=d||{};
+    if(d.vista==="avisos")return abrirAvisos();
+    if(d.vista==="orcamentos")return abrirOrcamentos(d.orcamento?{abrirId:d.orcamento}:null);
+    if(d.vista==="financeiro"){finAbrir=d.lancamento||null;$("#btn-financeiro").click();return}
+    if(d.cliente&&clientes.find(c=>c.id===d.cliente)){
+      if(d.ciclo)cicloAtual={id:d.ciclo};aba=d.aba||"posts";vista="cliente";
+      abrirCliente(d.cliente).then(()=>{if(d.config){const det=$("#cl-config");if(det){det.open=true;const w=$("#cl-wa");if(w){w.focus();w.scrollIntoView({block:"center"})}}}});
+      rolarMain();return}
+    toast("Não encontrei esse item. Ele pode ter sido apagado.")}
+  const irCliente=(id,ab)=>{if(!clientes.find(c=>c.id===id)){toast("Cliente não encontrado.");return}if(ab)aba=ab;vista="cliente";abrirCliente(id);window.scrollTo({top:0,behavior:"smooth"})};
+  $("#btn-agenda").addEventListener("click",()=>{vista="agenda";renderClientes();
+    $("#main").innerHTML=`<div id="ag-root" class="list"></div>`;
+    window.GlaraAgenda.criar($("#ag-root"),sb,{toast,falha,clientes:()=>clientes,abrirCliente:irCliente,ir:d=>{const b=$("#btn-"+d);if(b)b.click()}});rolarMain()});
+  $("#btn-avisos").addEventListener("click",abrirAvisos);
+  $("#btn-notas").addEventListener("click",()=>{vista="notas";renderClientes();
+    $("#main").innerHTML=`<div id="nt-root" class="list"></div>`;
+    window.GlaraNotas.criar($("#nt-root"),sb,{toast,falha,clientes:()=>clientes});rolarMain()});
+  $("#btn-midia").addEventListener("click",()=>{vista="midia";renderClientes();
+    $("#main").innerHTML=`<div id="pm-root" class="list"></div>`;
+    window.GlaraPlanoMidia.criar($("#pm-root"),sb,{toast,falha,clientes:()=>clientes});rolarMain()});
+  $("#novo-cliente").addEventListener("submit",async e=>{
+    e.preventDefault();const nome=$("#nc-nome").value.trim();if(!nome)return;
+    const {data,error}=await sb.from("clientes").insert({nome}).select().single();
+    if(error)return falha("criar o cliente",error);
+    $("#nc-nome").value="";clientes.push(data);clientes.sort((a,b)=>a.nome.localeCompare(b.nome));cliAtual=data;renderClientes();abrirCliente(data.id);toast("Cliente criado.");
+  });
+
+  /* ---------- senha provisória (quando o e-mail de confirmação não chega) ---------- */
+  const gerarSenha=()=>{const L="abcdefghjkmnpqrstuvwxyz",r=n=>{const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n};
+    return (cfg.marca||"Hub").replace(/[^A-Za-z]/g,"").slice(0,6).replace(/^./,c=>c.toUpperCase())+"-"+String(1000+r(9000))+"-"+L[r(L.length)]+L[r(L.length)]+L[r(L.length)]};
+  function abrirSenhaTemp(u){if(!u)return;
+    let d=$("#senha-dlg");if(!d){document.body.insertAdjacentHTML("beforeend",`<dialog class="tk-dlg" id="senha-dlg" aria-labelledby="st-t"></dialog>`);d=$("#senha-dlg")}
+    d.innerHTML=`<form method="dialog" class="tk-form" id="st-form">
+      <div class="head"><h2 id="st-t">Senha provisória</h2><button type="button" class="tk-x" data-st="fechar" aria-label="Fechar">✕</button></div>
+      <p class="note" style="margin:0">Para <b>${esc(u.nome||u.email)}</b> · ${esc(u.email)}. O login fica confirmado na hora, sem depender do e-mail. No primeiro acesso a pessoa é obrigada a criar a senha dela.</p>
+      <div><label class="label" for="st-senha">Senha provisória</label><div class="orc-lucro"><input type="text" id="st-senha" minlength="8" autocomplete="off" spellcheck="false" value="${esc(gerarSenha())}"><button type="button" class="btn small" data-st="gerar" style="white-space:nowrap">Gerar outra</button></div></div>
+      <div class="actions"><button type="submit" class="btn primary">Criar senha provisória</button><button type="button" class="btn ghost" data-st="fechar">Cancelar</button></div>
+      <div id="st-ok" hidden></div></form>`;
+    if(typeof d.showModal==="function")d.showModal();else d.setAttribute("open","");
+    d.onclick=async e=>{const b=e.target.closest("[data-st]");if(!b)return;const k=b.dataset.st;
+      if(k==="fechar"){d.close?d.close():0;d.removeAttribute("open");return}
+      if(k==="gerar"){$("#st-senha").value=gerarSenha();return}
+      if(k==="copiar"){const t=$("#st-msg").value;try{await navigator.clipboard.writeText(t);toast("Mensagem copiada.")}catch(_){$("#st-msg").select();toast("Selecionei a mensagem: copie com Ctrl+C.")}return}};
+    d.onsubmit=async e=>{e.preventDefault();const senha=$("#st-senha").value.trim();
+      if(senha.length<8){toast("A senha precisa ter pelo menos 8 caracteres.");return}
+      const bt=d.querySelector('button[type=submit]');bt.disabled=true;bt.textContent="Criando…";
+      const {data,error}=await sb.rpc("admin_senha_temporaria",{p_email:u.email,p_senha:senha});
+      bt.disabled=false;bt.textContent="Criar senha provisória";
+      if(error){const m=String(error.message||"");toast(/admin_senha_temporaria|function/i.test(m)&&/not find|does not exist|schema cache/i.test(m)?"Rode o arquivo 08 do banco no Supabase primeiro.":/email_de_admin/.test(m)?"Este e-mail é de administrador: troque a senha pelo Supabase.":/email_sem_acesso/.test(m)?"Este e-mail não tem acesso liberado.":"Não deu para criar a senha. "+m);return}
+      u.senha_temp_em=new Date().toISOString();
+      const msg=`Olá${u.nome?", "+u.nome.split(" ")[0]:""}! Seu acesso ao ${cfg.plataforma||"Hub de Marketing"} da ${cfg.marca||"GUXTA"} está pronto.\n\n1. Acesse: ${loginURL()}\n2. E-mail: ${u.email}\n3. Senha provisória: ${senha}\n\nNo primeiro acesso o sistema vai pedir para você criar a sua própria senha.`;
+      const ok=$("#st-ok");ok.hidden=false;ok.innerHTML=`<p class="ok-txt" style="margin:0 0 8px;font-weight:700">✓ Senha provisória ${data==="criado"?"criada":"definida"}. Envie para a pessoa:</p>
+        <textarea id="st-msg" style="min-height:150px" readonly>${esc(msg)}</textarea>
+        <div class="actions" style="margin-top:8px"><button type="button" class="btn small" data-st="copiar">Copiar mensagem</button><a class="btn small primary" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">Abrir no WhatsApp</a></div>`;
+      d.querySelector(".actions").hidden=true;render();};
+    setTimeout(()=>{const i=$("#st-senha");i&&i.select()},30);
+  }
+
+  async function abrirCliente(id){
+    vista="cliente";cliAtual=clientes.find(c=>c.id===id);renderClientes();
+    const {data,error}=await sb.from("ciclos").select("*").eq("cliente_id",id).order("inicio",{ascending:false,nullsFirst:false}).order("criado_em",{ascending:false});
+    if(error)return falha("carregar os meses",error);
+    ciclos=data;
+    const pq=await sb.from("pedidos").select("*").eq("cliente_id",id).order("criado_em",{ascending:false});
+    pedidos=pq.error?[]:pq.data;
+    const aq=await sb.from("cliente_usuarios").select("*").eq("cliente_id",id).order("criado_em");acessos=aq.error?[]:aq.data;
+    const dq=await sb.from("documentos").select("*").eq("cliente_id",id).order("criado_em",{ascending:false});documentos=dq.error?[]:dq.data;
+    if(!cicloAtual||!ciclos.find(c=>c.id===cicloAtual.id))cicloAtual=ciclos[0]||null;
+    else cicloAtual=ciclos.find(c=>c.id===cicloAtual.id);
+    await carregarCiclo();
+  }
+
+  function clienteHTML(){
+    const c=cliAtual;
+    return `<section class="card">
+      <div class="head"><h2 class="cli-titulo">${esc(c.nome)}</h2>
+        <div class="cli-acoes"><span class="status ${c.ativo?"ativo":"inativo"}">${c.ativo?"Acesso ativo":"Cliente desativado"}</span>
+        <button class="btn small ${c.ativo?"outline":"primary"}" data-act="pausar">${c.ativo?"Desativar cliente":"Reativar cliente"}</button>
+        <button class="icone-lixo" data-act="excluir-cliente" title="Excluir cliente" aria-label="Excluir cliente"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></div></div>
+      ${c.ativo?"":`<p class="aviso-inativo">Cliente desativado: ninguém dele consegue entrar (nem pelo link nem pelo login). Todo o histórico continua guardado aqui. Para voltar a atender, clique em <b>Reativar cliente</b>.</p>`}
+      <div><span class="label">Acessos com e-mail e senha</span>
+        <div class="acessos">${acessos.length?acessos.map(u=>`<div class="acesso"><span><b>${esc(u.nome||u.email)}</b>${u.nome?` <small class="note">${esc(u.email)}</small>`:""}${u.senha_temp_em?` <span class="tag-temp" title="Criada em ${esc(fmtQuando(u.senha_temp_em))}">Senha provisória · aguardando troca</span>`:""}</span><span class="acesso-bts"><button class="btn small" data-act="senha-temp" data-email="${esc(u.email)}">Senha provisória</button><button class="btn small danger" data-act="rm-acesso" data-email="${esc(u.email)}">Remover</button></span></div>`).join(""):`<p class="note">Ninguém deste cliente tem login ainda.</p>`}</div>
+        <div class="row" style="margin-top:10px"><div><label class="label" for="ac-email">E-mail</label><input type="email" id="ac-email" placeholder="pessoa@escritorio.com"></div>
+          <div><label class="label" for="ac-nome">Nome (aparece nas aprovações)</label><input type="text" id="ac-nome" placeholder="Ex.: Franciane"></div>
+          <div style="flex:0 0 auto"><button class="btn small primary" data-act="add-acesso">Liberar acesso</button></div></div>
+        ${acessos.length?`<div class="linkbox" style="margin-top:10px"><code>${esc(loginURL())}</code><button class="btn small" data-act="copiar-convite">Copiar convite</button></div>
+        <p class="note" style="margin-top:6px">O convite já explica o primeiro acesso: a pessoa abre o endereço, clica em “Primeiro acesso”, usa o e-mail liberado e cria a senha. Se o e-mail de confirmação não chegar, use <b>Senha provisória</b>: você cria uma senha, manda pelo WhatsApp e no primeiro acesso ela troca pela dela.</p>`:""}</div>
+      <div><span class="label">Link secreto (sem senha)</span>
+        <label class="check"><input type="checkbox" id="link-ativo" ${c.link_ativo!==false?"checked":""}> Permitir entrar também pelo link secreto</label>
+        ${c.link_ativo!==false?`<div class="linkbox" style="margin-top:8px"><code id="link">${esc(portalURL(c.token))}</code>
+        <button class="btn small" data-act="copiar">Copiar link</button>
+        <a class="btn small" href="${esc(portalURL(c.token))}" target="_blank" rel="noopener">Abrir como cliente</a></div>
+        <p class="note" style="margin-top:6px">Quem tiver este link entra sem senha. Desligue quando todos do cliente já usarem login.</p>`:`<p class="note" style="margin-top:6px">Desligado: o cliente só entra com e-mail e senha.</p>`}</div>
+      <details id="cl-config"><summary>Configurações do cliente</summary>
+        <div class="grid2" style="margin-top:12px">
+          <div><label class="label" for="cl-nome">Nome</label><input type="text" id="cl-nome" value="${esc(c.nome)}"></div>
+          <div><label class="label" for="cl-cor">Cor de destaque do portal (vazio = azul padrão)</label><input type="text" id="cl-cor" value="${esc(PADRAO_COR.includes(String(c.cor_destaque||"").toUpperCase())?"":c.cor_destaque)}" placeholder="Ex.: #1877F2"></div>
+          <div><label class="label" for="cl-wa">WhatsApp do cliente (para lembretes e relatório)</label><input type="tel" id="cl-wa" value="${esc(c.whatsapp||"")}" placeholder="Ex.: (21) 99999-9999" inputmode="tel"></div>
+        </div>
+        <div style="margin-top:16px"><span class="label">Plano mensal (deixe vazio o que não tem limite)</span>
+          <div class="grid2">
+            <div><label class="label" for="cl-plano">Nome do plano</label><input type="text" id="cl-plano" value="${esc(c.plano_nome||"")}" placeholder="Ex.: Plano Essencial"></div>
+            ${TIPOS_PLANO.map(t=>`<div><label class="label" for="lim-${t}">${t==="Stories"?"Sequências de Stories":t==="Carrossel"?"Carrosséis":t==="Estático"?"Estáticos":"Reels"} por mês</label><input type="number" min="0" max="999" id="lim-${t}" data-lim="${t}" value="${(c.limites||{})[t]??""}" placeholder="Sem limite"></div>`).join("")}
+          </div>
+          <div style="margin-top:12px"><label class="label" for="cl-regra">Regra da cobrança extra (aparece para o cliente)</label><input type="text" id="cl-regra" value="${esc(c.regra_extra||"")}" placeholder="Ex.: R$ 90 por conteúdo extra, cobrado na próxima fatura"></div>
+        </div>
+        <div class="actions" style="margin-top:12px">
+          <button class="btn small primary" data-act="salvar-cliente">Salvar</button>
+          <button class="btn small" data-act="novo-link">Gerar link novo</button>
+        </div>
+        <p class="note" style="margin-top:6px">“Gerar link novo” desativa o link antigo na hora.</p>
+      </details>
+    </section>
+    ${documentosHTML()}
+    <section class="card">
+      <div class="row">
+        <div><label class="label" for="ciclo-sel">Mês</label>
+          <select id="ciclo-sel">${ciclos.map(x=>`<option value="${x.id}" ${cicloAtual&&x.id===cicloAtual.id?"selected":""}>${esc(x.titulo)}${x.publicado?"":" (rascunho)"}</option>`).join("")||"<option value=''>Nenhum mês ainda</option>"}</select></div>
+        <div style="flex:0 0 auto"><button class="btn small outline" data-act="novo-ciclo">+ Novo mês</button></div>
+      </div>
+    </section>`;
+  }
+
+  /* ---------- contrato e documentos ---------- */
+  const tamanho=b=>!b?"":b<1048576?Math.max(1,Math.round(b/1024))+" KB":(b/1048576).toLocaleString("pt-BR",{maximumFractionDigits:1})+" MB";
+  const dataBR=iso=>{if(!iso)return"";const [y,m,d]=String(iso).slice(0,10).split("-");return d+"/"+m+"/"+y};
+  function documentosHTML(){
+    return `<section class="card">
+      <div class="head"><h2>Contrato e documentos</h2><span class="note">${documentos.length?documentos.length+(documentos.length>1?" arquivos":" arquivo"):"Nenhum ainda"}</span></div>
+      <p class="intro" style="margin:0">Anexe o contrato assinado (PDF ou foto). Ele aparece na aba <b>Contrato</b> do portal e só abre para quem entra com e-mail e senha.</p>
+      ${documentos.length?`<div class="docs">${documentos.map(d=>{const ext=((d.nome_arquivo||"").split(".").pop()||"").slice(0,4).toUpperCase()||"DOC";
+        return `<div class="doc"><span class="doc-ico" aria-hidden="true">${esc(ext)}</span>
+          <span class="doc-info"><b>${esc(d.titulo)}</b><small>${d.assinado_em?"Assinado em "+dataBR(d.assinado_em)+" · ":""}${esc(d.nome_arquivo)}${d.tamanho?" · "+tamanho(d.tamanho):""} · enviado em ${dataBR(d.criado_em)}</small></span>
+          <span class="actions"><button class="btn small outline" data-act="abrir-doc" data-id="${d.id}">Abrir</button><button class="btn small danger" data-act="apagar-doc" data-id="${d.id}">Apagar</button></span></div>`}).join("")}</div>`:""}
+      <div class="doc-novo">
+        <div><label class="label" for="doc-titulo">Nome do documento</label><input type="text" id="doc-titulo" value="${documentos.length?"":"Contrato assinado"}" placeholder="Ex.: Aditivo de contrato"></div>
+        <div><label class="label" for="doc-data">Data da assinatura (opcional)</label><input type="date" id="doc-data"></div>
+        <div><label class="label" for="doc-arq">Arquivo (PDF, JPG ou PNG, até 25 MB)</label><input type="file" id="doc-arq" accept="application/pdf,image/jpeg,image/png,image/webp"></div>
+        <div><button class="btn primary small" data-act="enviar-doc">Anexar documento</button></div>
+      </div>
+    </section>`;
+  }
+  async function enviarDocumento(btn){
+    const f=$("#doc-arq").files[0], titulo=$("#doc-titulo").value.trim()||"Contrato assinado";
+    if(!f){toast("Escolha o arquivo do contrato.");return}
+    if(f.size>25*1048576){toast("Arquivo muito grande: o limite é 25 MB.");return}
+    if(!/^(application\/pdf|image\/(jpeg|png|webp))$/.test(f.type)){toast("Envie um PDF ou uma imagem (JPG, PNG).");return}
+    const limpo=f.name.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Za-z0-9._-]+/g,"-").replace(/^-+|-+$/g,"")||"documento";
+    const caminho=cliAtual.id+"/"+Date.now()+"-"+limpo;
+    btn.disabled=true;btn.textContent="Enviando…";
+    const up=await sb.storage.from("documentos").upload(caminho,f,{contentType:f.type,upsert:false});
+    if(up.error){btn.disabled=false;btn.textContent="Anexar documento";return falha("enviar o arquivo",up.error)}
+    const {data,error}=await sb.from("documentos").insert({cliente_id:cliAtual.id,titulo,caminho,nome_arquivo:f.name,tipo_arquivo:f.type,tamanho:f.size,assinado_em:$("#doc-data").value||null}).select().single();
+    if(error){await sb.storage.from("documentos").remove([caminho]);btn.disabled=false;btn.textContent="Anexar documento";return falha("salvar o documento",error)}
+    documentos.unshift(data);render();toast(`“${titulo}” anexado. ${acessos.length?"O cliente já vê na aba Contrato.":"Libere um acesso com e-mail e senha para o cliente abrir."}`);
+  }
+
+  /* ---------- ciclo ---------- */
+  async function carregarCiclo(){
+    if(!cicloAtual){posts=[];roteiros=[];stories=[];decisoes={};render();return}
+    const id=cicloAtual.id;
+    const [p,r,s]=await Promise.all([
+      sb.from("posts").select("*").eq("ciclo_id",id).order("data",{nullsFirst:false}).order("dia",{nullsFirst:false}).order("criado_em"),
+      sb.from("roteiros").select("*").eq("ciclo_id",id).order("data",{nullsFirst:false}).order("dia",{nullsFirst:false}),
+      sb.from("stories").select("*").eq("ciclo_id",id).order("data",{nullsFirst:false}).order("dia",{nullsFirst:false})]);
+    const ad=await sb.from("anuncios").select("*").eq("ciclo_id",id).order("data");anuncios=ad.error?[]:ad.data;
+    if(p.error||r.error||s.error)return falha("carregar o mês",p.error||r.error||s.error);
+    posts=p.data;roteiros=r.data;stories=s.data;decisoes={};
+    if(posts.length){const d=await sb.from("decisoes").select("*").in("post_id",posts.map(x=>x.id));if(!d.error)d.data.forEach(x=>decisoes[x.post_id]=x)}
+    render();
+  }
+
+  function cicloHTML(){
+    if(!cicloAtual)return `<div class="empty">Crie o primeiro mês deste cliente em “+ Novo mês”.</div>`;
+    const c=cicloAtual;
+    const cont={pend:0,ok:0,adj:0};posts.forEach(p=>cont[estado(p)]++);
+    return `<section class="card">
+      <div class="head"><h2>${esc(c.titulo)}</h2>
+        <span class="status ${c.publicado?"ok":"pend"}">${c.publicado?"Publicado para o cliente":"Rascunho: o cliente ainda não vê"}</span></div>
+      <div class="grid2">
+        <div><label class="label" for="ci-titulo">Título do mês</label><input type="text" id="ci-titulo" value="${esc(c.titulo)}"></div>
+        <div><label class="label" for="ci-inicio">Início</label><input type="date" id="ci-inicio" value="${esc(c.inicio||"")}"></div>
+        <div><label class="label" for="ci-fim">Fim</label><input type="date" id="ci-fim" value="${esc(c.fim||"")}"></div>
+      </div>
+      <div class="actions">
+        <button class="btn small primary" data-act="salvar-ciclo">Salvar mês</button>
+        <button class="btn small ${c.publicado?"":"outline"}" data-act="publicar">${c.publicado?"Voltar para rascunho":"Publicar para o cliente"}</button>
+        <button class="btn small danger" data-act="apagar-ciclo">Apagar mês</button>
+      </div>
+      <p class="meta" style="margin:0"><span><b>${posts.length} posts</b> no ciclo</span><span>${cont.ok} aprovados</span><span>${cont.adj} com ajuste</span><span>${cont.pend} aguardando</span><span>${roteiros.length} Reels</span><span>${stories.length} Stories</span></p>
+    </section>
+    <nav class="tabs" role="tablist">
+      ${[["posts","Posts do feed",bolha(cont.adj,cont.adj+" ajuste(s) pedido(s) pelo cliente")],["roteiros","Roteiros dos Reels"],["stories","Stories"],["dicas","Dicas"],["numeros","Números do Instagram"],["anuncios","Anúncios"],["relatorio","Relatório"],["pedidos","Pedidos",bolha(pedidos.filter(x=>x.status==="recebido"||x.status==="alteracao").length,"pedidos novos ou com alteração pedida")]].map(([k,t,bb])=>`<button class="tab" role="tab" data-aba="${k}" aria-selected="${aba===k}">${t}${bb||""}</button>`).join("")}
+    </nav>
+    <div class="list" id="aba">${aba==="posts"?postsHTML():aba==="roteiros"?roteirosHTML():aba==="stories"?storiesHTML():aba==="numeros"?numerosHTML():aba==="pedidos"?pedidosHTML():aba==="anuncios"?anunciosHTML():aba==="relatorio"?relatorioHTML():dicasHTML()}</div>`;
+  }
+  function render(){
+    if(!cliAtual){$("#main").innerHTML=`<div class="empty">Escolha um cliente ou adicione um novo.</div>`;return}
+    if(vista!=="cliente")return;
+    $("#main").innerHTML=clienteHTML()+cicloHTML();
+    const dash=document.getElementById("ads-dash");
+    if(dash)window.GlaraAnuncios.montar(dash,anuncios,{admin:true,arquivo:"anuncios_"+(cliAtual.nome||"cliente").toLowerCase().replace(/\s+/g,"-")});
+  }
+
+  /* ---------- posts ---------- */
+  const vigente=p=>{const d=decisoes[p.id];return d&&d.versao===p.versao?d:null};
+  const estado=p=>{const d=vigente(p);return !d?"pend":d.decisao==="aprovado"?"ok":"adj"};
+  function postsHTML(){
+    const nAg=posts.filter(p=>p.publicacao==="agendado").length, nPub=posts.filter(p=>p.publicacao==="publicado").length, nOk=posts.filter(p=>estado(p)==="ok").length;
+    return `<div class="actions"><button class="btn primary" data-act="novo-post">+ Novo post</button><button class="btn outline" data-act="novo-reels">+ Novo Reels (vídeo)</button>
+      ${posts.length?`<span class="pub-resumo">${nOk} aprovado${nOk===1?"":"s"} · ${nAg} agendado${nAg===1?"":"s"} · ${nPub} publicado${nPub===1?"":"s"} de ${posts.length}</span>`:""}</div>`+
+    (posts.length?posts.map(p=>{
+      const d=decisoes[p.id], v=vigente(p), st=estado(p);
+      const pill=st==="ok"?'<span class="status ok">Aprovado</span>':st==="adj"?'<span class="status adj">Ajuste pedido</span>':'<span class="status pend">Aguardando o cliente</span>';
+      const pt=v&&v.partes&&v.partes.tema&&v.partes_em===v.em?v.partes:null;
+      const ptHTML=pt?`<ul class="pt-res">${[["tema","Tema"],["arte",p.formato==="Reels"?"Vídeo":"Arte"],["legenda","Legenda"]].map(([k,t])=>{const x=pt[k]||{};return `<li class="pt-${esc(x.d||"ok")}"><span class="pt-ico" aria-hidden="true">${x.d==="alt"?"✎":x.d==="rep"?"✕":"✓"}</span><b>${t}</b><span>${x.d==="alt"?"alterar":x.d==="rep"?"reprovado":"aprovado"}</span>${x.c?`<q>${esc(x.c)}</q>`:""}</li>`}).join("")}</ul>`:"";
+      const dec=v?`<p class="record">${v.decisao==="aprovado"?"Aprovado":"Ajuste pedido"}${v.nome?" por "+esc(v.nome):""} em ${fmtQuando(v.em)}.${!pt&&v.decisao==="ajuste"&&v.comentario?`<q>${esc(v.comentario)}</q>`:""}</p>${ptHTML}`
+        :d?`<p class="record">Você alterou o post depois da última decisão (${d.decisao==="aprovado"?"aprovado":"ajuste pedido"} em ${fmtQuando(d.em)}). O cliente vai ver a nova versão.${d.decisao==="ajuste"&&d.comentario?`<q>${esc(d.comentario)}</q>`:""}</p>`:"";
+      return `<article class="card" id="post-${p.id}">
+        <div class="head"><h3>${p.dia!=null?"Post "+String(p.dia).padStart(2,"0")+" · ":""}${esc(p.titulo||"Post sem título")}</h3>${pill}</div>
+        ${dec}
+        <div><span class="label">${p.formato==="Reels"?"Vídeo do Reels (MP4 até 50 MB; pode juntar uma capa em imagem)":"Telas (na ordem do carrossel)"}</span>
+          <div class="thumbs">${(p.slides||[]).map((u,i)=>`<div class="thumb${ehVideo(u)?" vid":""}">${ehVideo(u)?`<video src="${esc(u)}#t=0.5" controls playsinline preload="metadata" aria-label="Vídeo ${i+1}"></video>`:`<img src="${esc(u)}" alt="Tela ${i+1}" loading="lazy">`}
+            <div class="actions"><button class="btn" data-act="sl-esq" data-id="${p.id}" data-i="${i}" aria-label="Mover para a esquerda" ${i===0?"disabled":""}>←</button>
+            <button class="btn" data-act="sl-dir" data-id="${p.id}" data-i="${i}" aria-label="Mover para a direita" ${i===p.slides.length-1?"disabled":""}>→</button>
+            <button class="btn" data-act="sl-del" data-id="${p.id}" data-i="${i}" aria-label="Remover tela">✕</button></div></div>`).join("")}
+            <label class="addthumb" for="up-${p.id}">${p.formato==="Reels"?((p.slides||[]).length?"+ Adicionar outro vídeo ou capa":"+ Enviar o vídeo do Reels"):"+ Adicionar telas"}</label>
+            <input type="file" id="up-${p.id}" data-up="${p.id}" accept="${p.formato==="Reels"?"video/mp4,video/quicktime,video/webm,image/png,image/jpeg":"image/png,image/jpeg,image/webp"}" multiple hidden>
+          </div></div>
+        <div class="grid2">
+          <div><label class="label" for="pt-${p.id}">Título</label><input type="text" id="pt-${p.id}" value="${esc(p.titulo)}"></div>
+          <div><label class="label" for="pf-${p.id}">Formato</label><select id="pf-${p.id}"><option ${p.formato==="Carrossel"?"selected":""}>Carrossel</option><option ${p.formato==="Estático"?"selected":""}>Estático</option><option ${p.formato==="Reels"?"selected":""}>Reels</option></select></div>
+          <div><label class="label" for="pd-${p.id}">Data de publicação</label><input type="date" id="pd-${p.id}" value="${esc(p.data||"")}"></div>
+          <div><label class="label" for="pn-${p.id}">Post do ciclo (nº)</label><input type="number" min="1" max="200" id="pn-${p.id}" value="${p.dia??""}"></div>
+        </div>
+        <div><label class="label" for="pl-${p.id}">Legenda</label><textarea id="pl-${p.id}" style="min-height:130px">${esc(p.legenda)}</textarea></div>
+        ${pubHTML(p,st)}
+        <div class="actions"><button class="btn primary small" data-act="salvar-post" data-id="${p.id}">Salvar post</button>
+          <button class="btn danger small" data-act="apagar-post" data-id="${p.id}">Apagar post</button>
+          <span class="note">Mudar telas, vídeo, título ou legenda faz o cliente aprovar de novo.</span></div>
+      </article>`}).join(""):`<div class="empty">Nenhum post neste mês. Clique em “+ Novo post”.</div>`);
+  }
+  const localDT=ts=>{if(!ts)return"";const d=new Date(ts);return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)};
+  function pubHTML(p,st){const pub=p.publicacao||"";
+    return `<div class="pub-box ${pub||"nada"}">
+      <div class="pub-top"><span class="label">Publicação no Instagram</span>
+        <div class="seg" role="group" aria-label="Situação da publicação">${[["","Não agendado"],["agendado","Agendado"],["publicado","Publicado"]].map(([k,t])=>`<button type="button" data-act="pub-st" data-id="${p.id}" data-st="${k}" aria-pressed="${pub===k}">${t}</button>`).join("")}</div></div>
+      ${pub==="agendado"?`<div class="pub-campo"><label class="label" for="pa-${p.id}">Dia e hora agendados</label><input type="datetime-local" id="pa-${p.id}" data-pub-in="${p.id}" value="${localDT(p.agendado_para)}"></div>`:""}
+      ${pub==="publicado"?`<div class="pub-campo"><label class="label" for="pu-${p.id}">Link do post no Instagram (opcional)</label><input type="url" id="pu-${p.id}" data-pub-in="${p.id}" value="${esc(p.publicado_url||"")}" placeholder="https://www.instagram.com/p/…"></div>`:""}
+      <div class="actions">${st!=="ok"&&pub!=="publicado"?`<span class="note">O cliente ainda não aprovou este post.</span>`:""}
+        <button type="button" class="btn small ghost" data-act="pub-copiar" data-id="${p.id}">Copiar legenda</button>
+        <a class="btn small outline" href="https://business.facebook.com/latest/content_calendar" target="_blank" rel="noopener">Agendar no Meta Business Suite ↗</a></div>
+    </div>`}
+  const ehVideo=u=>/\.(mp4|mov|webm|m4v)(\?|#|$)/i.test(u||"");
+  const lerPost=id=>({titulo:$("#pt-"+id).value.trim()||"Post sem título",formato:$("#pf-"+id).value,data:$("#pd-"+id).value||null,
+    dia:$("#pn-"+id).value===""?null:+$("#pn-"+id).value,legenda:$("#pl-"+id).value});
+  async function atualizarPost(id,campos,msg){
+    const {data,error}=await sb.from("posts").update(campos).eq("id",id).select().single();
+    if(error)return falha("salvar o post",error);
+    const i=posts.findIndex(p=>p.id===id);posts[i]=data;render();if(msg)toast(msg);
+  }
+  async function enviarTelas(id,files){
+    const p=posts.find(x=>x.id===id);const urls=[];
+    for(const [k,f] of [...files].entries()){
+      const lim=/^video\//.test(f.type)?50:15;if(f.size>lim*1024*1024){toast(f.name+" passa de "+lim+" MB e foi ignorado. "+(lim===50?"Exporte o vídeo em MP4 com menos peso.":""));continue}
+      toast(/^video\//.test(f.type)?`Enviando o vídeo (${Math.round(f.size/1048576)} MB)… não feche a página.`:`Enviando tela ${k+1} de ${files.length}…`);
+      const ext=(f.name.split(".").pop()||"jpg").toLowerCase().replace("qt","mov");
+      const path=`${cliAtual.id}/${cicloAtual.id}/${crypto.randomUUID()}.${ext}`;
+      const {error}=await sb.storage.from("artes").upload(path,f,{contentType:f.type,upsert:false});
+      if(error)return falha("enviar "+f.name,error);
+      urls.push(sb.storage.from("artes").getPublicUrl(path).data.publicUrl);
+    }
+    if(urls.length)await atualizarPost(id,{slides:[...(p.slides||[]),...urls]},urls.length+" tela(s) adicionada(s).");
+  }
+
+  /* ---------- roteiros ---------- */
+  function roteirosHTML(){
+    return `<div class="actions"><button class="btn primary" data-act="novo-roteiro">+ Novo roteiro de Reels</button></div>`+
+    (roteiros.length?roteiros.map(r=>`<article class="card" data-rot="${r.id}">
+      <div class="head"><h3>${r.dia!=null?"Dia "+String(r.dia).padStart(2,"0")+" · ":""}${esc(r.titulo)}</h3></div>
+      <div class="grid2">
+        <div><label class="label">Título</label><input type="text" data-f="titulo" value="${esc(r.titulo)}"></div>
+        <div><label class="label">Data</label><input type="date" data-f="data" value="${esc(r.data||"")}"></div>
+        <div><label class="label">Dia do ciclo</label><input type="number" data-f="dia" value="${r.dia??""}"></div>
+        <div><label class="label">Duração</label><input type="text" data-f="duracao" value="${esc(r.duracao)}" placeholder="Ex.: 45 a 60 s"></div>
+        <div><label class="label">Pilar</label><input type="text" data-f="pilar" value="${esc(r.pilar)}"></div>
+      </div>
+      <div><label class="label">Gancho (primeira frase)</label><input type="text" data-f="gancho" value="${esc(r.gancho)}"></div>
+      <div><label class="label">Objetivo</label><input type="text" data-f="objetivo" value="${esc(r.objetivo)}"></div>
+      <div><span class="label">Roteiro: tempo, fala e o que aparece na tela</span>
+        <div class="rows" data-blocos>${(r.blocos||[]).map(blocoRow).join("")}</div>
+        <div class="actions" style="margin-top:8px"><button class="btn small" data-act="add-bloco">+ Trecho</button></div></div>
+      <div><label class="label">Chamada final (CTA)</label><input type="text" data-f="cta" value="${esc(r.cta)}"></div>
+      <div><label class="label">Legenda sugerida</label><textarea data-f="legenda">${esc(r.legenda)}</textarea></div>
+      <div><label class="label">Validar antes de gravar</label><textarea data-f="validar" style="min-height:60px">${esc(r.validar)}</textarea></div>
+      <div class="actions"><button class="btn primary small" data-act="salvar-roteiro">Salvar roteiro</button><button class="btn danger small" data-act="apagar-roteiro">Apagar</button></div>
+    </article>`).join(""):`<div class="empty">Nenhum roteiro de Reels neste mês.</div>`);
+  }
+  const blocoRow=b=>`<div class="brow" data-row><input type="text" data-b="tempo" value="${esc(b.tempo||"")}" placeholder="0–3 s" aria-label="Tempo">
+    <textarea data-b="fala" placeholder="Fala" aria-label="Fala">${esc(b.fala||"")}</textarea>
+    <textarea data-b="tela" placeholder="Na tela / cena" aria-label="Na tela">${esc(b.tela||"")}</textarea>
+    <button class="btn small" data-act="rm-row" aria-label="Remover trecho">✕</button></div>`;
+
+  /* ---------- stories ---------- */
+  function storiesHTML(){
+    return `<div class="actions"><button class="btn primary" data-act="novo-story">+ Novo roteiro de Stories</button></div>`+
+    (stories.length?stories.map(s=>`<article class="card" data-sto="${s.id}">
+      <div class="head"><h3>${s.dia!=null?"Dia "+String(s.dia).padStart(2,"0")+" · ":""}${esc(s.titulo)}</h3></div>
+      <div class="grid2">
+        <div><label class="label">Título</label><input type="text" data-f="titulo" value="${esc(s.titulo)}"></div>
+        <div><label class="label">Data</label><input type="date" data-f="data" value="${esc(s.data||"")}"></div>
+        <div><label class="label">Dia do ciclo</label><input type="number" data-f="dia" value="${s.dia??""}"></div>
+      </div>
+      <div><label class="label">Objetivo</label><input type="text" data-f="objetivo" value="${esc(s.objetivo)}"></div>
+      <div><span class="label">Telas: o que mostrar e o recurso do Instagram</span>
+        <div class="rows" data-telas>${(s.telas||[]).map(telaRow).join("")}</div>
+        <div class="actions" style="margin-top:8px"><button class="btn small" data-act="add-tela">+ Tela</button></div></div>
+      <div><label class="label">Atenção (opcional)</label><textarea data-f="aviso" style="min-height:60px">${esc(s.aviso)}</textarea></div>
+      <div class="actions"><button class="btn primary small" data-act="salvar-story">Salvar Stories</button><button class="btn danger small" data-act="apagar-story">Apagar</button></div>
+    </article>`).join(""):`<div class="empty">Nenhum roteiro de Stories neste mês.</div>`);
+  }
+  const telaRow=t=>`<div class="srow" data-row><textarea data-b="texto" placeholder="O que mostrar ou falar" aria-label="Texto da tela">${esc(t.texto||"")}</textarea>
+    <input type="text" data-b="recurso" value="${esc(t.recurso||"")}" placeholder="Ex.: Enquete, Caixinha, Link" aria-label="Recurso">
+    <button class="btn small" data-act="rm-row" aria-label="Remover tela">✕</button></div>`;
+
+
+  /* ---------- pedidos e plano ---------- */
+  const TIPOS_PLANO=["Carrossel","Estático","Reels","Stories"];
+  const NOME_TIPO={"Carrossel":"Carrosséis","Estático":"Estáticos","Reels":"Reels","Stories":"Sequências de Stories"};
+  const ST_PED={recebido:["Recebido","pend"],producao:["Em produção","prod"],aprovacao:["Aguardando aprovação do cliente","pend"],alteracao:["Alteração pedida","adj"],concluido:["Concluído","ok"],recusado:["Não aceito","adj"]};
+  const ABERTOS_PED=["recebido","producao","aprovacao","alteracao"];
+  const linkSeguro=u=>/^https?:\/\//i.test(String(u||"").trim())?String(u).trim():"";
+  function usoPlano(){
+    const abertos=t=>pedidos.filter(x=>x.ciclo_id===cicloAtual.id&&x.tipo===t&&ABERTOS_PED.includes(x.status)).length;
+    const nf=f=>posts.filter(p=>p.formato===f).length;
+    return {"Carrossel":nf("Carrossel")+abertos("Carrossel"),"Estático":nf("Estático")+abertos("Estático"),
+      "Reels":Math.max(nf("Reels"),roteiros.length)+abertos("Reels"),"Stories":stories.length+abertos("Stories")};
+  }
+  const ETAPAS_PED={
+    "Carrossel":["Pauta e texto","Design das telas","Revisão","Enviado para aprovação","Publicado"],
+    "Estático":["Texto","Design","Revisão","Enviado para aprovação","Publicado"],
+    "Reels":["Roteiro","Gravação ou material recebido","Edição","Legenda e capa","Enviado para aprovação","Publicado"],
+    "Stories":["Roteiro","Artes ou vídeos","Enviado para aprovação","Publicado"],
+    "Outro":["Entender o pedido","Produção","Revisão","Entrega"]};
+  const ORIGENS=["WhatsApp","Ligação","Reunião","E-mail","Direct do Instagram","Pessoalmente","Outro"];
+  const ckHTML=x=>{const l=x.checklist||[], f=l.filter(i=>i.ok).length, pc=l.length?Math.round(f/l.length*100):0;
+    return `<div class="ck-box">
+      <div class="ck-head"><span class="label" style="margin:0">Checklist</span>${l.length?`<span class="ck-count">${f} de ${l.length} etapas · ${pc}%</span>`:""}</div>
+      ${l.length?`<div class="bar ck-bar"><i style="width:${pc}%" class="${pc===100?"full-ok":""}"></i></div>`:""}
+      <ul class="ck-list">${l.map((i,k)=>`<li class="ck-item${i.ok?" ok":""}"><label><input type="checkbox" data-ped-ck="${k}" ${i.ok?"checked":""}><span>${esc(i.t)}</span></label><button type="button" class="ck-rm" data-act="ped-ck-rm" data-k="${k}" aria-label="Remover etapa">✕</button></li>`).join("")}</ul>
+      <div class="ck-add"><input type="text" data-ped-ck-novo placeholder="Nova etapa e Enter" aria-label="Nova etapa"><button class="btn small" data-act="ped-ck-add">Adicionar</button>${l.length?"":`<button class="btn small ghost" data-act="ped-ck-padrao">Usar etapas padrão</button>`}</div>
+    </div>`};
+  function registrarHTML(){
+    return `<details class="card registrar" ${pedidos.length?"":"open"}>
+      <summary><span><b>Registrar pedido</b> <small class="note">pedidos que chegaram por WhatsApp, ligação ou reunião</small></span></summary>
+      <form id="rp-form" class="list" style="gap:12px;margin-top:12px" novalidate>
+        <div class="grid2">
+          <div><label class="label" for="rp-tipo">Tipo de conteúdo</label><select id="rp-tipo">${["Carrossel","Estático","Reels","Stories","Outro"].map(t=>`<option value="${t}">${t==="Outro"?"Outro (arte, vídeo, evento…)":t}</option>`).join("")}</select></div>
+          <div><label class="label" for="rp-origem">Como chegou</label><select id="rp-origem">${ORIGENS.map(o=>`<option>${o}</option>`).join("")}</select></div>
+          <div><label class="label" for="rp-nome">Quem pediu</label><input type="text" id="rp-nome" placeholder="Ex.: Franciane" list="rp-nomes"><datalist id="rp-nomes">${[...new Set([...acessos.map(u=>u.nome).filter(Boolean),...pedidos.map(x=>x.nome).filter(Boolean)])].map(n=>`<option value="${esc(n)}">`).join("")}</datalist></div>
+          <div><label class="label" for="rp-prazo">Para quando?</label><input type="date" id="rp-prazo"></div>
+        </div>
+        <div><label class="label" for="rp-titulo">O que foi pedido?</label><input type="text" id="rp-titulo" maxlength="200" placeholder="Ex.: Reels explicando a perícia do BPC"></div>
+        <div><label class="label" for="rp-desc">Detalhes da conversa (opcional)</label><textarea id="rp-desc" style="min-height:70px" placeholder="Cole aqui o trecho da conversa ou anote o que foi combinado."></textarea></div>
+        <div class="grid2">
+          <div><label class="label" for="rp-ciclo">Conta no mês</label><select id="rp-ciclo">${ciclos.map(x=>`<option value="${x.id}" ${cicloAtual&&x.id===cicloAtual.id?"selected":""}>${esc(x.titulo)}</option>`).join("")}</select></div>
+          <div><label class="label" for="rp-cobranca">Cobrança</label><select id="rp-cobranca"><option value="auto">Automática pelo plano</option><option value="plano">Está no plano</option><option value="extra">Extra: cobrar à parte</option></select></div>
+          <div><label class="label" for="rp-link">Link de fotos e vídeos (opcional)</label><input type="url" id="rp-link" placeholder="https://drive.google.com/…"></div>
+        </div>
+        <p class="note" id="rp-aviso" aria-live="polite"></p>
+        <div class="actions"><button class="btn primary" type="submit">Registrar pedido</button><span class="note">Entra com as etapas padrão do checklist. O cliente vê na aba Pedidos.</span></div>
+      </form></details>`;
+  }
+  function avisoRegistro(){
+    const el=$("#rp-aviso");if(!el)return;const t=$("#rp-tipo").value, lim=(cliAtual.limites||{})[t];
+    if(t==="Outro"||typeof lim!=="number"){el.textContent=t==="Outro"?"Pedidos “Outro” não entram no plano: na cobrança automática, ficam como extra.":"";return}
+    const u=usoPlano()[t];el.textContent=u+1>lim?`Atenção: ${u} de ${lim} ${NOME_TIPO[t].toLowerCase()} já usados neste mês. Na cobrança automática, este pedido fica como extra.`:`${u} de ${lim} ${NOME_TIPO[t].toLowerCase()} usados neste mês: este pedido entra no plano.`;
+  }
+  function pedidosHTML(){
+    const c=cliAtual, lim=c.limites||{}, uso=usoPlano(), tipos=TIPOS_PLANO.filter(t=>typeof lim[t]==="number"), mat=linkSeguro(c.materiais_link);
+    const plano=`<article class="card"><div class="head"><h3>${esc(c.plano_nome||"Plano do cliente")} · uso em ${esc(cicloAtual.titulo)}</h3></div>
+      ${tipos.length?`<div class="usage">${tipos.map(t=>{const u=uso[t],l=lim[t],pc=l>0?Math.min(100,u/l*100):100;
+        return `<div class="use"><div class="use-top"><span>${NOME_TIPO[t]}</span><b>${u} de ${l}</b></div><div class="bar"><i style="width:${pc}%" class="${u>=l?"full":""}"></i></div>${u>l?`<span class="use-msg">${u-l} além do plano</span>`:""}</div>`}).join("")}</div>`
+      :`<p class="note">Cadastre os limites do plano em “Configurações do cliente”, lá em cima.</p>`}
+      <p class="note">Conta os posts, roteiros e Stories deste mês e os pedidos em aberto (recebidos e em produção).</p>
+      <p style="margin:0"><b>Pasta de materiais do cliente:</b> ${mat?`<a href="${esc(mat)}" target="_blank" rel="noopener noreferrer">abrir ↗</a>`:"<span class='note'>ainda não enviada</span>"}</p></article>`;
+    const aberto=x=>ABERTOS_PED.includes(x.status);
+    const lista0=pedFiltro==="abertos"?pedidos.filter(aberto):pedFiltro==="feitos"?pedidos.filter(x=>!aberto(x)):pedidos;
+    const filtros=`<div class="summary" role="group" aria-label="Filtrar pedidos">
+      <button class="chip" data-pedf="abertos" aria-pressed="${pedFiltro==="abertos"}">Em aberto <b>${pedidos.filter(aberto).length}</b></button>
+      <button class="chip" data-pedf="feitos" aria-pressed="${pedFiltro==="feitos"}">Concluídos e recusados <b>${pedidos.filter(x=>!aberto(x)).length}</b></button>
+      <button class="chip" data-pedf="todos" aria-pressed="${pedFiltro==="todos"}">Todos <b>${pedidos.length}</b></button></div>`;
+    const lista=lista0.length?lista0.map(x=>{const st=ST_PED[x.status]||ST_PED.recebido, lk=linkSeguro(x.link), via=x.origem&&x.origem!=="portal";
+      return `<article class="card pedido-adm${x.status==="recebido"||x.status==="alteracao"?" novo":""}" data-ped="${x.id}">
+        <div class="meta"><span class="day">${esc(x.tipo)}</span><span>${fmtQuando(x.criado_em)}${x.nome?" · "+esc(x.nome):""}</span><span class="origem">${via?"via "+esc(x.origem):"pelo portal"}</span>${x.prazo?`<span>Para ${esc(x.prazo.split("-").reverse().join("/"))}</span>`:""}<span class="status ${st[1]}">${st[0]}</span>${x.extra?`<span class="sticker">Extra: cobrar à parte</span>`:""}</div>
+        <h3>${esc(x.titulo)}</h3>
+        ${x.descricao?`<p class="caption" style="margin:0">${esc(x.descricao)}</p>`:""}
+        ${lk?`<p style="margin:0"><a href="${esc(lk)}" target="_blank" rel="noopener noreferrer">Abrir fotos e vídeos do pedido ↗</a></p>`:""}
+        ${x.status==="alteracao"?`<div class="ped-alt"><b>Alteração pedida pelo cliente${x.aprovado_por?" ("+esc(x.aprovado_por)+")":""}${x.alteracao_em?" em "+fmtQuando(x.alteracao_em):""}:</b><p>${esc(x.alteracao_pedida||"")}</p><span class="note">Faça o ajuste e marque de novo “Enviado para aprovação” no checklist.</span></div>`:""}
+        ${x.status==="aprovacao"?`<p class="ped-esp">Esperando o cliente aprovar no portal. Quando ele aprovar, o pedido conclui sozinho.</p>`:""}
+        ${x.aprovado_cliente_em?`<p class="ped-ok-cli">✓ Aprovado pelo cliente${x.aprovado_por?" ("+esc(x.aprovado_por)+")":""} em ${fmtQuando(x.aprovado_cliente_em)}</p>`:""}
+        ${ckHTML(x)}
+        <div class="grid2">
+          <div><label class="label">Status</label><select data-pf="status">${Object.entries(ST_PED).map(([k,v])=>`<option value="${k}" ${x.status===k?"selected":""}>${v[0]}</option>`).join("")}</select></div>
+          <div><label class="label">Cobrar à parte?</label><select data-pf="extra"><option value="false" ${!x.extra?"selected":""}>Não, está no plano</option><option value="true" ${x.extra?"selected":""}>Sim, é extra</option></select></div>
+        </div>
+        <div><label class="label">Resposta para o cliente</label><textarea data-pf="resposta" style="min-height:60px" placeholder="Ex.: Combinado! Entra no calendário do dia 20.">${esc(x.resposta)}</textarea></div>
+        <div class="actions"><button class="btn primary small" data-act="salvar-pedido">Salvar</button><button class="btn danger small" data-act="apagar-pedido">Apagar</button>${x.atualizado_em&&x.criado_em&&new Date(x.atualizado_em)-new Date(x.criado_em)>5000?`<span class="note">Atualizado em ${fmtQuando(x.atualizado_em)}</span>`:""}</div>
+      </article>`}).join(""):`<div class="empty">${pedidos.length?"Nenhum pedido nesta lista.":"Nenhum pedido deste cliente ainda. Eles chegam pela aba “Pedidos” do portal ou você registra aqui em cima."}</div>`;
+    return plano+registrarHTML()+filtros+lista;
+  }
+  async function salvarChecklist(id,lista,msgExtra){
+    const x=pedidos.find(p=>p.id===id);if(!x)return;
+    const f=lista.filter(i=>i.ok).length, campos={checklist:lista};
+    let msg=msgExtra||"Checklist salvo. O cliente acompanha o andamento.";
+    const iAp=lista.findIndex(i=>/aprova/i.test(i.t)), apOk=iAp>=0&&lista[iAp].ok;
+    if(x.status==="recusado"){}
+    else if(lista.length&&f===lista.length&&x.status!=="concluido"){
+      if(x.aprovado_cliente_em||iAp<0){campos.status="concluido";msg="Todas as etapas feitas: pedido concluído."}
+      else if(x.status!=="aprovacao"){campos.status="aprovacao";msg="Enviado para o cliente aprovar no portal."}}
+    else if(apOk&&!["aprovacao","concluido"].includes(x.status)&&!x.aprovado_cliente_em){campos.status="aprovacao";msg="Enviado para o cliente aprovar no portal. Ele recebe o aviso no sino."}
+    else if(!apOk&&x.status==="aprovacao"){campos.status="producao";msg="Voltou para produção."}
+    else if(f>0&&x.status==="recebido"){campos.status="producao";msg="Pedido em produção. O cliente vê o andamento."}
+    else if(f<lista.length&&x.status==="concluido"){campos.status="producao"}
+    const {data,error}=await sb.from("pedidos").update(campos).eq("id",id).select().single();
+    if(error){render();return falha("salvar o checklist",error)}
+    if(data.status==="concluido"&&pedFiltro==="abertos")pedFiltro="todos"; // o pedido concluído continua à vista
+    pedidos[pedidos.findIndex(p=>p.id===id)]=data;render();toast(msg);if(campos.status)carregarAlertas();
+  }
+  const lerCk=card=>[...card.querySelectorAll(".ck-item")].map(li=>({t:li.querySelector("span").textContent,ok:li.querySelector("input").checked}));
+
+  /* ---------- relatório mensal ---------- */
+  function relatorioHTML(){
+    const c=cicloAtual;
+    return `<article class="card">
+      <div class="head"><h3>Relatório de ${esc(c.titulo)}</h3></div>
+      <p class="intro">O relatório junta tudo deste mês: números do mês, Instagram, anúncios, os posts com miniatura e os pedidos. Escreva abaixo a sua análise e salve. Depois clique em <b>Abrir relatório</b> e em <b>Salvar em PDF</b>.</p>
+      <div><label class="label" for="rl-resumo">Resumo do mês (o que foi feito e os destaques)</label><textarea id="rl-resumo" style="min-height:150px" placeholder="Ex.: Neste mês focamos em explicar o BPC para mães de crianças autistas. O carrossel do Post 05 foi o que mais alcançou…">${esc(c.relatorio_resumo||"")}</textarea></div>
+      <div><label class="label" for="rl-prox">Próximos passos</label><textarea id="rl-prox" style="min-height:110px" placeholder="Ex.: Mais Reels de dúvidas, campanha de WhatsApp com novo criativo, série sobre perícia…">${esc(c.relatorio_proximos||"")}</textarea></div>
+      <div class="actions"><button class="btn small ghost" data-act="rl-auto" title="Escreve um rascunho com os números do mês. Você revisa e ajusta.">Gerar rascunho automático</button><button class="btn small" data-act="salvar-relatorio">Salvar textos</button>
+        <a class="btn primary" href="relatorio.html?ciclo=${encodeURIComponent(c.id)}" target="_blank" rel="noopener" data-act="abrir-relatorio">Abrir relatório</a></div>
+      ${rlEnvioHTML()}
+      <label class="check"><input type="checkbox" id="rl-mostrar" ${c.mostrar_relatorio!==false?"checked":""}> Mostrar o relatório para o cliente no portal (ele acompanha tudo o que você for atualizando)</label>
+      <p class="note">A “leitura do mês” da aba Números do Instagram também entra no relatório. No portal, os números do Instagram e os anúncios só aparecem se estiverem liberados nas abas deles.</p>
+    </article>`;
+  }
+
+  function rlWa(){const c=cliAtual, fone=window.GlaraAvisos?window.GlaraAvisos.foneWa(c.whatsapp):"";if(!fone)return "";
+    const u=new URL("index.html",location.href);if(c.link_ativo!==false&&c.token)u.searchParams.set("c",c.token);u.searchParams.set("aba","relatorio");
+    return "https://wa.me/"+fone+"?text="+encodeURIComponent(`Oi! O relatório de ${cicloAtual.titulo} já está no portal, com os números do mês, os conteúdos e os próximos passos:\n${u.href}`)}
+  function rlEnvioHTML(){const c=cicloAtual, wa=rlWa(), libera=c.publicado&&c.mostrar_relatorio!==false;
+    return `<div class="rl-envio"><div><b>Enviar ao cliente</b><small>${c.relatorio_enviado_em?"Enviado em "+esc(fmtQuando(c.relatorio_enviado_em)):libera?"Ainda não enviado":"Publique o mês e marque “Mostrar o relatório” para enviar"}</small></div>
+      <div class="actions"><button class="btn small primary" data-act="rl-email" ${libera&&acessos.length?"":"disabled"} title="${acessos.length?"Manda o link do relatório para quem tem acesso":"Este cliente ainda não tem acesso com e-mail"}">Enviar por e-mail${acessos.length?" ("+acessos.length+")":""}</button>
+      ${wa?`<a class="btn small av-wa" href="${esc(wa)}" target="_blank" rel="noopener" data-act="rl-wa" ${libera?"":'aria-disabled="true"'}>WhatsApp</a>`:`<button class="btn small ghost" data-act="rl-sem-wa">+ WhatsApp do cliente</button>`}</div></div>`}
+
+  /* ---------- importar do Gerenciador de Anúncios ---------- */
+  let impPrev=null, impSubst=true;
+  const noCiclo=d=>(!cicloAtual.inicio||d>=cicloAtual.inicio)&&(!cicloAtual.fim||d<=cicloAtual.fim);
+  function impMarcar(rows){const ult={};anuncios.forEach(a=>ult[a.campanha]=a.tipo_resultado);
+    return rows.map(r=>{const ex=anuncios.find(a=>a.data===r.data&&a.campanha===r.campanha);
+      return {...r,tipo_resultado:ult[r.campanha]||r.tipo_resultado||"Resultados",_ex:ex?ex.id:null,_fora:!noCiclo(r.data)}})}
+  function impHTML(){
+    const GA=window.GlaraAnuncios, brl=v=>GA.brl(v);
+    if(!impPrev)return `<article class="card imp-card">
+      <div class="head"><h3>Importar do Gerenciador de Anúncios</h3></div>
+      <details class="imp-como"><summary>Como exportar o relatório (1 minuto)</summary><ol>
+        <li>No <b>Gerenciador de Anúncios</b>, abra a aba <b>Campanhas</b> e escolha o período (ex.: este mês).</li>
+        <li>Em <b>Detalhamento › Por tempo</b>, escolha <b>Dia</b>.</li>
+        <li>Clique em <b>Relatórios › Exportar dados da tabela</b> e baixe em <b>.csv</b> ou <b>.xlsx</b>.</li>
+        <li>Solte o arquivo aqui: confiro tudo antes de lançar.</li></ol></details>
+      <label class="imp-drop" for="imp-arq"><b>Escolher arquivo .csv ou .xlsx</b><span>Valor usado, impressões, alcance, cliques no link e resultados, por dia e campanha</span></label>
+      <input type="file" id="imp-arq" accept=".csv,.xlsx,.xls,text/csv" hidden>
+    </article>`;
+    const {rows,avisos,nome}=impPrev, ok=rows.filter(r=>!r._fora), novos=ok.filter(r=>!r._ex).length, iguais=ok.filter(r=>r._ex).length, fora=rows.length-ok.length;
+    const soma=k=>ok.reduce((t,r)=>t+(+r[k]||0),0);
+    return `<article class="card imp-card">
+      <div class="head"><h3>Conferir importação</h3><span class="note">${esc(nome)}</span></div>
+      ${avisos.map(a=>`<p class="imp-aviso">${esc(a)}</p>`).join("")}
+      <p class="imp-res"><b>${ok.length}</b> lançamento${ok.length===1?"":"s"} · ${novos} novo${novos===1?"":"s"}${iguais?` · ${iguais} já lançado${iguais===1?"":"s"}`:""}${fora?` · <span class="imp-fora">${fora} de fora de ${esc(cicloAtual.titulo)} (não entram)</span>`:""} · investido <b>${brl(soma("investimento"))}</b> · ${soma("resultados").toLocaleString("pt-BR")} resultados</p>
+      <div class="imp-tab-wrap"><table class="imp-tab"><thead><tr><th>Dia</th><th>Campanha</th><th class="n">Investido</th><th class="n">Impressões</th><th class="n">Alcance</th><th class="n">Cliques</th><th class="n">Resultados</th><th>Tipo</th><th></th></tr></thead>
+      <tbody>${rows.map(r=>`<tr class="${r._fora?"fora":""}"><td>${r.data.split("-").reverse().slice(0,2).join("/")}</td><td>${esc(r.campanha)}</td><td class="n">${brl(r.investimento)}</td><td class="n">${r.impressoes.toLocaleString("pt-BR")}</td><td class="n">${r.alcance.toLocaleString("pt-BR")}</td><td class="n">${r.cliques.toLocaleString("pt-BR")}</td><td class="n">${r.resultados.toLocaleString("pt-BR")}</td><td>${esc(r.tipo_resultado)}</td><td>${r._fora?'<span class="imp-tag fora">outro mês</span>':r._ex?'<span class="imp-tag">atualiza</span>':'<span class="imp-tag novo">novo</span>'}</td></tr>`).join("")}</tbody></table></div>
+      ${iguais?`<label class="check"><input type="checkbox" id="imp-subst" ${impSubst?"checked":""}> Atualizar os ${iguais} dia${iguais===1?"":"s"} que já estavam lançados com os números do arquivo</label>`:""}
+      <div class="actions"><button class="btn primary small" data-act="imp-ok" ${ok.length?"":"disabled"}>Importar ${ok.length} lançamento${ok.length===1?"":"s"}</button><button class="btn ghost small" data-act="imp-cancelar">Cancelar</button></div>
+    </article>`;
+  }
+  async function impLer(arq){
+    try{toast("Lendo o arquivo…");const r=await window.GlaraImportAds.lerArquivo(arq);
+      if(!r.rows.length){toast("Não achei lançamentos com valor nesse arquivo.");return}
+      impPrev={rows:impMarcar(r.rows),avisos:r.avisos,nome:arq.name};render();
+      const c=document.querySelector(".imp-card");c&&c.scrollIntoView({block:"start",behavior:"smooth"})}
+    catch(err){toast(err.message||"Não consegui ler o arquivo.")}
+  }
+  async function impGravar(){
+    const subst=impSubst, ok=impPrev.rows.filter(r=>!r._fora), limpa=r=>{const o={...r};delete o._ex;delete o._fora;return o};
+    const novos=ok.filter(r=>!r._ex).map(r=>({...limpa(r),ciclo_id:cicloAtual.id})), atual=subst?ok.filter(r=>r._ex):[];
+    if(novos.length){const {error}=await sb.from("anuncios").insert(novos);if(error)return falha("importar",error)}
+    for(const r of atual){const c=limpa(r);delete c.data;delete c.campanha;const {error}=await sb.from("anuncios").update(c).eq("id",r._ex);if(error)return falha("atualizar "+r.campanha,error)}
+    const ad=await sb.from("anuncios").select("*").eq("ciclo_id",cicloAtual.id).order("data");if(!ad.error)anuncios=ad.data;
+    impPrev=null;render();toast(`Importado: ${novos.length} novo${novos.length===1?"":"s"}${atual.length?` e ${atual.length} atualizado${atual.length===1?"":"s"}`:""}.`);
+  }
+
+  /* ---------- anúncios (Meta Ads) ---------- */
+  function anunciosHTML(){
+    const GA=window.GlaraAnuncios, hoje=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
+    const ultimo=anuncios.length?anuncios[anuncios.length-1]:null;
+    const nomes=[...new Set(anuncios.map(a=>a.campanha))];
+    const tipos=[...new Set(["Conversas no WhatsApp","Mensagens no Direct","Leads (formulário)","Cliques no link","Seguidores","Visitas ao perfil",...anuncios.map(a=>a.tipo_resultado)])];
+    return impHTML()+`<article class="card">
+      <div class="head"><h3>Lançar dia</h3></div>
+      <p class="intro">No Gerenciador de Anúncios, filtre o dia e copie os números de cada campanha. Um lançamento por dia e campanha.</p>
+      <div class="grid2" id="ad-form">
+        <div><label class="label" for="ad-data">Dia</label><input type="date" id="ad-data" value="${ultimo&&ultimo.data<hoje?hoje:hoje}"></div>
+        <div><label class="label" for="ad-camp">Campanha</label><input type="text" id="ad-camp" list="ad-camps" value="${esc(ultimo?ultimo.campanha:"")}" placeholder="Ex.: BPC · WhatsApp"><datalist id="ad-camps">${nomes.map(n=>`<option value="${esc(n)}">`).join("")}</datalist></div>
+        <div><label class="label" for="ad-inv">Valor investido (R$)</label><input type="text" inputmode="decimal" id="ad-inv" placeholder="0,00"></div>
+        <div><label class="label" for="ad-imp">Impressões</label><input type="text" inputmode="numeric" id="ad-imp" placeholder="0"></div>
+        <div><label class="label" for="ad-alc">Alcance</label><input type="text" inputmode="numeric" id="ad-alc" placeholder="0"></div>
+        <div><label class="label" for="ad-cli">Cliques no link</label><input type="text" inputmode="numeric" id="ad-cli" placeholder="0"></div>
+        <div><label class="label" for="ad-res">Resultados</label><input type="text" inputmode="numeric" id="ad-res" placeholder="0"></div>
+        <div><label class="label" for="ad-tipo">Tipo de resultado</label><input type="text" id="ad-tipo" list="ad-tipos" value="${esc(ultimo?ultimo.tipo_resultado:"Conversas no WhatsApp")}"><datalist id="ad-tipos">${tipos.map(n=>`<option value="${esc(n)}">`).join("")}</datalist></div>
+        <div><label class="label" for="ad-rec">Receita atribuída (R$, opcional)</label><input type="text" inputmode="decimal" id="ad-rec" placeholder="Vendas que vieram dos anúncios"></div>
+      </div>
+      <div class="actions"><button class="btn primary small" data-act="add-anuncio">Adicionar lançamento</button>
+        <label class="check" style="margin-left:auto"><input type="checkbox" id="ad-mostrar" ${cicloAtual.mostrar_anuncios?"checked":""}> Mostrar para o cliente no portal</label></div>
+    </article>
+    <article class="card"><div class="head"><h3>Dashboard de investimento · ${esc(cicloAtual.titulo)}</h3></div><div id="ads-dash" class="dash"></div></article>`;
+  }
+
+  /* ---------- números do Instagram ---------- */
+  function numerosHTML(){
+    const GM=window.GlaraMetricas, c=cicloAtual, m=c.metricas||{}, i=m.inicio||{}, f=m.fim||{};
+    return `<article class="card">
+      <div class="head"><h3>Números deste mês</h3></div>
+      <p class="intro">Anote no Instagram (Painel profissional › Insights, período “Últimos 30 dias”) no dia em que o mês começa e de novo 30 dias depois.</p>
+      <div class="mgrid">
+        <span class="h n">Métrica</span><span class="h">No início</span><span class="h">Após 30 dias</span>
+        ${GM.METRICAS.map(x=>`<span class="n"><b>${esc(x.t)}</b><small>${esc(x.d)}</small></span>
+          <input type="text" inputmode="numeric" data-mi="${x.k}" value="${i[x.k]!=null?Number(i[x.k]).toLocaleString("pt-BR"):""}" aria-label="${esc(x.t)} no início" placeholder="0">
+          <input type="text" inputmode="numeric" data-mf="${x.k}" value="${f[x.k]!=null?Number(f[x.k]).toLocaleString("pt-BR"):""}" aria-label="${esc(x.t)} após 30 dias" placeholder="0">`).join("")}
+      </div>
+      <div><label class="label" for="m-obs">Leitura do mês (opcional)</label><textarea id="m-obs" style="min-height:70px" placeholder="Ex.: o carrossel do dia 09 puxou o crescimento; os Reels de dúvidas trouxeram mais contatos.">${esc(m.obs||"")}</textarea></div>
+      <label class="check"><input type="checkbox" id="m-mostrar" ${c.mostrar_resultados?"checked":""}> Mostrar estes resultados para o cliente no portal</label>
+      <div class="actions"><button class="btn primary small" data-act="salvar-numeros">Salvar números</button></div>
+    </article>
+    <article class="card"><div class="head"><h3>Resultado do mês</h3></div>${GM.cicloHTML(c)}</article>
+    <article class="card"><div class="head"><h3>Balanço mês a mês · ${esc(cliAtual.nome)}</h3></div>${GM.balancoHTML(ciclos)}</article>`;
+  }
+
+  /* ---------- dicas ---------- */
+  function dicasHTML(){
+    const c=cicloAtual;
+    return `<article class="card">
+      <p class="intro">Uma dica por linha. Elas aparecem no topo das abas de Reels e Stories do cliente.</p>
+      <div><label class="label" for="d-reels">Dicas de gravação dos Reels</label><textarea id="d-reels" style="min-height:160px">${esc((c.dicas_reels||[]).join("\n"))}</textarea></div>
+      <div><label class="label" for="d-stories">Dicas para os Stories</label><textarea id="d-stories" style="min-height:160px">${esc((c.dicas_stories||[]).join("\n"))}</textarea></div>
+      <div class="actions"><button class="btn primary small" data-act="salvar-dicas">Salvar dicas</button></div>
+    </article>`;
+  }
+
+  const lerCampos=card=>{const o={};card.querySelectorAll("[data-f]").forEach(el=>{let v=el.value;if(el.type==="number")v=v===""?null:+v;else if(el.type==="date")v=v||null;o[el.dataset.f]=v});return o};
+  const lerLinhas=(box,campos)=>[...box.querySelectorAll("[data-row]")].map(r=>{const o={};campos.forEach(c=>o[c]=r.querySelector(`[data-b="${c}"]`).value.trim());return o}).filter(o=>campos.some(c=>o[c]));
+
+  /* ---------- ações ---------- */
+  document.addEventListener("change",e=>{
+    if(e.target.id==="link-ativo"){const on=e.target.checked;sb.from("clientes").update({link_ativo:on}).eq("id",cliAtual.id).select().single().then(({data,error})=>{if(error){e.target.checked=!on;return falha("salvar",error)}Object.assign(cliAtual,data);render();toast(on?"Link secreto ligado.":"Link secreto desligado: agora só com e-mail e senha.")});return}
+    if(e.target.id==="ad-mostrar"){const on=e.target.checked;sb.from("ciclos").update({mostrar_anuncios:on}).eq("id",cicloAtual.id).select().single().then(({data,error})=>{if(error){e.target.checked=!on;return falha("salvar",error)}Object.assign(cicloAtual,data);toast(on?"O cliente já vê os anúncios deste mês.":"Anúncios ocultos para o cliente.")});return}
+    if(e.target.id==="rl-mostrar"){const on=e.target.checked;sb.from("ciclos").update({mostrar_relatorio:on}).eq("id",cicloAtual.id).select().single().then(({data,error})=>{if(error){e.target.checked=!on;return falha("salvar",error)}Object.assign(cicloAtual,data);toast(on?"O cliente já acompanha o relatório deste mês no portal.":"Relatório oculto para o cliente.")});return}
+    if(e.target.dataset&&e.target.dataset.pedCk!=null){const card=e.target.closest("[data-ped]");salvarChecklist(card.dataset.ped,lerCk(card));return}
+    if(e.target.id==="rp-tipo"){avisoRegistro();return}
+    if(e.target.id==="ciclo-sel"){impPrev=null;cicloAtual=ciclos.find(c=>c.id===e.target.value)||null;carregarCiclo()}
+    if(e.target.id==="imp-arq"){const f=e.target.files&&e.target.files[0];if(f)impLer(f);e.target.value="";return}
+    if(e.target.id==="imp-subst"){impSubst=e.target.checked;return}
+    if(e.target.dataset&&e.target.dataset.pubIn){const id=e.target.dataset.pubIn,p=posts.find(x=>x.id===id);if(!p)return;
+      const v=e.target.value, campos=e.target.type==="datetime-local"?{agendado_para:v?new Date(v).toISOString():null}:{publicado_url:v.trim()};
+      sb.from("posts").update(campos).eq("id",id).select().single().then(({data,error})=>{if(error)return falha("salvar a publicação",error);Object.assign(p,data);toast(campos.agendado_para!==undefined?"Horário salvo.":"Link salvo.")});return}
+    if(e.target.dataset&&e.target.dataset.up){const f=e.target.files;if(f&&f.length)enviarTelas(e.target.dataset.up,f);e.target.value=""}
+  });
+  document.addEventListener("click",async e=>{
+    const tab=e.target.closest("[data-aba]");if(tab){aba=tab.dataset.aba;render();if(aba==="pedidos")avisoRegistro();return}
+    const pf=e.target.closest("[data-pedf]");if(pf){pedFiltro=pf.dataset.pedf;render();return}
+    const b=e.target.closest("[data-act]");if(!b||!cliAtual)return;
+    const a=b.dataset.act, id=b.dataset.id;
+    if(a==="copiar"){const t=portalURL(cliAtual.token);try{await navigator.clipboard.writeText(t);toast("Link copiado.")}catch(err){const r=document.createRange();r.selectNodeContents($("#link"));getSelection().removeAllRanges();getSelection().addRange(r);toast("Selecionei o link: copie com Ctrl+C.")}return}
+    if(a==="salvar-cliente"){const lim={};document.querySelectorAll("[data-lim]").forEach(el=>{if(el.value!=="")lim[el.dataset.lim]=Math.max(0,parseInt(el.value,10)||0)});
+      const {data,error}=await sb.from("clientes").update({nome:$("#cl-nome").value.trim()||cliAtual.nome,cor_destaque:$("#cl-cor").value.trim(),plano_nome:$("#cl-plano").value.trim(),limites:lim,regra_extra:$("#cl-regra").value.trim(),whatsapp:$("#cl-wa").value.trim()}).eq("id",cliAtual.id).select().single();if(error)return falha("salvar o cliente",error);Object.assign(cliAtual,data);renderClientes();render();toast("Cliente salvo.");return}
+    if(a==="add-acesso"){const email=$("#ac-email").value.trim().toLowerCase(),nome=$("#ac-nome").value.trim();
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){toast("Digite um e-mail válido.");return}
+      if(acessos.some(u=>u.email===email)){toast("Este e-mail já tem acesso.");return}
+      const {data,error}=await sb.from("cliente_usuarios").insert({cliente_id:cliAtual.id,email,nome}).select().single();if(error)return falha("liberar o acesso",error);
+      acessos.push(data);render();toast("Acesso liberado. Agora copie o convite e envie para "+(nome||email)+".");return}
+    if(a==="rm-acesso"){if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Confirmar";return}
+      const em=b.dataset.email;const {error}=await sb.from("cliente_usuarios").delete().eq("cliente_id",cliAtual.id).eq("email",em);if(error)return falha("remover",error);
+      acessos=acessos.filter(u=>u.email!==em);render();toast("Acesso removido. Essa pessoa não vê mais este cliente.");return}
+    if(a==="senha-temp"){abrirSenhaTemp(acessos.find(u=>u.email===b.dataset.email));return}
+    if(a==="copiar-convite"){const nomes=acessos.map(u=>u.nome||u.email);
+      const t=`Olá${nomes.length===1?", "+nomes[0]:""}! Seu acesso ao ${cfg.plataforma||"Hub de Marketing"} da ${cfg.marca||"GUXTA"} está liberado.\n\n1. Acesse: ${loginURL()}\n2. Clique em “Primeiro acesso? Criar minha senha”\n3. Use o e-mail ${acessos.length===1?acessos[0].email:"que você nos passou"} e crie sua senha\n4. Confirme pelo e-mail que vai chegar e pronto!\n\nLá você aprova os conteúdos do mês, vê os roteiros, acompanha os resultados e faz pedidos.`;
+      try{await navigator.clipboard.writeText(t);toast("Convite copiado. Cole no WhatsApp ou no e-mail.")}catch(err){prompt("Copie o convite:",t)}return}
+    if(a==="pausar"){const {data,error}=await sb.from("clientes").update({ativo:!cliAtual.ativo}).eq("id",cliAtual.id).select().single();if(error)return falha("mudar o link",error);Object.assign(cliAtual,data);renderClientes();render();toast(data.ativo?"Cliente reativado: o acesso voltou.":"Cliente desativado. O histórico continua guardado.");return}
+    if(a==="excluir-cliente"){
+      const nome=cliAtual.nome;
+      const digitado=prompt(`Excluir "${nome}" apaga para sempre todos os meses, posts, aprovações, roteiros, pedidos, números, anúncios, acessos, artes e contratos deste cliente.\n\nSe ele só encerrou o contrato, use "Desativar cliente": guarda o histórico.\n\nPara excluir mesmo assim, digite o nome do cliente:`);
+      if(digitado===null)return;
+      if(digitado.trim().toLowerCase()!==nome.trim().toLowerCase()){toast("O nome não confere. Nada foi excluído.");return}
+      toast("Excluindo…");
+      // apaga as artes do cliente no armazenamento (pasta com o id dele)
+      try{const st=sb.storage.from("artes");const pastas=(await st.list(cliAtual.id,{limit:1000})).data||[];
+        for(const pz of pastas){const arqs=(await st.list(cliAtual.id+"/"+pz.name,{limit:1000})).data||[];
+          if(arqs.length)await st.remove(arqs.map(a=>cliAtual.id+"/"+pz.name+"/"+a.name));}}catch(e){console.warn(e)}
+      // e os documentos (contrato)
+      try{const docsArq=(await sb.storage.from("documentos").list(cliAtual.id,{limit:1000})).data||[];
+        if(docsArq.length)await sb.storage.from("documentos").remove(docsArq.map(a=>cliAtual.id+"/"+a.name));}catch(e){console.warn(e)}
+      const {error}=await sb.from("clientes").delete().eq("id",cliAtual.id);
+      if(error)return falha("excluir o cliente",error);
+      clientes=clientes.filter(x=>x.id!==cliAtual.id);cliAtual=null;cicloAtual=null;renderClientes();render();toast(`${nome} foi excluído.`);return}
+    if(a==="enviar-doc"){enviarDocumento(b);return}
+    if(a==="abrir-doc"){const d=documentos.find(x=>x.id===id);if(!d)return;const janela=window.open("","_blank");
+      const {data,error}=await sb.storage.from("documentos").createSignedUrl(d.caminho,600);
+      if(error){janela&&janela.close();return falha("abrir o documento",error)}
+      if(janela)janela.location.href=data.signedUrl;else location.href=data.signedUrl;return}
+    if(a==="apagar-doc"){if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Clique de novo para apagar";return}
+      const d=documentos.find(x=>x.id===id);if(!d)return;
+      const {error}=await sb.from("documentos").delete().eq("id",id);if(error)return falha("apagar o documento",error);
+      await sb.storage.from("documentos").remove([d.caminho]);
+      documentos=documentos.filter(x=>x.id!==id);render();toast("Documento apagado.");return}
+    if(a==="novo-link"){if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Clique de novo para confirmar";return}
+      const novo=crypto.randomUUID().replace(/-/g,"")+crypto.randomUUID().replace(/-/g,"");
+      const {data,error}=await sb.from("clientes").update({token:novo}).eq("id",cliAtual.id).select().single();if(error)return falha("gerar o link",error);Object.assign(cliAtual,data);render();toast("Link novo gerado. Envie para o cliente.");return}
+    if(a==="novo-ciclo"){
+      const anterior=cicloAtual;
+      const {data,error}=await sb.from("ciclos").insert({cliente_id:cliAtual.id,titulo:"Novo mês",dicas_reels:anterior?anterior.dicas_reels:[],dicas_stories:anterior?anterior.dicas_stories:[],metricas:{inicio:anterior&&anterior.metricas&&anterior.metricas.fim?anterior.metricas.fim:{},fim:{},obs:""}}).select().single();
+      if(error)return falha("criar o mês",error);cicloAtual=data;aba="posts";await abrirCliente(cliAtual.id);toast("Mês criado como rascunho. Dicas e números finais do mês anterior já vieram copiados.");return}
+    if(!cicloAtual)return;
+    if(a==="salvar-ciclo"){const {data,error}=await sb.from("ciclos").update({titulo:$("#ci-titulo").value.trim()||"Mês",inicio:$("#ci-inicio").value||null,fim:$("#ci-fim").value||null}).eq("id",cicloAtual.id).select().single();if(error)return falha("salvar o mês",error);Object.assign(cicloAtual,data);render();toast("Mês salvo.");return}
+    if(a==="publicar"){const {data,error}=await sb.from("ciclos").update({publicado:!cicloAtual.publicado}).eq("id",cicloAtual.id).select().single();if(error)return falha("publicar",error);Object.assign(cicloAtual,data);render();toast(data.publicado?"Publicado: o cliente já vê este mês.":"Voltou para rascunho.");return}
+    if(a==="apagar-ciclo"){if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Apaga tudo deste mês. Clique de novo";return}
+      const {error}=await sb.from("ciclos").delete().eq("id",cicloAtual.id);if(error)return falha("apagar o mês",error);cicloAtual=null;await abrirCliente(cliAtual.id);toast("Mês apagado.");return}
+    const proximoNum=()=>posts.reduce((m,p)=>Math.max(m,p.dia||0),0)+1;
+    if(a==="novo-reels"){const {data,error}=await sb.from("posts").insert({ciclo_id:cicloAtual.id,titulo:"Novo Reels",formato:"Reels",dia:proximoNum()}).select().single();if(error)return falha("criar o Reels",error);posts.push(data);render();document.getElementById("post-"+data.id)?.scrollIntoView({block:"start"});return}
+    if(a==="novo-post"){const {data,error}=await sb.from("posts").insert({ciclo_id:cicloAtual.id,titulo:"Novo post",dia:proximoNum()}).select().single();if(error)return falha("criar o post",error);posts.push(data);render();document.getElementById("post-"+data.id)?.scrollIntoView({block:"start"});return}
+    if(a==="salvar-post")return atualizarPost(id,lerPost(id),"Post salvo.");
+    if(a==="apagar-post"){if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Clique de novo para apagar";return}
+      const {error}=await sb.from("posts").delete().eq("id",id);if(error)return falha("apagar o post",error);posts=posts.filter(p=>p.id!==id);render();toast("Post apagado.");return}
+    if(a==="sl-esq"||a==="sl-dir"||a==="sl-del"){const p=posts.find(x=>x.id===id),i=+b.dataset.i,s=[...p.slides];
+      if(a==="sl-del")s.splice(i,1);else{const j=a==="sl-esq"?i-1:i+1;[s[i],s[j]]=[s[j],s[i]]}
+      return atualizarPost(id,{slides:s},a==="sl-del"?"Tela removida.":"Ordem atualizada.")}
+    // roteiros
+    const rc=b.closest("[data-rot]"), sc=b.closest("[data-sto]");
+    if(a==="novo-roteiro"){const {data,error}=await sb.from("roteiros").insert({ciclo_id:cicloAtual.id,titulo:"Novo Reels",blocos:[{tempo:"0–3 s",fala:"",tela:""}]}).select().single();if(error)return falha("criar o roteiro",error);roteiros.push(data);render();return}
+    if(a==="novo-story"){const {data,error}=await sb.from("stories").insert({ciclo_id:cicloAtual.id,titulo:"Novos Stories",telas:[{texto:"",recurso:""}]}).select().single();if(error)return falha("criar os Stories",error);stories.push(data);render();return}
+    if(a==="add-bloco"&&rc){rc.querySelector("[data-blocos]").insertAdjacentHTML("beforeend",blocoRow({}));return}
+    if(a==="add-tela"&&sc){sc.querySelector("[data-telas]").insertAdjacentHTML("beforeend",telaRow({}));return}
+    if(a==="rm-row"){b.closest("[data-row]").remove();return}
+    if(a==="salvar-roteiro"&&rc){const campos=Object.assign(lerCampos(rc),{blocos:lerLinhas(rc.querySelector("[data-blocos]"),["tempo","fala","tela"])});
+      const {data,error}=await sb.from("roteiros").update(campos).eq("id",rc.dataset.rot).select().single();if(error)return falha("salvar o roteiro",error);roteiros[roteiros.findIndex(x=>x.id===data.id)]=data;render();toast("Roteiro salvo.");return}
+    if(a==="apagar-roteiro"&&rc){if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Clique de novo para apagar";return}
+      const {error}=await sb.from("roteiros").delete().eq("id",rc.dataset.rot);if(error)return falha("apagar",error);roteiros=roteiros.filter(x=>x.id!==rc.dataset.rot);render();return}
+    if(a==="salvar-story"&&sc){const campos=Object.assign(lerCampos(sc),{telas:lerLinhas(sc.querySelector("[data-telas]"),["texto","recurso"])});
+      const {data,error}=await sb.from("stories").update(campos).eq("id",sc.dataset.sto).select().single();if(error)return falha("salvar os Stories",error);stories[stories.findIndex(x=>x.id===data.id)]=data;render();toast("Stories salvos.");return}
+    if(a==="apagar-story"&&sc){if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Clique de novo para apagar";return}
+      const {error}=await sb.from("stories").delete().eq("id",sc.dataset.sto);if(error)return falha("apagar",error);stories=stories.filter(x=>x.id!==sc.dataset.sto);render();return}
+    const pc=b.closest("[data-ped]");
+    if(a==="ped-ck-add"&&pc){const i=pc.querySelector("[data-ped-ck-novo]"),v=i.value.trim();if(!v){i.focus();return}return salvarChecklist(pc.dataset.ped,[...lerCk(pc),{t:v,ok:false}],"Etapa adicionada.")}
+    if(a==="ped-ck-rm"&&pc){const l=lerCk(pc);l.splice(+b.dataset.k,1);return salvarChecklist(pc.dataset.ped,l,"Etapa removida.")}
+    if(a==="ped-ck-padrao"&&pc){const x=pedidos.find(p=>p.id===pc.dataset.ped);return salvarChecklist(pc.dataset.ped,(ETAPAS_PED[x.tipo]||ETAPAS_PED.Outro).map(t=>({t,ok:false})),"Etapas padrão adicionadas.")}
+    if(a==="salvar-pedido"&&pc){const v=k=>pc.querySelector(`[data-pf="${k}"]`).value;
+      const {data,error}=await sb.from("pedidos").update({status:v("status"),extra:v("extra")==="true",resposta:v("resposta").trim(),atualizado_em:new Date().toISOString()}).eq("id",pc.dataset.ped).select().single();
+      if(error)return falha("salvar o pedido",error);pedidos[pedidos.findIndex(x=>x.id===data.id)]=data;render();carregarAlertas();toast("Pedido atualizado. O cliente já vê o status e a resposta.");return}
+    if(a==="apagar-pedido"&&pc){if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Clique de novo para apagar";return}
+      const {error}=await sb.from("pedidos").delete().eq("id",pc.dataset.ped);if(error)return falha("apagar o pedido",error);pedidos=pedidos.filter(x=>x.id!==pc.dataset.ped);render();carregarAlertas();toast("Pedido apagado.");return}
+    if(a==="salvar-relatorio"||a==="abrir-relatorio"){
+      let janela=null;if(a==="abrir-relatorio"){e.preventDefault();janela=window.open("","_blank");}
+      const destino="relatorio.html?ciclo="+encodeURIComponent(cicloAtual.id);
+      const campos={relatorio_resumo:$("#rl-resumo").value.trim(),relatorio_proximos:$("#rl-prox").value.trim()};
+      if(campos.relatorio_resumo!==(cicloAtual.relatorio_resumo||"")||campos.relatorio_proximos!==(cicloAtual.relatorio_proximos||"")){
+        const {data,error}=await sb.from("ciclos").update(campos).eq("id",cicloAtual.id).select().single();if(error){janela&&janela.close();return falha("salvar o relatório",error)}Object.assign(cicloAtual,data);
+        if(a==="salvar-relatorio")toast("Textos salvos.");}
+      else if(a==="salvar-relatorio")toast("Nada novo para salvar.");
+      if(a==="abrir-relatorio"){if(janela)janela.location.href=destino;else location.href=destino}
+      return}
+    if(a==="rl-auto"){if(!window.GlaraAvisos)return;const r=window.GlaraAvisos.rascunhoRelatorio({ciclo:cicloAtual,posts,decisoes,roteiros,stories,pedidos,anuncios});
+      const tr=$("#rl-resumo"), tp=$("#rl-prox");
+      if((tr.value.trim()||tp.value.trim())&&b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Clique de novo para substituir o texto";return}
+      tr.value=r.resumo;tp.value=r.proximos;b.dataset.confirm="";b.textContent="Gerar rascunho automático";tr.focus();toast("Rascunho pronto. Revise, complete o destaque do mês e clique em Salvar textos.");return}
+    if(a==="rl-sem-wa"){const det=$("#cl-config");if(det){det.open=true;$("#cl-wa").focus();$("#cl-wa").scrollIntoView({block:"center"})}toast("Preencha o WhatsApp do cliente e clique em Salvar.");return}
+    if(a==="rl-wa"){if(b.getAttribute("aria-disabled")==="true"){e.preventDefault();toast("Publique o mês e marque “Mostrar o relatório” antes de enviar.");return}
+      sb.from("ciclos").update({relatorio_enviado_em:new Date().toISOString()}).eq("id",cicloAtual.id).select().single().then(({data})=>{if(data){Object.assign(cicloAtual,data);render()}});return}
+    if(a==="rl-email"){b.disabled=true;
+      const campos={relatorio_resumo:$("#rl-resumo").value.trim(),relatorio_proximos:$("#rl-prox").value.trim()};
+      if(campos.relatorio_resumo!==(cicloAtual.relatorio_resumo||"")||campos.relatorio_proximos!==(cicloAtual.relatorio_proximos||"")){
+        const sv=await sb.from("ciclos").update(campos).eq("id",cicloAtual.id).select().single();if(sv.error){b.disabled=false;return falha("salvar o relatório",sv.error)}Object.assign(cicloAtual,sv.data)}
+      const {data,error}=await sb.rpc("relatorio_enviar",{p_ciclo:cicloAtual.id});b.disabled=false;
+      if(error)return falha("enviar o relatório",error);
+      cicloAtual.relatorio_enviado_em=new Date().toISOString();render();
+      toast(data&&data.email_ativo?`Relatório enviado para ${data.emails} pessoa(s).`:"Relatório na fila: ele sai assim que o e-mail estiver ligado em Avisos e lembretes.");return}
+    if(a==="imp-ok"){b.disabled=true;await impGravar();return}
+    if(a==="imp-cancelar"){impPrev=null;render();return}
+    if(a==="pub-st"){const p=posts.find(x=>x.id===id);if(!p)return;const st=b.dataset.st;
+      const campos={publicacao:st,publicacao_em:st?new Date().toISOString():null};
+      if(st==="agendado"&&!p.agendado_para&&p.data)campos.agendado_para=new Date(p.data+"T18:00").toISOString();
+      const {data,error}=await sb.from("posts").update(campos).eq("id",id).select().single();if(error)return falha("marcar a publicação",error);
+      Object.assign(p,data);render();toast(st==="agendado"?"Marcado como agendado. O cliente vê no portal.":st==="publicado"?"Marcado como publicado.":"Publicação desmarcada.");return}
+    if(a==="pub-copiar"){const p=posts.find(x=>x.id===id);try{await navigator.clipboard.writeText(p.legenda||"");toast("Legenda copiada. Cole no Meta Business Suite.")}catch(_){toast("Não deu para copiar: selecione a legenda no campo.")}return}
+    if(a==="add-anuncio"){const GA=window.GlaraAnuncios,v=x=>$(x).value;
+      const row={ciclo_id:cicloAtual.id,data:v("#ad-data"),campanha:v("#ad-camp").trim(),investimento:GA.parseMoeda(v("#ad-inv")),impressoes:GA.parseInteiro(v("#ad-imp")),alcance:GA.parseInteiro(v("#ad-alc")),cliques:GA.parseInteiro(v("#ad-cli")),resultados:GA.parseInteiro(v("#ad-res")),tipo_resultado:v("#ad-tipo").trim()||"Resultados",receita:GA.parseMoeda(v("#ad-rec"))};
+      if(!row.data||!row.campanha){toast("Preencha o dia e o nome da campanha.");return}
+      const {data,error}=await sb.from("anuncios").insert(row).select().single();if(error)return falha("lançar",error);
+      anuncios.push(data);anuncios.sort((x,y)=>String(x.data).localeCompare(String(y.data)));render();toast(`Lançado: ${row.campanha} em ${row.data.split("-").reverse().slice(0,2).join("/")}.`);$("#ad-inv")&&$("#ad-inv").focus();return}
+    if(a==="apagar-anuncio"){if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Apagar?";return}
+      const {error}=await sb.from("anuncios").delete().eq("id",id);if(error)return falha("apagar",error);anuncios=anuncios.filter(x=>x.id!==id);render();toast("Lançamento apagado.");return}
+    if(a==="salvar-numeros"){const GM=window.GlaraMetricas,ini={},fim={};
+      document.querySelectorAll("[data-mi]").forEach(el=>{const v=GM.parse(el.value);if(v!=null)ini[el.dataset.mi]=v});
+      document.querySelectorAll("[data-mf]").forEach(el=>{const v=GM.parse(el.value);if(v!=null)fim[el.dataset.mf]=v});
+      const {data,error}=await sb.from("ciclos").update({metricas:{inicio:ini,fim:fim,obs:$("#m-obs").value.trim()},mostrar_resultados:$("#m-mostrar").checked}).eq("id",cicloAtual.id).select().single();
+      if(error)return falha("salvar os números",error);Object.assign(cicloAtual,data);const k=ciclos.findIndex(x=>x.id===data.id);if(k>=0)ciclos[k]=cicloAtual;render();toast("Números salvos.");return}
+    if(a==="salvar-dicas"){const lin=id=>$(id).value.split("\n").map(s=>s.trim()).filter(Boolean);
+      const {data,error}=await sb.from("ciclos").update({dicas_reels:lin("#d-reels"),dicas_stories:lin("#d-stories")}).eq("id",cicloAtual.id).select().single();if(error)return falha("salvar as dicas",error);Object.assign(cicloAtual,data);render();toast("Dicas salvas.");return}
+  });
+
+  document.addEventListener("keydown",e=>{if(e.target.dataset&&e.target.dataset.pedCkNovo!=null&&e.key==="Enter"){e.preventDefault();const b=e.target.closest("[data-ped]").querySelector('[data-act="ped-ck-add"]');b&&b.click()}});
+  document.addEventListener("submit",async e=>{
+    if(e.target.id!=="rp-form")return;e.preventDefault();
+    const v=x=>$(x).value, tipo=v("#rp-tipo"), titulo=v("#rp-titulo").trim(), link=v("#rp-link").trim(), ciclo=v("#rp-ciclo")||(cicloAtual&&cicloAtual.id)||null;
+    if(!titulo){toast("Escreva o que foi pedido.");$("#rp-titulo").focus();return}
+    if(link&&!linkSeguro(link)){toast("O link precisa começar com https://");$("#rp-link").focus();return}
+    let extra=v("#rp-cobranca")==="extra";
+    if(v("#rp-cobranca")==="auto"){const lim=(cliAtual.limites||{})[tipo];
+      if(tipo==="Outro")extra=true;else if(typeof lim==="number"&&cicloAtual&&ciclo===cicloAtual.id)extra=usoPlano()[tipo]+1>lim;}
+    const {data:{session}}=await sb.auth.getSession();
+    const row={cliente_id:cliAtual.id,ciclo_id:ciclo,tipo,titulo,descricao:v("#rp-desc").trim(),prazo:v("#rp-prazo")||null,link,nome:v("#rp-nome").trim(),
+      extra,status:"recebido",resposta:"",origem:v("#rp-origem"),registrado_por:session?session.user.email:"",checklist:(ETAPAS_PED[tipo]||ETAPAS_PED.Outro).map(t=>({t,ok:false}))};
+    const {data,error}=await sb.from("pedidos").insert(row).select().single();
+    if(error)return falha("registrar o pedido",error);
+    pedidos.unshift(data);pedFiltro="abertos";render();carregarAlertas();
+    toast(`Pedido registrado${extra?" como extra":""}. O cliente já vê na aba Pedidos.`);
+    document.querySelector(`[data-ped="${data.id}"]`)?.scrollIntoView({block:"center"});
+  });
+
+  iniciar();
+})();
+</script>
+</body>
+</html>
