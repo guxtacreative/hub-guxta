@@ -27,7 +27,7 @@
     sub=r2(sub);custo=r2(custo);const total=Math.max(r2(sub-N(desconto)),0);return {sub,custo,total,lucro:r2(total-custo)}};
 
   function criar(el,sb,ctx){
-    let orcs=[], produtos=[], empresa={}, sub="lista", filtro="abertos", busca="", buscaP="", atual=null, salvarCatalogo=true, sujo=false;
+    let orcs=[], produtos=[], empresa={}, pedidos=null, lancOrc=[], cupons=null, nOfertas=0, cupEd=null, filtroL="todos", sub="lista", filtro="abertos", busca="", buscaP="", atual=null, salvarCatalogo=true, sujo=false;
     const toast=ctx.toast||(m=>console.log(m)), falha=ctx.falha||((a,e)=>toast("Não deu para "+a+"."));
     const clientes=()=>(ctx.clientes&&ctx.clientes())||[];
     const nomeCli=o=>{const c=clientes().find(x=>x.id===o.cliente_id);return c?c.nome:(o.cliente_nome||"")};
@@ -38,6 +38,10 @@
         sb.from("orcamentos").select("*").order("criado_em",{ascending:false}),
         sb.from("produtos").select("*").order("nome"),
         sb.from("empresa").select("*").eq("id",1).maybeSingle()]);
+      const lo=await sb.from("lancamentos").select("orcamento_id,status,tipo");lancOrc=lo.error?[]:(lo.data||[]).filter(l=>l.orcamento_id);
+      const cp=await sb.from("cupons").select("*").order("criado_em",{ascending:false});cupons=cp.error?null:(cp.data||[]);
+      const no=await sb.from("contatos").select("id,email,aceita_ofertas").eq("aceita_ofertas",true);nOfertas=no.error?0:(no.data||[]).filter(c=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c.email||"")).length;
+      const lp=await sb.from("loja_pedidos").select("*").order("atualizado_em",{ascending:false}).limit(300);pedidos=lp.error?null:(lp.data||[]);
       const err=a.error||b.error||c.error;
       if(err){el.innerHTML=`<div class="empty">Não consegui carregar os orçamentos. ${/orcamentos|produtos|empresa/.test(err.message||"")?"Rode o arquivo 07 do banco no Supabase.":esc(err.message)}</div>`;return}
       orcs=a.data||[];produtos=b.data||[];empresa=c.data||{};render();
@@ -67,9 +71,20 @@
         <div class="seg orc-seg" role="group" aria-label="Seção">
           <button type="button" data-o-sub="lista" aria-pressed="${sub==="lista"}">Orçamentos</button>
           <button type="button" data-o-sub="produtos" aria-pressed="${sub==="produtos"}">Produtos salvos <b>${produtos.length}</b></button>
+          <button type="button" data-o-sub="loja" aria-pressed="${sub==="loja"}">Loja online${pedidos&&pedidos.filter(x=>x.status==="fechado").length?` <b>${pedidos.filter(x=>x.status==="fechado").length}</b>`:""}</button>
+          <button type="button" data-o-sub="cupons" aria-pressed="${sub==="cupons"}">Cupons${cupons&&cupons.filter(c=>cupomVale(c)).length?` <b>${cupons.filter(c=>cupomVale(c)).length}</b>`:""}</button>
           <button type="button" data-o-sub="empresa" aria-pressed="${sub==="empresa"}">Dados no PDF</button>
         </div></section>`;
     }
+    // quando o orçamento vai ser excluído por falta de pagamento (igual ao banco)
+    function expiraEm(o){const dias=empresa.orcamento_expira_dias==null?15:N(empresa.orcamento_expira_dias);if(!dias||!o.id)return null;
+      const ls=lancOrc.filter(l=>l.orcamento_id===o.id&&l.tipo==="entrada");if(ls.some(l=>l.status==="pago"))return null;
+      if(o.status==="enviado")return somaDias(o.validade||somaDias(String(o.criado_em).slice(0,10),dias),1);
+      if(o.status==="aprovado"&&ls.some(l=>l.status==="previsto")){const b=new Date(o.assinado_em||o.aprovado_em||o.criado_em);const iso=new Date(b.getTime()-3*3600e3).toISOString().slice(0,10);return somaDias(iso,dias+1)}
+      return null}
+    const diasAte=iso=>Math.round((new Date(iso+"T12:00")-new Date(hojeISO()+"T12:00"))/864e5);
+    function expiraTag(o){const e=expiraEm(o);if(!e)return "";const d=diasAte(e);
+      return `<span class="orc-exp${d<=3?" perto":""}" title="Sem pagamento, este orçamento é excluído sozinho">${d<=0?"Exclui hoje":d===1?"Exclui amanhã":"Exclui em "+d+" dias"}</span>`}
     function listaHTML(){
       const cont=f=>orcs.filter(o=>f==="todos"||(f==="abertos"?(o.status==="rascunho"||o.status==="enviado"):o.status===f)).length;
       const q=busca.trim().toLowerCase();
@@ -85,7 +100,7 @@
           return `<button type="button" class="orc-row" data-o-id="${o.id}">
             <span class="orc-n">Nº ${nro(o.numero)}</span>
             <span class="orc-t"><b>${esc(nomeCli(o)||"Sem cliente")}</b><small>${esc(o.titulo||(o.itens||[]).map(i=>i.nome).filter(Boolean).slice(0,3).join(", ")||"Sem itens")} · ${dmy(String(o.criado_em).slice(0,10))}</small></span>
-            <span class="orc-st"><span class="status ${st[1]}">${st[0]}</span>${o.status==="aprovado"&&!o.lancado_em?'<span class="orc-flag">Lançar no financeiro</span>':""}${o.assinado_em?'<span class="orc-tag-ass">Assinada online</span>':o.status==="enviado"&&o.visto_em?'<span class="orc-tag-vis">Cliente abriu</span>':""}</span>
+            <span class="orc-st"><span class="status ${st[1]}">${st[0]}</span>${o.status==="aprovado"&&!o.lancado_em?'<span class="orc-flag">Lançar no financeiro</span>':""}${o.assinado_em?'<span class="orc-tag-ass">Assinada online</span>':o.status==="enviado"&&o.visto_em?'<span class="orc-tag-vis">Cliente abriu</span>':""}${expiraTag(o)}</span>
             <span class="orc-v"><b>${brl(o.total)}</b><small>lucro ${brl(o.lucro_total)}${N(o.total)?" · "+pct(mg):""}</small></span>
           </button>`}).join("")||`<div class="empty">${orcs.length?"Nenhum orçamento neste filtro.":"Nenhum orçamento ainda. Clique em Novo orçamento: os produtos que você usar ficam salvos com custo e lucro para os próximos."}</div>`}</div>`;
     }
@@ -96,7 +111,7 @@
       return `<div class="tk-bar"><p class="note" style="margin:0">Custo e lucro ficam guardados aqui. Ao salvar um orçamento, produtos novos entram sozinhos e os valores alterados são atualizados.</p>
           <div class="tk-tools"><input type="search" id="prod-busca" placeholder="Buscar produto" value="${esc(buscaP)}" aria-label="Buscar produto"><button class="btn small primary" data-o="prod-novo">${I.mais} Novo produto</button></div></div>
         <div class="orc-lista">${vis.map(p=>{const lucroR=r2(N(p.preco)-N(p.custo));return `<button type="button" class="orc-row prod-row" data-p-id="${p.id}">
-            <span class="orc-t"><b>${esc(p.nome)}</b><small>${esc([p.descricao,p.fornecedor&&("Fornecedor: "+p.fornecedor)].filter(Boolean).join(" · ")||"Sem especificação")}</small></span>
+            <span class="orc-t"><b>${esc(p.nome)}${p.na_loja?` <span class="badge-loja">Na loja</span>`:""}${p.preco_tipo==="m2"?` <span class="badge-loja m2">por m²</span>`:""}</b><small>${esc([p.descricao,p.fornecedor&&("Fornecedor: "+p.fornecedor),(p.faixas||[]).length?(p.faixas.length+" faixa"+(p.faixas.length>1?"s":"")+" de quantidade"):""].filter(Boolean).join(" · ")||"Sem especificação")}</small></span>
             <span class="prod-c"><small>Custo</small><b>${brl(p.custo)}</b></span>
             <span class="prod-c"><small>Lucro</small><b class="ok-txt">${p.lucro_tipo==="pct"?pct(p.lucro):brl(p.lucro)}</b></span>
             <span class="orc-v"><b>${brl(p.preco)}</b><small>por ${esc(p.unidade)} · +${brl(lucroR)}</small></span></button>`}).join("")||`<div class="empty">${produtos.length?"Nenhum produto encontrado.":"Nenhum produto salvo ainda."}</div>`}</div>
@@ -108,19 +123,130 @@
         <div class="head"><h2>${novo?"Novo produto":"Editar produto"}</h2><button type="button" class="tk-x" data-o="dlg-fechar" aria-label="Fechar">✕</button></div>
         <div><label class="label" for="pf-nome">Produto</label><input type="text" id="pf-nome" required maxlength="160" value="${esc(p.nome||"")}" placeholder="Ex.: Cartão de visita 1000 un"></div>
         <div><label class="label" for="pf-desc">Especificação (aparece no PDF)</label><input type="text" id="pf-desc" maxlength="300" value="${esc(p.descricao||"")}" placeholder="Ex.: 9x5 cm, couché 300 g, 4x4 cores, laminação fosca"></div>
+        <div><span class="label">Como cobra</span><div class="seg" role="radiogroup" aria-label="Como cobra" id="pf-ptipo">
+          <button type="button" data-ptipo="faixas" aria-pressed="${(p.preco_tipo||"faixas")!=="m2"}">Por quantidade (faixas)</button><button type="button" data-ptipo="m2" aria-pressed="${p.preco_tipo==="m2"}">Por m² (lona, adesivo)</button></div></div>
         <div class="grid2">
           <div><label class="label" for="pf-un">Unidade</label><input type="text" id="pf-un" list="orc-unid" value="${esc(p.unidade||"un")}"></div>
           <div><label class="label" for="pf-forn">Fornecedor / gráfica</label><input type="text" id="pf-forn" value="${esc(p.fornecedor||"")}"></div>
-          <div><label class="label" for="pf-custo">Custo (R$)</label><input type="text" id="pf-custo" inputmode="decimal" value="${p.custo!=null?num(p.custo):""}" placeholder="0,00"></div>
+          <div><label class="label" for="pf-custo"><span class="pf-m2-on">Custo do m² (R$)</span><span class="pf-m2-off">Custo (R$)</span></label><input type="text" id="pf-custo" inputmode="decimal" value="${p.custo!=null?num(p.custo):""}" placeholder="0,00"></div>
           <div><label class="label" for="pf-lucro">Lucro</label><div class="orc-lucro"><input type="text" id="pf-lucro" inputmode="decimal" value="${p.lucro!=null?String(p.lucro).replace(".",","):String(N(empresa.lucro_padrao)||40).replace(".",",")}">
             <select id="pf-tipo" aria-label="Tipo de lucro"><option value="pct" ${(p.lucro_tipo||"pct")==="pct"?"selected":""}>%</option><option value="valor" ${p.lucro_tipo==="valor"?"selected":""}>R$</option></select></div></div>
         </div>
         <p class="orc-calc" id="pf-calc"></p>
+        <fieldset class="orc-fs"><legend>Loja online</legend>
+          <label class="check"><input type="checkbox" id="pf-loja" ${p.na_loja?"checked":""}> Mostrar este produto na loja</label>
+          <div class="grid2">
+            <div><label class="label" for="pf-cat">Categoria</label><input type="text" id="pf-cat" list="pf-cats" value="${esc(p.categoria||"")}" placeholder="Ex.: Cartões, Banners, Panfletos"><datalist id="pf-cats">${[...new Set(produtos.map(x=>x.categoria).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
+            <div><label class="label" for="pf-prazo">Prazo de produção</label><input type="text" id="pf-prazo" value="${esc(p.prazo||"")}" placeholder="Ex.: 5 dias úteis após aprovar a arte"></div>
+            <div><label class="label" for="pf-arte">Valor da criação da arte (R$)</label><input type="text" id="pf-arte" inputmode="decimal" value="${num(p.arte_valor||0)}"><small class="note">Somado quando o cliente não tem a arte pronta.</small></div>
+            <div><span class="label">Foto</span><div class="pf-foto">${p.foto?`<img src="${esc(p.foto)}" alt="" id="pf-foto-img">`:`<span class="pf-foto-vazia" id="pf-foto-img">Sem foto</span>`}
+              <label class="btn small">Escolher foto<input type="file" id="pf-foto-arq" accept="image/jpeg,image/png,image/webp" hidden></label>${p.foto?`<button type="button" class="btn small ghost" data-o="foto-tira">Tirar</button>`:""}</div>
+              <input type="hidden" id="pf-foto" value="${esc(p.foto||"")}"></div>
+          </div>
+          <div class="pf-m2-on"><label class="label" for="pf-amin">Área mínima cobrada por peça (m²)</label><input type="text" id="pf-amin" inputmode="decimal" value="${String(N(p.area_min)||"").replace(".",",")}" placeholder="Ex.: 0,5 (vazio = sem mínimo)"><small class="note">Na loja o cliente digita largura × altura em cm e a quantidade. Preço = m² × preço do m² acima.</small></div>
+          <div class="pf-m2-off"><span class="label">Faixas de quantidade (o preço de cada uma sai do custo + o seu lucro)</span>
+            <div class="fx-lista" id="pf-faixas">${(p.faixas&&p.faixas.length?p.faixas:[{qtd:"",custo:""}]).map(fxRow).join("")}</div>
+            <button type="button" class="btn small" data-o="fx-add" style="margin-top:8px">${I.mais} Adicionar faixa</button></div>
+        </fieldset>
         <div class="actions"><button type="submit" class="btn primary" data-o="prod-salvar">${novo?"Salvar produto":"Salvar"}</button><button type="button" class="btn ghost" data-o="dlg-fechar">Cancelar</button>
           ${novo?"":`<button type="button" class="btn danger small" data-o="prod-apagar" data-id="${p.id}" style="margin-left:auto">Apagar</button>`}</div></form>`;
     }
+    const pfTipo=()=>{const b=el.querySelector("#pf-ptipo [aria-pressed=true]");return b?b.dataset.ptipo:"faixas"};
+    const pfTipoAplica=()=>{const f=el.querySelector("#prod-form");if(f)f.classList.toggle("pf-m2",pfTipo()==="m2")};
+    function fxRow(f){return `<div class="fx-row"><div><label class="label">Quantidade</label><input type="text" inputmode="numeric" data-fx="qtd" value="${f.qtd!==""&&f.qtd!=null?String(f.qtd):""}" placeholder="Ex.: 500"></div>
+      <div><label class="label">Seu custo (R$)</label><input type="text" inputmode="decimal" data-fx="custo" value="${f.custo!==""&&f.custo!=null?num(f.custo):""}" placeholder="0,00"></div>
+      <span class="fx-p"><small>Preço na loja</small><b>–</b></span><button type="button" class="tk-x" data-o="fx-rm" aria-label="Tirar esta faixa">✕</button></div>`}
+    const lerFaixas=()=>[...el.querySelectorAll("#pf-faixas .fx-row")].map(r=>({qtd:parseNum(r.querySelector('[data-fx="qtd"]').value),custo:r2(parseNum(r.querySelector('[data-fx="custo"]').value))})).filter(f=>f.qtd>0);
     function calcProdForm(){const v=s=>el.querySelector(s).value;const c=parseNum(v("#pf-custo")),t=v("#pf-tipo"),l=parseNum(v("#pf-lucro")),p=precoDe(c,t,l);
+      el.querySelectorAll("#pf-faixas .fx-row").forEach(r=>{const q=parseNum(r.querySelector('[data-fx="qtd"]').value),fc=parseNum(r.querySelector('[data-fx="custo"]').value),fp=precoDe(fc,t,l);
+        r.querySelector(".fx-p b").textContent=q&&fc?brl(fp):"–";r.querySelector(".fx-p small").textContent=q&&fc?`Preço na loja · ${brl(fp/q)} cada`:"Preço na loja"});
       el.querySelector("#pf-calc").innerHTML=`Preço de venda: <b>${brl(p)}</b> por ${esc(v("#pf-un")||"un")} · lucro de <b class="ok-txt">${brl(p-c)}</b>${p?` (margem de ${pct((p-c)/p*100)} do preço)`:""}`}
+
+
+    /* ---------- loja online ---------- */
+    const linkLoja=()=>new URL("loja.html",location.href).href;
+    const STL={carrinho:["Carrinho aberto","pend"],abandonado:["Abandonou","adj"],fechado:["Aguardando pagamento","pend"],pago:["Pago","ok"],cancelado:["Cancelado","prod"]};
+    function lojaHTML(){
+      if(!pedidos)return `<div class="empty">Rode o arquivo 19 do banco no Supabase para ligar a loja online.</div>`;
+      const e=empresa, link=linkLoja(), mes=hojeISO().slice(0,7), naLoja=produtos.filter(p=>p.na_loja&&(p.faixas||[]).length);
+      const pagosMes=pedidos.filter(x=>x.status==="pago"&&String(x.pago_em||"").slice(0,7)===mes);
+      const vis=pedidos.filter(x=>filtroL==="todos"||x.status===filtroL);
+      const msg=encodeURIComponent(`Olá! Monte seu pedido de material gráfico por aqui: escolha os produtos, envie sua arte (ou deixe que a gente cria) e pague online. ${link}`);
+      const k=(cls,n,t,s)=>`<div class="tk-kpi ${cls}"><b>${n}</b><span>${t}</span>${s?`<small>${s}</small>`:""}</div>`;
+      const fone=x=>window.GlaraCRM&&window.GlaraCRM.foneWa?window.GlaraCRM.foneWa(x):String(x||"").replace(/\D/g,"").replace(/^(?!55)(\d{10,11})$/,"55$1");
+      const wa=x=>{const f=fone(x.telefone);if(!f)return "";const t=x.status==="abandonado"||x.status==="carrinho"?`Olá, ${x.nome.split(" ")[0]}! Vi que você montou um pedido na nossa loja e não finalizou. Posso te ajudar com alguma dúvida? ${link}`:`Olá, ${x.nome.split(" ")[0]}! Sobre o seu pedido na nossa loja:`;
+        return `<a class="btn small ghost" href="https://wa.me/${f}?text=${encodeURIComponent(t)}" target="_blank" rel="noopener">WhatsApp</a>`};
+      return `<section class="card orc-loja">
+        <div class="head"><div><h2>Loja online</h2><p class="note" style="margin:4px 0 0">${naLoja.length} produto${naLoja.length===1?"":"s"} na loja. Marque “Mostrar na loja” em Produtos salvos e cadastre as faixas de quantidade.</p></div></div>
+        <div class="orc-prop-link"><input type="text" readonly value="${esc(link)}" aria-label="Link da loja" id="lj-link"><button type="button" class="btn small" data-o="loja-copiar">Copiar</button></div>
+        <div class="orc-st-bts"><a class="btn small ghost" href="https://wa.me/?text=${msg}" target="_blank" rel="noopener">Enviar no WhatsApp</a><a class="btn small ghost" href="${esc(link)}" target="_blank" rel="noopener">Ver a loja</a></div>
+        <p class="note" style="margin:0">Dica: para saber de onde veio o cliente, acrescente <b>?origem=instagram</b> (ou outro nome) no fim do link. Aparece no CRM.</p>
+        <div class="tk-kpis orc-kpis">
+          ${k("money",brl(pagosMes.reduce((s,x)=>s+N(x.total),0)),"Vendido no mês",`${pagosMes.length} pedido${pagosMes.length===1?"":"s"} pago${pagosMes.length===1?"":"s"}`)}
+          ${k("",pedidos.filter(x=>x.status==="fechado").length,"Aguardando pagamento","")}
+          ${k(pedidos.filter(x=>x.status==="abandonado").length?"late":"",pedidos.filter(x=>x.status==="abandonado").length,"Carrinhos abandonados","vale chamar no WhatsApp")}
+          ${k("",pedidos.filter(x=>x.status==="carrinho").length,"Montando agora","")}
+        </div></section>
+      <section class="card">
+        <div class="tk-bar"><h3 style="margin:0">Pedidos e carrinhos</h3>
+          <div class="seg" role="group" aria-label="Filtrar pedidos">${[["todos","Todos"],["fechado","Aguardando pagamento"],["pago","Pagos"],["abandonado","Abandonados"],["carrinho","Carrinhos"]].map(([v,t])=>`<button type="button" data-l-f="${v}" aria-pressed="${filtroL===v}">${t}</button>`).join("")}</div></div>
+        <div class="lj-lista">${vis.map(x=>{const st=STL[x.status]||[x.status,""];const artes=(x.itens||[]).filter(i=>i.arquivo&&i.arquivo.caminho);
+          return `<article class="lj-ped"><div class="lj-ped-h"><div><b>${esc(x.empresa||x.nome)}</b><small>${esc([x.empresa?x.nome:"",x.telefone,x.email].filter(Boolean).join(" · "))}${x.origem?` · origem: ${esc(x.origem)}`:""}</small></div>
+              <div class="lj-ped-v"><b>${brl(x.total)}</b><span class="status ${st[1]}">${st[0]}</span></div></div>
+            <ul>${(x.itens||[]).map(i=>`<li>${esc(i.nome)} · ${N(i.qtd).toLocaleString("pt-BR")} ${esc(i.unidade||"")}${i.preco_tipo==="m2"&&i.largura?` · ${N(i.largura).toLocaleString("pt-BR")}×${N(i.altura).toLocaleString("pt-BR")} cm (${N(i.area_m2).toLocaleString("pt-BR",{maximumFractionDigits:2})} m²)`:""} <small>${i.arte==="tem"?"arte do cliente (revisar)":i.arte==="criar"?"criar a arte":"arte não escolhida"}</small></li>`).join("")}
+              ${x.identidade==="criar"?`<li>Criação de identidade visual</li>`:""}${x.entrega_tipo?`<li>${x.entrega_tipo==="entrega"?"Entrega":"Retirada"}${N(x.entrega_valor)?" · "+brl(x.entrega_valor):""}</li>`:""}</ul>
+            <div class="orc-st-bts"><small class="note">${x.status==="pago"&&x.pago_em?"Pago em "+dmy(String(x.pago_em).slice(0,10)):"Atualizado em "+dmy(String(x.atualizado_em).slice(0,10))}</small>
+              ${artes.map(i=>`<button type="button" class="btn small" data-o="arte-baixar" data-c="${esc(i.arquivo.caminho)}" data-n="${esc(i.arquivo.nome||"arte")}">Baixar arte: ${esc(i.arquivo.nome||"arquivo")}</button>`).join("")}
+              ${x.orcamento_id?`<button type="button" class="btn small ghost" data-o="ped-orc" data-id="${x.orcamento_id}">Ver pedido nº ${nro((orcs.find(o=>o.id===x.orcamento_id)||{}).numero)}</button>`:""}${wa(x)}</div></article>`}).join("")||`<div class="empty">Nenhum pedido ${filtroL==="todos"?"ainda. Mande o link da loja para os clientes":"neste filtro"}.</div>`}</div></section>
+      <form class="card orc-emp" id="loja-form">
+        <div class="head"><h2>Configurações da loja</h2></div>
+        <label class="check"><input type="checkbox" id="lj-ativa" ${e.loja_ativa!==false?"checked":""}> Loja aberta</label>
+        <div class="grid2">
+          <div><label class="label" for="lj-tit">Título</label><input type="text" id="lj-tit" value="${esc(e.loja_titulo||"Material gráfico")}"></div>
+          <div><label class="label" for="lj-idv">Valor da criação de identidade visual (R$)</label><input type="text" id="lj-idv" inputmode="decimal" value="${num(e.identidade_valor||0)}"></div>
+        </div>
+        <div><label class="label" for="lj-txt">Texto de abertura</label><textarea id="lj-txt" style="min-height:60px">${esc(e.loja_texto||"")}</textarea></div>
+        <div><label class="label" for="lj-idi">O que vem na identidade visual</label><input type="text" id="lj-idi" value="${esc(e.identidade_info||"")}"></div>
+        <p class="note" style="margin:0">Retirada, entrega e valor do frete ficam em <b>Dados no PDF</b>. O valor da arte é de cada produto. O cliente paga tudo de uma vez pelo Mercado Pago.</p>
+        <div class="actions"><button type="submit" class="btn primary">Salvar configurações</button></div></form>`;
+    }
+
+    /* ---------- cupons de desconto ---------- */
+    const cupomVale=c=>c.ativo&&(!c.valido_ate||c.valido_ate>=hojeISO())&&(c.usos_max==null||N(c.usos)<N(c.usos_max));
+    const ONDE={tudo:"Qualquer cobrança",loja:"Só pedidos da loja",orcamentos:"Orçamentos e propostas",mensalidades:"Só mensalidades"};
+    const cupomTxt=c=>c.tipo==="pct"?`${String(N(c.valor)).replace(".",",")}% de desconto`:`${brl(c.valor)} de desconto`;
+    const cupomMsg=c=>`Olá! Separei um cupom para você: *${c.codigo}* – ${cupomTxt(c)}${N(c.minimo)?` em compras a partir de ${brl(c.minimo)}`:""}${c.valido_ate?`, válido até ${dmy(c.valido_ate)}`:""}. É só digitar o código na hora do pagamento.${c.onde==="mensalidades"?"":` Monte seu pedido aqui: ${linkLoja()}`}`;
+    function cuponsHTML(){
+      if(!cupons)return `<div class="empty">Rode o arquivo 22 do banco no Supabase para criar cupons.</div>`;
+      return `<section class="card">
+        <div class="tk-bar"><div><h2 style="margin:0">Cupons de desconto</h2><p class="note" style="margin:4px 0 0">O cliente digita o código na tela de pagamento e o valor cai na hora. O desconto nunca deixa a cobrança abaixo do custo (impressão + entrega).</p></div>
+          <button type="button" class="btn small primary" data-o="cup-novo">${I.mais} Novo cupom</button></div>
+        <div class="cup-lista">${cupons.map(c=>{const v=cupomVale(c), m=encodeURIComponent(cupomMsg(c));
+          const motivo=!c.ativo?"Pausado":c.valido_ate&&c.valido_ate<hojeISO()?"Venceu":c.usos_max!=null&&N(c.usos)>=N(c.usos_max)?"Esgotado":"Ativo";
+          return `<article class="cup${v?"":" off"}"><div class="cup-h"><div><b class="cup-cod">${esc(c.codigo)}</b><span class="status ${v?"ok":"prod"}">${motivo}</span>
+              <small>${esc(cupomTxt(c))} · ${esc(ONDE[c.onde]||c.onde)}${N(c.minimo)?" · mínimo "+brl(c.minimo):""}${c.valido_ate?" · até "+dmy(c.valido_ate):" · sem validade"} · usado ${N(c.usos)}${c.usos_max!=null?" de "+c.usos_max:""} vez${N(c.usos)===1?"":"es"}${c.descricao?" · "+esc(c.descricao):""}</small></div>
+              <button type="button" class="btn small ghost" data-o="cup-editar" data-id="${c.id}">Editar</button></div>
+            ${v?`<div class="orc-st-bts"><button type="button" class="btn small" data-o="cup-copiar" data-id="${c.id}">${I.copia} Copiar mensagem</button>
+              <a class="btn small ghost" href="https://wa.me/?text=${m}" target="_blank" rel="noopener">Enviar no WhatsApp</a>
+              <a class="btn small ghost" href="mailto:?subject=${encodeURIComponent("Cupom de desconto: "+c.codigo)}&body=${m}">Enviar por e-mail</a>
+              ${nOfertas?`<button type="button" class="btn small ghost" data-o="cup-massa" data-id="${c.id}">E-mail para quem aceita ofertas (${nOfertas})</button>`:""}</div>`:""}</article>`}).join("")||`<div class="empty">Nenhum cupom ainda. Crie um e mande para os clientes.</div>`}</div>
+        <dialog class="tk-dlg" id="orc-dlg"></dialog></section>`;
+    }
+    function cupomForm(c){const novo=!c.id;
+      return `<form method="dialog" class="tk-form" id="cup-form">
+        <div class="head"><h2>${novo?"Novo cupom":"Editar cupom"}</h2><button type="button" class="tk-x" data-o="dlg-fechar" aria-label="Fechar">✕</button></div>
+        <div class="grid2">
+          <div><label class="label" for="cp-cod">Código</label><input type="text" id="cp-cod" maxlength="30" required value="${esc(c.codigo||"")}" placeholder="Ex.: BEMVINDO10" style="text-transform:uppercase"></div>
+          <div><label class="label" for="cp-desc">Descrição (só você vê)</label><input type="text" id="cp-desc" value="${esc(c.descricao||"")}" placeholder="Ex.: Campanha de novembro"></div>
+          <div><span class="label">Desconto</span><div class="orc-lucro"><input type="text" id="cp-val" inputmode="decimal" value="${c.valor!=null?String(c.valor).replace(".",","):""}" placeholder="10"><select id="cp-tipo" aria-label="Tipo de desconto"><option value="pct" ${(c.tipo||"pct")==="pct"?"selected":""}>%</option><option value="valor" ${c.tipo==="valor"?"selected":""}>R$</option></select></div></div>
+          <div><label class="label" for="cp-onde">Vale para</label><select id="cp-onde">${Object.entries(ONDE).map(([k,t])=>`<option value="${k}" ${(c.onde||"tudo")===k?"selected":""}>${t}</option>`).join("")}</select></div>
+          <div><label class="label" for="cp-ate">Válido até</label><input type="date" id="cp-ate" value="${esc(c.valido_ate||"")}"><small class="note">Vazio = sem validade</small></div>
+          <div><label class="label" for="cp-max">Limite de usos</label><input type="text" id="cp-max" inputmode="numeric" value="${c.usos_max??""}" placeholder="Vazio = sem limite"></div>
+          <div><label class="label" for="cp-min">Valor mínimo da cobrança (R$)</label><input type="text" id="cp-min" inputmode="decimal" value="${N(c.minimo)?num(c.minimo):""}" placeholder="0,00"></div>
+        </div>
+        <label class="check"><input type="checkbox" id="cp-ativo" ${c.ativo!==false?"checked":""}> Cupom ativo</label>
+        <div class="actions"><button type="submit" class="btn primary">${novo?"Criar cupom":"Salvar"}</button><button type="button" class="btn ghost" data-o="dlg-fechar">Cancelar</button>
+          ${novo?"":`<button type="button" class="btn danger small" data-o="cup-apagar" data-id="${c.id}" style="margin-left:auto">Apagar</button>`}</div></form>`}
 
     /* ---------- dados da empresa ---------- */
     function empresaHTML(){
@@ -132,8 +258,18 @@
           ${f("tel","WhatsApp / telefone",e.telefone,"(21) 90000-0000")}${f("email","E-mail",e.email,"contato@guxta.com.br")}
           ${f("site","Site ou Instagram",e.site,"@guxta")}${f("end","Cidade / endereço",e.endereco,"Duque de Caxias · RJ")}
           ${f("pix","Chave Pix",e.pix,"")}${f("val","Validade padrão (dias)",e.validade_dias??15,"15",'inputmode="numeric"')}
-          ${f("lucro","Lucro padrão para itens novos (%)",e.lucro_padrao??40,"40",'inputmode="decimal"')}
+          ${f("lucro","Lucro padrão para itens novos (%)",e.lucro_padrao??40,"40",'inputmode="decimal"')}${f("exp","Excluir orçamento sem pagamento após (dias)",e.orcamento_expira_dias??15,"15",'inputmode="numeric"')}
         </div>
+        <fieldset class="orc-fs"><legend>Retirada e entrega do material</legend>
+          <p class="note" style="margin:0">Na proposta online, o cliente preenche o cadastro e escolhe: retirar no seu endereço, sem custo, ou receber em casa, pagando o valor da entrega junto com o pedido.</p>
+          <div class="grid2">
+            ${f("ret","Endereço para retirada",e.retirada_endereco,"Rua, número, bairro · cidade")}${f("reti","Horário e instruções da retirada",e.retirada_info,"Seg a sex, 9h às 18h. Avise antes de vir.")}
+          </div>
+          <label class="check"><input type="checkbox" id="em-entr" ${e.entrega_ativa!==false?"checked":""}> Oferecer entrega no endereço do cliente</label>
+          <div class="grid2">
+            ${f("entv","Valor cobrado do cliente pela entrega (R$)",num(e.entrega_valor??0),"0,00",'inputmode="decimal"')}${f("entc","Quanto você paga pela entrega (R$)",e.entrega_custo!=null?num(e.entrega_custo):"","Vazio = o mesmo valor cobrado",'inputmode="decimal"')}${f("enti","Informação da entrega",e.entrega_info,"Ex.: Só Baixada Fluminense e Rio. Até 2 dias úteis após a produção.")}
+          </div>
+        </fieldset>
         <div><label class="label" for="em-cond">Condições de pagamento padrão</label><textarea id="em-cond" style="min-height:70px">${esc(e.condicoes||"")}</textarea></div>
         <div><label class="label" for="em-obs">Observações padrão (rodapé)</label><textarea id="em-obs" style="min-height:70px" placeholder="Ex.: Valores para arte já aprovada. Alterações após a aprovação da prova podem gerar custo.">${esc(e.observacoes||"")}</textarea></div>
         <div class="actions"><button type="submit" class="btn primary">Salvar dados</button></div></form>`;
@@ -157,13 +293,17 @@
           <button type="button" class="oi-rm" data-o="item-rm" aria-label="Remover produto ${k+1}">${I.lixo}</button>
         </div>
         <div class="oi-b">
-          <div><label class="label" for="oi-q${k}">Qtd</label><input type="text" id="oi-q${k}" data-f="qtd" inputmode="decimal" value="${String(N(i.qtd)).replace(".",",")}"></div>
+          <div><label class="label" for="oi-q${k}">Qtd${/m²|m2/i.test(i.unidade||"")?" (m²)":""}</label><input type="text" id="oi-q${k}" data-f="qtd" inputmode="decimal" value="${String(N(i.qtd)).replace(".",",")}"></div>
           <div><label class="label" for="oi-u${k}">Unidade</label><input type="text" id="oi-u${k}" data-f="unidade" list="orc-unid" value="${esc(i.unidade||"un")}"></div>
           <div><label class="label" for="oi-c${k}">Custo un.</label><input type="text" id="oi-c${k}" data-f="custo" inputmode="decimal" value="${num(i.custo)}"></div>
           <div><label class="label" for="oi-l${k}">Lucro</label><div class="orc-lucro"><input type="text" id="oi-l${k}" data-f="lucro" inputmode="decimal" value="${String(r2(i.lucro)).replace(".",",")}"><select data-f="lucro_tipo" aria-label="Tipo de lucro do produto ${k+1}"><option value="pct" ${i.lucro_tipo!=="valor"?"selected":""}>%</option><option value="valor" ${i.lucro_tipo==="valor"?"selected":""}>R$</option></select></div></div>
           <div><label class="label" for="oi-p${k}">Preço un.</label><input type="text" id="oi-p${k}" data-f="preco" inputmode="decimal" value="${num(i.preco)}" class="oi-preco"></div>
           <div class="oi-tot"><span class="label">Total</span><b data-tot>${brl(tot)}</b><small class="ok-txt" data-luc>+ ${brl(lucroItem)} de lucro</small></div>
-        </div></div>`;
+        </div>
+        <div class="oi-m2"${/m²|m2/i.test(i.unidade||"")?"":" hidden"}><span class="label">Calcular m²</span>
+          <input type="text" data-m2="l" inputmode="decimal" value="${i.largura?String(i.largura).replace(".",","):""}" placeholder="Largura (cm)" aria-label="Largura em cm"><span>×</span>
+          <input type="text" data-m2="a" inputmode="decimal" value="${i.altura?String(i.altura).replace(".",","):""}" placeholder="Altura (cm)" aria-label="Altura em cm"><span>×</span>
+          <input type="text" data-m2="q" inputmode="numeric" value="${i.pecas||""}" placeholder="Peças" aria-label="Quantidade de peças"><small class="note">preenche a Qtd em m²</small></div></div>`;
     }
     function resumoHTML(){
       const t=totais(atual.itens,atual.desconto), mg=t.total?t.lucro/t.total*100:0, sob=t.custo?t.lucro/t.custo*100:0;
@@ -211,9 +351,11 @@
             </fieldset>
             <fieldset class="orc-fs"><legend>Condições</legend>
               <div class="grid2">
-                <div><label class="label" for="oe-val">Válido até</label><input type="date" id="oe-val" value="${esc(o.validade||"")}"></div>
+                <div><label class="label" for="oe-val">Válido até</label><input type="date" id="oe-val" value="${esc(o.validade||"")}">${expiraEm(o)?`<small class="note">Sem pagamento, é excluído sozinho em ${dmy(expiraEm(o))}.</small>`:""}</div>
                 <div><label class="label" for="oe-prazo">Prazo de entrega</label><input type="text" id="oe-prazo" value="${esc(o.prazo_entrega||"")}" placeholder="Ex.: 5 dias úteis após a aprovação da arte"></div>
               </div>
+              <label class="check"><input type="checkbox" id="oe-entrega" ${o.tem_entrega!==false?"checked":""}> Tem material para retirar ou entregar (o cliente escolhe na proposta)</label>
+              ${o.entrega_tipo?`<p class="note orc-entrega">${o.entrega_tipo==="retirada"?"📦 O cliente vai <b>retirar</b> no seu endereço.":`🚚 <b>Entrega</b> (${brl(o.entrega_valor)}): ${esc(endTxt(o.entrega_endereco))}`}</p>`:""}
               <div><label class="label" for="oe-cond">Condições de pagamento</label><textarea id="oe-cond" style="min-height:64px">${esc(o.condicoes||"")}</textarea></div>
               <div><label class="label" for="oe-obs">Observações</label><textarea id="oe-obs" style="min-height:64px">${esc(o.observacoes||"")}</textarea></div>
             </fieldset>
@@ -241,10 +383,11 @@
     /* ---------- proposta online: link para o cliente aceitar e assinar ---------- */
     const linkProposta=o=>o.token?new URL("proposta.html?t="+o.token,location.href).href:"";
     const quando=iso=>{if(!iso)return"";const d=new Date(iso);return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})+" às "+d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})};
+    const endTxt=a=>{a=a||{};const c=String(a.cep||"");return [[a.rua,a.numero].filter(Boolean).join(", "),a.complemento,a.bairro,[a.cidade,a.uf].filter(Boolean).join("/"),c?"CEP "+c.slice(0,5)+"-"+c.slice(5):"",a.referencia?"ref.: "+a.referencia:""].filter(Boolean).join(" · ")};
     function propostaHTML(o){
       const a=o.assinatura||{}, link=linkProposta(o);
       if(!o.token)return `<div class="orc-prop"><b>Proposta online</b><p class="note">Rode o arquivo 13 do banco no Supabase para liberar o link de assinatura.</p></div>`;
-      if(o.status==="rascunho")return `<div class="orc-prop"><b>Proposta online</b><p class="note">O cliente abre o link, aceita, preenche os dados e assina. Ao assinar, o orçamento fica aprovado e a entrada vai para o financeiro.</p>
+      if(o.status==="rascunho")return `<div class="orc-prop"><b>Proposta online</b><p class="note">O cliente abre o link, aceita, preenche o cadastro, escolhe retirada ou entrega, assina e paga o valor integral pelo Mercado Pago (Pix, cartão ou boleto). A cobrança vai sozinha para o financeiro e a baixa é automática.</p>
         <button type="button" class="btn small" data-o="prop-gerar">Gerar link da proposta</button></div>`;
       const fone=window.GlaraCRM&&window.GlaraCRM.foneWa?window.GlaraCRM.foneWa(o.cliente_contato):"";
       const msg=encodeURIComponent(`Olá${o.cliente_nome?", "+o.cliente_nome.split(" ")[0]:""}! Segue a proposta Nº ${nro(o.numero)}${o.titulo?" ("+o.titulo+")":""}. Você pode ver, aceitar e assinar por aqui: ${link}`);
@@ -258,7 +401,7 @@
     function render(){
       const listas=`<datalist id="orc-prods">${produtos.map(p=>`<option value="${esc(p.nome)}">${esc(p.descricao||"")} · ${brl(p.preco)}</option>`).join("")}</datalist><datalist id="orc-unid">${UNID.map(u=>`<option value="${u}">`).join("")}</datalist>`;
       if(sub==="editor"&&atual){el.innerHTML=editorHTML()+listas;return}
-      el.innerHTML=topoHTML()+(sub==="produtos"?produtosHTML():sub==="empresa"?empresaHTML():listaHTML()+`<dialog class="tk-dlg" id="orc-dlg"></dialog>`)+listas;
+      el.innerHTML=topoHTML()+(sub==="produtos"?produtosHTML():sub==="empresa"?empresaHTML():sub==="loja"?lojaHTML():sub==="cupons"?cuponsHTML():listaHTML()+`<dialog class="tk-dlg" id="orc-dlg"></dialog>`)+listas;
     }
 
     /* lê e recalcula um item a partir do que foi digitado */
@@ -291,7 +434,7 @@
     function lerCabecalho(){
       const v=s=>{const x=el.querySelector(s);return x?x.value:""};
       Object.assign(atual,{cliente_id:v("#oe-cli")||null,cliente_nome:v("#oe-nome").trim(),cliente_contato:v("#oe-cont").trim(),titulo:v("#oe-tit").trim(),
-        validade:v("#oe-val")||null,prazo_entrega:v("#oe-prazo").trim(),condicoes:v("#oe-cond").trim(),observacoes:v("#oe-obs").trim(),desconto:r2(parseNum(v("#oe-desc")))});
+        validade:v("#oe-val")||null,prazo_entrega:v("#oe-prazo").trim(),condicoes:v("#oe-cond").trim(),observacoes:v("#oe-obs").trim(),desconto:r2(parseNum(v("#oe-desc"))),tem_entrega:!!(el.querySelector("#oe-entrega")||{checked:true}).checked});
       if(atual.cliente_id&&!atual.cliente_nome){const c=clientes().find(x=>x.id===atual.cliente_id);if(c)atual.cliente_nome=c.nome}
     }
     async function guardarCatalogo(itens){
@@ -321,7 +464,7 @@
       if(salvarCatalogo)cat=await guardarCatalogo(itens);
       atual.itens=itens.map(i=>({produto_id:i.produto_id||null,nome:String(i.nome||"").trim(),descricao:i.descricao||"",unidade:i.unidade||"un",qtd:N(i.qtd),custo:r2(i.custo),lucro_tipo:i.lucro_tipo==="valor"?"valor":"pct",lucro:r2(i.lucro),preco:r2(i.preco)}));
       const campos={contato_id:atual.contato_id||null,cliente_id:atual.cliente_id,cliente_nome:atual.cliente_nome,cliente_contato:atual.cliente_contato,titulo:atual.titulo,itens:atual.itens,desconto:atual.desconto,
-        validade:atual.validade,prazo_entrega:atual.prazo_entrega,condicoes:atual.condicoes,observacoes:atual.observacoes,status:atual.status};
+        validade:atual.validade,prazo_entrega:atual.prazo_entrega,condicoes:atual.condicoes,observacoes:atual.observacoes,status:atual.status,tem_entrega:atual.tem_entrega!==false};
       const q=atual.id?sb.from("orcamentos").update(campos).eq("id",atual.id):sb.from("orcamentos").insert(campos);
       const {data,error}=await q.select().single();
       if(error){falha("salvar o orçamento",error);return null}
@@ -345,18 +488,12 @@
       return `<form method="dialog" class="tk-form" id="lanc-form">
         <div class="head"><h2>Lançar no financeiro</h2><button type="button" class="tk-x" data-o="dlg-fechar" aria-label="Fechar">✕</button></div>
         <p class="note" style="margin:0">Orçamento Nº ${nro(o.numero)} · ${esc(nomeCli(o))} · total <b>${brl(t.total)}</b>, custo ${brl(t.custo)}, lucro <b class="ok-txt">${brl(t.lucro)}</b>.</p>
-        <div><span class="label">Como o cliente vai pagar?</span>
-          <div class="seg" role="radiogroup" aria-label="Forma de pagamento" id="lf-modo">
-            <button type="button" data-modo="1" aria-pressed="false">À vista</button>
-            <button type="button" data-modo="2" aria-pressed="true">50% + 50%</button>
-            <button type="button" data-modo="n" aria-pressed="false">Parcelado</button></div></div>
+        <p class="note" style="margin:0">Pagamento integral${N(o.entrega_valor)?`, com a entrega (${brl(o.entrega_valor)})`:""}. Se ainda não pagou, ele recebe o link e paga pelo Mercado Pago (Pix, cartão ou boleto), com baixa automática.</p>
         <div class="grid2">
-          <div id="lf-n-box" hidden><label class="label" for="lf-n">Parcelas</label><input id="lf-n" type="number" min="2" max="24" value="3"></div>
-          <div><label class="label" for="lf-data">Primeiro pagamento</label><input type="date" id="lf-data" value="${h}"></div>
-          <div><label class="label" for="lf-forma">Forma</label><input type="text" id="lf-forma" list="fin-formas" value="Pix"></div>
-          <div><label class="label" for="lf-int">Intervalo entre parcelas (dias)</label><input id="lf-int" type="number" min="1" value="30"></div>
+          <div><label class="label" for="lf-data">Vencimento</label><input type="date" id="lf-data" value="${h}"></div>
+          <div><label class="label" for="lf-forma">Forma (se já pagou)</label><input type="text" id="lf-forma" list="fin-formas" value=""></div>
         </div>
-        <label class="check"><input type="checkbox" id="lf-pago" checked> O primeiro pagamento já entrou</label>
+        <label class="check"><input type="checkbox" id="lf-pago"> O cliente já pagou</label>
         <fieldset class="orc-fs"><legend>Pagamento à gráfica / fornecedor (saída)</legend>
           <label class="check"><input type="checkbox" id="lf-saida" ${t.custo>0?"checked":""}> Lançar também a saída do custo (${brl(t.custo)})</label>
           <div class="grid2"><div><label class="label" for="lf-sdata">Data</label><input type="date" id="lf-sdata" value="${h}"></div>
@@ -368,18 +505,15 @@
         <div class="actions"><button type="submit" class="btn primary" data-o="lancar-ok">Lançar</button><button type="button" class="btn ghost" data-o="dlg-fechar">Cancelar</button></div></form>`;
     }
     function parcelas(){
-      const d=el.querySelector("#lanc-form");const modo=(d.querySelector("#lf-modo [aria-pressed=true]")||{}).dataset?.modo||"1";
-      const n=modo==="1"?1:modo==="2"?2:Math.max(2,Math.min(24,parseInt(d.querySelector("#lf-n").value)||2));
-      const t=totais(atual.itens,atual.desconto), base=Math.floor(t.total/n*100)/100, baseC=Math.floor(t.custo/n*100)/100, int_=parseInt(d.querySelector("#lf-int").value)||30;
-      const ini=d.querySelector("#lf-data").value||hojeISO();
-      return Array.from({length:n},(_,k)=>({k,valor:k===n-1?r2(t.total-base*(n-1)):base,custo:k===n-1?r2(t.custo-baseC*(n-1)):baseC,data:somaDias(ini,k*int_)}));
+      const d=el.querySelector("#lanc-form"), t=totais(atual.itens,atual.desconto);
+      return [{k:0,valor:r2(t.total+N(atual.entrega_valor)),custo:t.custo,data:d.querySelector("#lf-data").value||hojeISO()}];
     }
-    function prevLanc(){const ps=parcelas();el.querySelector("#lf-prev").innerHTML=ps.map(p=>`${p.k+1}ª: <b>${brl(p.valor)}</b> em ${dmy(p.data)} <span class="note">(lucro ${brl(p.valor-p.custo)})</span>`).join("<br>")}
+    function prevLanc(){const ps=parcelas();el.querySelector("#lf-prev").innerHTML=ps.map(p=>`Cobrança: <b>${brl(p.valor)}</b> com vencimento em ${dmy(p.data)} <span class="note">(impressão ${brl(p.custo)}${N(atual.entrega_valor)?` · entrega ${brl(empresa.entrega_custo!=null?N(empresa.entrega_custo):N(atual.entrega_valor))}`:""} · lucro ${brl(p.valor-p.custo-(N(atual.entrega_valor)?(empresa.entrega_custo!=null?N(empresa.entrega_custo):N(atual.entrega_valor)):0))})</span>`).join("<br>")}
     async function lancar(){
       const d=el.querySelector("#lanc-form"), o=atual, t=totais(o.itens,o.desconto), ps=parcelas(), n=ps.length;
       const forma=d.querySelector("#lf-forma").value.trim(), pago1=d.querySelector("#lf-pago").checked;
       const base={tipo:"entrada",categoria:"Materiais gráficos",forma,cliente_id:o.cliente_id,cliente_nome:nomeCli(o),orcamento_id:o.id};
-      const rows=ps.map(p=>({...base,descricao:`Orçamento Nº ${nro(o.numero)}${o.titulo?" · "+o.titulo:""}${n>1?` (${p.k+1}/${n})`:""}`,valor:p.valor,custo:p.custo,data:p.data,status:p.k===0&&pago1?"pago":"previsto"}));
+      const rows=ps.map(p=>({...base,custo_entrega:N(o.entrega_valor)?Math.min(empresa.entrega_custo!=null?N(empresa.entrega_custo):N(o.entrega_valor),r2(p.valor-p.custo)):0,descricao:`Orçamento Nº ${nro(o.numero)}${o.titulo?" · "+o.titulo:""}${N(o.entrega_valor)?" + entrega":""}`,valor:p.valor,custo:p.custo,data:p.data,status:p.k===0&&pago1?"pago":"previsto"}));
       if(d.querySelector("#lf-saida").checked&&t.custo>0)rows.push({tipo:"saida",categoria:"Gráfica / fornecedor",descricao:`${d.querySelector("#lf-sforn").value.trim()||"Gráfica"} · orçamento Nº ${nro(o.numero)}`,
         valor:t.custo,custo:0,data:d.querySelector("#lf-sdata").value||hojeISO(),status:d.querySelector("#lf-spago").checked?"pago":"previsto",forma:"",cliente_id:o.cliente_id,cliente_nome:nomeCli(o),orcamento_id:o.id});
       const {error}=await sb.from("lancamentos").insert(rows);
@@ -397,9 +531,11 @@
     el.addEventListener("click",async e=>{
       const sb_=e.target.closest("[data-o-sub]");if(sb_){sub=sb_.dataset.oSub;render();return}
       const f=e.target.closest("[data-o-f]");if(f){filtro=f.dataset.oF;render();return}
+      if(e.target.closest("#pf-ptipo [data-ptipo]")){const bt=e.target.closest("[data-ptipo]");el.querySelectorAll("#pf-ptipo button").forEach(x=>x.setAttribute("aria-pressed",String(x===bt)));
+        if(bt.dataset.ptipo==="m2"){const u=el.querySelector("#pf-un");if(u&&!/m/i.test(u.value))u.value="m²"}pfTipoAplica();calcProdForm();return}
+      const lf=e.target.closest("[data-l-f]");if(lf){filtroL=lf.dataset.lF;render();return}
       const row=e.target.closest("[data-o-id]");if(row){const o=orcs.find(x=>x.id===row.dataset.oId);if(o)abrir(o);return}
-      const pr=e.target.closest("[data-p-id]");if(pr){prodEd=produtos.find(x=>x.id===pr.dataset.pId);abrirDlg(prodForm(prodEd));calcProdForm();return}
-      const md=e.target.closest("#lf-modo [data-modo]");if(md){el.querySelectorAll("#lf-modo button").forEach(b=>b.setAttribute("aria-pressed",String(b===md)));el.querySelector("#lf-n-box").hidden=md.dataset.modo!=="n";prevLanc();return}
+      const pr=e.target.closest("[data-p-id]");if(pr){prodEd=produtos.find(x=>x.id===pr.dataset.pId);abrirDlg(prodForm(prodEd));pfTipoAplica();calcProdForm();return}
       const b=e.target.closest("[data-o]");if(!b)return;
       const a=b.dataset.o;
       if(a==="novo")return novo();
@@ -421,11 +557,31 @@
         const {error}=await sb.from("orcamentos").delete().eq("id",atual.id);if(error)return falha("apagar",error);
         orcs=orcs.filter(x=>x.id!==atual.id);atual=null;sub="lista";render();toast("Orçamento apagado.");ctx.mudou&&ctx.mudou();return}
       if(a==="dlg-fechar"){fecharDlg();return}
-      if(a==="prod-novo"){prodEd={};abrirDlg(prodForm(prodEd));calcProdForm();return}
+      if(a==="cup-novo"){cupEd={};abrirDlg(cupomForm(cupEd));setTimeout(()=>{const i=el.querySelector("#cp-cod");i&&i.focus()},30);return}
+      if(a==="cup-editar"){cupEd=cupons.find(x=>x.id===b.dataset.id)||{};abrirDlg(cupomForm(cupEd));return}
+      if(a==="cup-copiar"){const c=cupons.find(x=>x.id===b.dataset.id);try{await navigator.clipboard.writeText(cupomMsg(c).replace(/\*/g,""))}catch(_){}toast("Mensagem copiada. Cole no WhatsApp, e-mail ou Instagram.");return}
+      if(a==="cup-massa"){const c=cupons.find(x=>x.id===b.dataset.id);if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent=`Confirmar: mandar para ${nOfertas} contato${nOfertas===1?"":"s"}`;return}
+        b.disabled=true;const texto=`Olá, {nome}! Separamos um cupom para você: {cupom} – ${cupomTxt(c)}${N(c.minimo)?` em compras a partir de ${brl(c.minimo)}`:""}${c.valido_ate?`, válido até ${dmy(c.valido_ate)}`:""}. É só digitar o código na hora do pagamento.`;
+        const {data,error}=await sb.rpc("cupom_enviar_ofertas",{p_cupom:c.id,p_assunto:`Cupom ${c.codigo}: ${cupomTxt(c)}`,p_texto:texto});
+        if(error){b.disabled=false;return falha("enviar os e-mails",error)}toast(`${data.enviados} e-mail${data.enviados===1?"":"s"} na fila. Saem pelo Resend nos próximos minutos (se o envio de e-mails estiver ligado em Avisos e lembretes).`);render();return}
+      if(a==="cup-apagar"){if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Clique de novo para apagar";return}
+        const {error}=await sb.from("cupons").delete().eq("id",b.dataset.id);if(error)return falha("apagar o cupom",error);cupons=cupons.filter(x=>x.id!==b.dataset.id);fecharDlg();render();toast("Cupom apagado.");return}
+      if(a==="fx-add"){const l=el.querySelector("#pf-faixas");l.insertAdjacentHTML("beforeend",fxRow({qtd:"",custo:""}));l.lastElementChild.querySelector("input").focus();return}
+      if(a==="fx-rm"){const r=b.closest(".fx-row");if(el.querySelectorAll("#pf-faixas .fx-row").length>1)r.remove();else r.querySelectorAll("input").forEach(i=>i.value="");calcProdForm();return}
+      if(a==="foto-tira"){el.querySelector("#pf-foto").value="";const im=el.querySelector("#pf-foto-img");im.outerHTML=`<span class="pf-foto-vazia" id="pf-foto-img">Sem foto</span>`;b.remove();return}
+      if(a==="loja-copiar"){const v=linkLoja();try{await navigator.clipboard.writeText(v)}catch(_){const i=el.querySelector("#lj-link");i&&i.select();try{document.execCommand("copy")}catch(__){}}toast("Link da loja copiado.");return}
+      if(a==="arte-baixar"){const {data,error}=await sb.storage.from("loja-artes").createSignedUrl(b.dataset.c,600,{download:b.dataset.n||true});
+        if(error||!data)return falha("abrir a arte",error||{});const l=document.createElement("a");l.href=data.signedUrl;l.target="_blank";l.rel="noopener";document.body.appendChild(l);l.click();l.remove();return}
+      if(a==="ped-orc"){const o=orcs.find(x=>x.id===b.dataset.id);if(o)abrir(o);return}
+      if(a==="prod-novo"){prodEd={};abrirDlg(prodForm(prodEd));pfTipoAplica();calcProdForm();return}
       if(a==="prod-salvar"){e.preventDefault();
         const v=s=>el.querySelector(s).value, nome=v("#pf-nome").trim();if(!nome){toast("Dê um nome ao produto.");return}
         const dup=produtos.find(p=>p.nome.toLowerCase()===nome.toLowerCase()&&p.id!==prodEd.id);if(dup){toast("Já existe um produto com esse nome.");return}
-        const campos={nome,descricao:v("#pf-desc").trim(),unidade:v("#pf-un").trim()||"un",fornecedor:v("#pf-forn").trim(),custo:r2(parseNum(v("#pf-custo"))),lucro_tipo:v("#pf-tipo"),lucro:r2(parseNum(v("#pf-lucro")))};
+        const campos={nome,descricao:v("#pf-desc").trim(),unidade:v("#pf-un").trim()||"un",fornecedor:v("#pf-forn").trim(),custo:r2(parseNum(v("#pf-custo"))),lucro_tipo:v("#pf-tipo"),lucro:r2(parseNum(v("#pf-lucro"))),
+          na_loja:el.querySelector("#pf-loja").checked,preco_tipo:pfTipo(),area_min:Math.max(0,parseNum(v("#pf-amin"))),categoria:v("#pf-cat").trim()||"Gráfica",prazo:v("#pf-prazo").trim(),arte_valor:Math.max(0,r2(parseNum(v("#pf-arte")))),foto:v("#pf-foto"),faixas:lerFaixas()};
+        if(campos.preco_tipo==="m2"&&!/m/i.test(campos.unidade))campos.unidade="m²";
+        if(campos.na_loja&&campos.preco_tipo==="faixas"&&!campos.faixas.length){toast("Para mostrar na loja, cadastre pelo menos uma faixa de quantidade com custo.");return}
+        if(campos.na_loja&&campos.preco_tipo==="m2"&&!(campos.custo>0)){toast("Informe o custo do m² para mostrar na loja.");return}
         const q=prodEd.id?sb.from("produtos").update(campos).eq("id",prodEd.id):sb.from("produtos").insert(campos);
         const {data,error}=await q.select().single();if(error)return falha("salvar o produto",error);
         const i=produtos.findIndex(x=>x.id===data.id);if(i>=0)produtos[i]=data;else produtos.push(data);produtos.sort((x,y)=>x.nome.localeCompare(y.nome));
@@ -440,6 +596,12 @@
       if(t.id==="prod-busca"){buscaP=t.value;const l=el.querySelector(".orc-lista");const tmp=document.createElement("div");tmp.innerHTML=produtosHTML();l.replaceWith(tmp.querySelector(".orc-lista"));return}
       if(t.closest("#prod-form")){calcProdForm();return}
       if(t.closest("#lanc-form")){prevLanc();return}
+      if(t.dataset.m2){const d=t.closest(".oi"),k=+d.dataset.k,it=atual.itens[k],g=x=>parseNum(d.querySelector(`[data-m2="${x}"]`).value);
+        it.largura=g("l");it.altura=g("a");it.pecas=Math.max(0,Math.round(g("q")));
+        if(it.largura&&it.altura&&it.pecas){const q=Math.round(it.largura*it.altura/10000*it.pecas*10000)/10000;d.querySelector('[data-f="qtd"]').value=String(q).replace(".",",");
+          {const de=d.querySelector('[data-f="descricao"]'), resto=de.value.replace(/^[\d.,]+×[\d.,]+ cm · \d+ peças?( · )?/,"");de.value=`${String(it.largura).replace(".",",")}×${String(it.altura).replace(".",",")} cm · ${it.pecas} peça${it.pecas>1?"s":""}`+(resto?" · "+resto:"")}
+          lerItem(d,"qtd")}sujo=true;return}
+      if(t.dataset.f==="unidade"){const d=t.closest(".oi");const h=d&&d.querySelector(".oi-m2");if(h)h.hidden=!/m²|m2/i.test(t.value)}
       const div=t.closest(".oi");if(div&&t.dataset.f){if(t.dataset.f==="nome"){const k=+div.dataset.k;atual.itens[k].nome=t.value;
           const p=produtos.find(x=>x.nome.toLowerCase()===t.value.trim().toLowerCase());if(p&&atual.itens[k].produto_id!==p.id&&!N(atual.itens[k].custo)){aplicarProduto(k,p);const i=el.querySelector(`#oi-n${k}`);if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}return}
           if(atual.itens[k].produto_id&&!(produtos.find(x=>x.id===atual.itens[k].produto_id)||{}).nome?.toLowerCase().startsWith(t.value.trim().toLowerCase()))atual.itens[k].produto_id=null;
@@ -448,8 +610,13 @@
       if(t.id==="oe-desc"){atual.desconto=r2(parseNum(t.value));sujo=true;atualizarResumo();return}
       if(t.closest(".orc-ed"))sujo=true;
     });
-    el.addEventListener("change",e=>{
+    el.addEventListener("change",async e=>{
       const t=e.target;
+      if(t.id==="pf-foto-arq"&&t.files&&t.files[0]){const f=t.files[0];if(f.size>5*1024*1024){toast("A foto passa de 5 MB. Use uma menor.");return}
+        const nome=f.name.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^\w.\-]+/g,"_").slice(-60), caminho=`produtos/${Date.now()}-${nome}`;
+        toast("Enviando a foto…");const {error}=await sb.storage.from("loja").upload(caminho,f,{upsert:false,contentType:f.type});
+        if(error)return falha("enviar a foto",error);const url=sb.storage.from("loja").getPublicUrl(caminho).data.publicUrl;
+        el.querySelector("#pf-foto").value=url;const im=el.querySelector("#pf-foto-img");im.outerHTML=`<img src="${esc(url)}" alt="" id="pf-foto-img">`;toast("Foto pronta. Clique em Salvar.");return}
       if(t.id==="oe-docat"&&t.value){const p=produtos.find(x=>x.id===t.value);if(p){lerCabecalho();let k=atual.itens.findIndex(i=>!String(i.nome||"").trim()&&!N(i.preco));
         if(k<0){atual.itens.push(itemVazio());k=atual.itens.length-1;el.querySelector("#orc-itens").insertAdjacentHTML("beforeend",itemHTML(atual.itens[k],k))}aplicarProduto(k,p)}t.value="";return}
       if(t.id==="oe-salvacat"){salvarCatalogo=t.checked;return}
@@ -465,9 +632,24 @@
       e.preventDefault();
       if(e.target.id==="emp-form"){const v=s=>el.querySelector(s).value.trim();
         const campos={id:1,nome:v("#em-nome")||"GUXTA",documento:v("#em-doc"),telefone:v("#em-tel"),email:v("#em-email"),site:v("#em-site"),endereco:v("#em-end"),pix:v("#em-pix"),
-          validade_dias:Math.max(1,parseInt(v("#em-val"))||15),lucro_padrao:r2(parseNum(v("#em-lucro"))),condicoes:v("#em-cond"),observacoes:v("#em-obs")};
+          validade_dias:Math.max(1,parseInt(v("#em-val"))||15),orcamento_expira_dias:Math.max(0,parseInt(v("#em-exp"))||0),lucro_padrao:r2(parseNum(v("#em-lucro"))),condicoes:v("#em-cond"),observacoes:v("#em-obs"),
+          retirada_endereco:v("#em-ret"),retirada_info:v("#em-reti"),entrega_ativa:el.querySelector("#em-entr").checked,entrega_valor:Math.max(0,r2(parseNum(v("#em-entv")))),entrega_custo:v("#em-entc")?Math.max(0,r2(parseNum(v("#em-entc")))):null,entrega_info:v("#em-enti")};
         const {data,error}=await sb.from("empresa").upsert(campos).select().single();if(error)return falha("salvar os dados",error);
         empresa=data;toast("Dados do PDF salvos.");return}
+      if(e.target.id==="cup-form"){const v=s=>el.querySelector(s).value.trim();
+        const campos={codigo:v("#cp-cod").toUpperCase().replace(/\s/g,""),descricao:v("#cp-desc"),tipo:v("#cp-tipo"),valor:r2(parseNum(v("#cp-val"))),onde:v("#cp-onde"),
+          valido_ate:v("#cp-ate")||null,usos_max:v("#cp-max")?Math.max(1,parseInt(v("#cp-max"))||1):null,minimo:Math.max(0,r2(parseNum(v("#cp-min")))),ativo:el.querySelector("#cp-ativo").checked};
+        if(campos.codigo.length<3){toast("O código precisa ter pelo menos 3 letras ou números.");return}
+        if(!(campos.valor>0)){toast("Informe o valor do desconto.");return}if(campos.tipo==="pct"&&campos.valor>100){toast("Percentual até 100%.");return}
+        if(cupons.some(x=>x.codigo===campos.codigo&&x.id!==cupEd.id)){toast("Já existe um cupom com esse código.");return}
+        const q=cupEd.id?sb.from("cupons").update(campos).eq("id",cupEd.id):sb.from("cupons").insert(campos);
+        const {data,error}=await q.select().single();if(error)return falha("salvar o cupom",error);
+        const i=cupons.findIndex(x=>x.id===data.id);if(i>=0)cupons[i]=data;else cupons.unshift(data);fecharDlg();render();toast(cupEd.id?"Cupom salvo.":"Cupom criado. Agora é só mandar.");return}
+      if(e.target.id==="loja-form"){const v=s=>el.querySelector(s).value;
+        const campos={loja_ativa:el.querySelector("#lj-ativa").checked,loja_titulo:v("#lj-tit").trim()||"Material gráfico",loja_texto:v("#lj-txt").trim(),
+          identidade_valor:Math.max(0,r2(parseNum(v("#lj-idv")))),identidade_info:v("#lj-idi").trim()};
+        const {data,error}=await sb.from("empresa").update(campos).eq("id",1).select().single();if(error)return falha("salvar a loja",error);
+        empresa=data;toast("Loja salva.");render();return}
       if(e.target.id==="prod-form"){el.querySelector('[data-o="prod-salvar"]').click();return}
       if(e.target.id==="lanc-form"){lancar();return}
     });

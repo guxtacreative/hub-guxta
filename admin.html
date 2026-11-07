@@ -233,7 +233,8 @@
   $("#btn-orcamentos").addEventListener("click",()=>abrirOrcamentos());
   $("#btn-crm").addEventListener("click",()=>{vista="crm";renderClientes();
     $("#main").innerHTML=`<div id="crm-root" class="list"></div>`;
-    window.GlaraCRM.criar($("#crm-root"),sb,{toast,falha,cfg,clientes:()=>clientes,mudou:carregarAlertas,
+    const ab_=crmAbrir;crmAbrir=null;
+    window.GlaraCRM.criar($("#crm-root"),sb,{toast,falha,cfg,clientes:()=>clientes,mudou:carregarAlertas,abrirId:ab_,
       novoOrcamento:c=>abrirOrcamentos({prefill:c}),abrirOrcamento:id=>abrirOrcamentos({abrirId:id}),
       criarCliente:async nome=>{const {data,error}=await sb.from("clientes").insert({nome}).select().single();if(error){falha("criar o cliente",error);return null}
         clientes.push(data);clientes.sort((a,b)=>a.nome.localeCompare(b.nome));renderClientes();return data}});
@@ -247,10 +248,12 @@
   function abrirAvisos(){vista="avisos";renderClientes();
     $("#main").innerHTML=`<div id="av-root" class="list"></div>`;
     window.GlaraAvisos.criar($("#av-root"),sb,{toast,falha,clientes:()=>clientes,ir:irDestino,mudou:()=>carregarAlertas()});rolarMain()}
+  let crmAbrir=null;
   function irDestino(d){d=d||{};
     if(d.vista==="avisos")return abrirAvisos();
     if(d.vista==="orcamentos")return abrirOrcamentos(d.orcamento?{abrirId:d.orcamento}:null);
     if(d.vista==="financeiro"){finAbrir=d.lancamento||null;$("#btn-financeiro").click();return}
+    if(d.vista==="crm"){crmAbrir=d.contato||null;$("#btn-crm").click();return}
     if(d.cliente&&clientes.find(c=>c.id===d.cliente)){
       if(d.ciclo)cicloAtual={id:d.ciclo};aba=d.aba||"posts";vista="cliente";
       abrirCliente(d.cliente).then(()=>{if(d.config){const det=$("#cl-config");if(det){det.open=true;const w=$("#cl-wa");if(w){w.focus();w.scrollIntoView({block:"center"})}}}});

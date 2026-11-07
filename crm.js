@@ -19,7 +19,7 @@
   const ORIGENS=["Instagram","WhatsApp","Indicação","Anúncio","Site","Google","Evento","Cliente antigo","Outro"];
   const INTERESSES=["Social media","Identidade visual","Site","Tráfego pago","Materiais gráficos","Vídeo","Consultoria","Plano mensal"];
   const PERDAS=["Preço","Fechou com outro","Sem resposta","Adiou o projeto","Não era o perfil"];
-  const TIPOS={nota:"Nota",whatsapp:"WhatsApp",ligacao:"Ligação",reuniao:"Reunião",email:"E-mail",etapa:"Etapa",orcamento:"Orçamento"};
+  const TIPOS={nota:"Nota",whatsapp:"WhatsApp",ligacao:"Ligação",reuniao:"Reunião",email:"E-mail",etapa:"Etapa",orcamento:"Orçamento",carrinho:"Loja",compra:"Compra"};
   const ic=p=>`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
   const I={mais:ic('<path d="M12 5v14M5 12h14"/>'),wa:`<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.8-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>`,
     orc:ic('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>'),cli:ic('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>'),
@@ -29,7 +29,7 @@
   const foneWa=t=>{let d=String(t||"").replace(/\D/g,"");if(!d)return "";if(d.startsWith("00"))d=d.slice(2);if(d.length===10||d.length===11)d="55"+d;return d.length>=12?d:""};
 
   function criar(el,sb,ctx){
-    let C=[], eventos={}, orcsDe={}, vista="funil", busca="", origemF="", soAcao=false, ed=null, arrastando=null;
+    let C=[], eventos={}, orcsDe={}, vista="funil", busca="", origemF="", soAcao=false, soOfertas=false, ed=null, arrastando=null;
     const toast=ctx.toast||(m=>console.log(m)), falha=ctx.falha||((a,e)=>toast("Não deu para "+a+"."));
     const cfg=ctx.cfg||{}, eu=(cfg.nomeAdmin||"Gustavo"), marca=(cfg.marca||"GUXTA");
     const clientes=()=>(ctx.clientes&&ctx.clientes())||[];
@@ -48,12 +48,13 @@
       const a=await sb.from("contatos").select("*").order("atualizado_em",{ascending:false});
       if(a.error){el.innerHTML=`<div class="empty">Não consegui carregar o CRM. ${/contatos/.test(a.error.message||"")?"Rode o arquivo 09 do banco no Supabase.":esc(a.error.message)}</div>`;return}
       C=a.data||[];render();
+      if(ctx.abrirId){const c=C.find(x=>x.id===ctx.abrirId);ctx.abrirId=null;if(c)abrir(c)}
     }
     const aberto=c=>c.etapa!=="fechado"&&c.etapa!=="perdido";
     const atrasada=c=>aberto(c)&&c.proxima_data&&c.proxima_data<hojeISO();
     const hoje_=c=>aberto(c)&&c.proxima_data===hojeISO();
     function filtrados(){const q=busca.trim().toLowerCase();
-      return C.filter(c=>(!origemF||c.origem===origemF)&&(!soAcao||(aberto(c)&&c.proxima_data&&c.proxima_data<=hojeISO()))&&
+      return C.filter(c=>(!origemF||c.origem===origemF)&&(!soOfertas||c.aceita_ofertas)&&(!soAcao||(aberto(c)&&c.proxima_data&&c.proxima_data<=hojeISO()))&&
         (!q||[c.nome,c.empresa,c.telefone,c.email,c.interesse,c.origem,c.proxima_acao].join(" ").toLowerCase().includes(q)))}
 
     function kpisHTML(){
@@ -77,6 +78,7 @@
         ${aberto(c)&&(c.proxima_acao||c.proxima_data)?`<p class="crm-prox${late?" late":hj?" hoje":""}">${I.cal}<span>${c.proxima_data?(late?`Atrasado · ${dm(c.proxima_data)}`:hj?"Hoje":dm(c.proxima_data))+(c.proxima_acao?" · ":""):""}${esc(c.proxima_acao)}</span></p>`:""}
         ${c.etapa==="perdido"&&c.motivo_perda?`<p class="crm-prox">${esc(c.motivo_perda)}</p>`:""}
         ${c.cliente_id?`<span class="crm-cli">${I.cli} Cliente do Hub</span>`:""}
+        ${N(c.compras)||c.aceita_ofertas?`<p class="crm-loja">${N(c.compras)?`<span>🛒 ${c.compras} compra${c.compras>1?"s":""} · ${brl(c.total_compras)}</span>`:""}${c.aceita_ofertas?`<span>✉ Aceita ofertas</span>`:""}</p>`:""}
       </article>`;
     }
     function funilHTML(lista){
@@ -103,6 +105,8 @@
           <div class="tk-bar">
             <div class="summary" role="group" aria-label="Filtrar">
               <button class="chip" data-k="acao" aria-pressed="${soAcao}">Para fazer hoje <b>${C.filter(c=>atrasada(c)||hoje_(c)).length}</b></button>
+              <button class="chip" data-k="ofertas" aria-pressed="${soOfertas}">Aceitam ofertas <b>${C.filter(c=>c.aceita_ofertas).length}</b></button>
+              ${C.some(c=>c.aceita_ofertas)?`<button class="btn small ghost" data-k="exportar" title="Lista para e-mail marketing">Exportar lista (CSV)</button>`:""}
               ${origens.length?`<select id="crm-origem" aria-label="Filtrar por origem"><option value="">Todas as origens</option>${origens.map(o=>`<option ${o===origemF?"selected":""}>${esc(o)}</option>`).join("")}</select>`:""}
             </div>
             <div class="tk-tools"><input type="search" id="crm-busca" placeholder="Buscar nome, telefone, empresa" value="${esc(busca)}" aria-label="Buscar contato">
@@ -134,6 +138,8 @@
           <div><label class="label" for="cf-valor">Valor em negociação (R$)</label><input type="text" id="cf-valor" inputmode="decimal" value="${N(c.valor)?num(c.valor):""}" placeholder="0,00"></div>
           <div><label class="label" for="cf-data">Próximo retorno</label><input type="date" id="cf-data" value="${esc(c.proxima_data||"")}"></div>
         </div>
+        ${novo?"":`<div class="crm-resumo">${N(c.compras)?`<span>🛒 <b>${c.compras}</b> compra${c.compras>1?"s":""} na loja · <b>${brl(c.total_compras)}</b>${c.ultima_compra?" · última em "+dm(String(c.ultima_compra).slice(0,10)):""}</span>`:`<span>Ainda não comprou na loja</span>`}${c.documento?`<span>${c.documento.length>11?"CNPJ":"CPF"} ${esc(c.documento)}</span>`:""}</div>`}
+        <label class="check"><input type="checkbox" id="cf-ofertas" ${c.aceita_ofertas?"checked":""}> Aceita receber ofertas e promoções (e-mail e WhatsApp)${c.aceita_em?` <small class="note">desde ${dm(String(c.aceita_em).slice(0,10))}</small>`:""}</label>
         <div><label class="label" for="cf-acao">O que fazer no retorno</label><input type="text" id="cf-acao" value="${esc(c.proxima_acao||"")}" placeholder="Ex.: mandar proposta, ligar para fechar"></div>
         <div class="crm-atalhos" aria-label="Atalhos de data">${[["Hoje",0],["Amanhã",1],["Em 3 dias",3],["Em 1 semana",7]].map(([t,d])=>`<button type="button" class="chip" data-k="data" data-d="${d}">${t}</button>`).join("")}</div>
         ${novo?"":`<fieldset class="orc-fs crm-wa-box"><legend>${I.wa} WhatsApp</legend>
@@ -170,7 +176,8 @@
     function atualizarWa(){const a=el.querySelector("#cf-wa"), t=el.querySelector("#cf-msg");if(!a||!ed)return;const n=foneWa(ed.telefone);a.href=`https://wa.me/${n}${t&&t.value.trim()?"?text="+encodeURIComponent(t.value.trim()):""}`}
     function lerFicha(){const v=s=>{const x=el.querySelector(s);return x?x.value.trim():""};
       return {nome:v("#cf-nome"),telefone:v("#cf-tel"),empresa:v("#cf-emp"),email:v("#cf-email"),origem:v("#cf-origem"),interesse:v("#cf-int"),valor:r2(parseNum(v("#cf-valor"))),
-        proxima_data:v("#cf-data")||null,proxima_acao:v("#cf-acao"),etapa:ed.etapa||"novo",motivo_perda:ed.etapa==="perdido"?v("#cf-perda"):""}}
+        proxima_data:v("#cf-data")||null,proxima_acao:v("#cf-acao"),etapa:ed.etapa||"novo",motivo_perda:ed.etapa==="perdido"?v("#cf-perda"):"",
+        aceita_ofertas:!!(el.querySelector("#cf-ofertas")||{}).checked,...((el.querySelector("#cf-ofertas")||{}).checked&&!ed.aceita_ofertas?{aceita_em:new Date().toISOString()}:{})}}
     async function salvar(fecharDepois=true){
       const campos=lerFicha();if(!campos.nome){toast("Escreva o nome do contato.");el.querySelector("#cf-nome").focus();return null}
       const q=ed.id?sb.from("contatos").update(campos).eq("id",ed.id):sb.from("contatos").insert(campos);
@@ -204,6 +211,11 @@
       if(k==="novo")return abrir({etapa:"novo",origem:"",proxima_data:somaDias(hojeISO(),1),proxima_acao:"Primeiro contato"});
       if(k==="vista"){vista=b.dataset.v;render();return}
       if(k==="acao"){soAcao=!soAcao;render();return}
+      if(k==="ofertas"){soOfertas=!soOfertas;render();return}
+      if(k==="exportar"){const l=C.filter(c=>c.aceita_ofertas),q=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
+        const csv="\ufeff"+["Nome;E-mail;WhatsApp;Empresa;Origem;Compras;Total comprado;Última compra;Aceitou em"].concat(l.map(c=>[c.nome,c.email,c.telefone,c.empresa,c.origem,N(c.compras),String(N(c.total_compras)).replace(".",","),c.ultima_compra?String(c.ultima_compra).slice(0,10):"",c.aceita_em?String(c.aceita_em).slice(0,10):""].map(q).join(";"))).join("\r\n");
+        const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="contatos-ofertas.csv";document.body.appendChild(a);a.click();a.remove();
+        toast(`${l.length} contato${l.length===1?"":"s"} exportado${l.length===1?"":"s"}. Só quem aceitou receber ofertas.`);return}
       if(k==="fechar"){fechar();return}
       if(k==="etapa"){ed.etapa=b.dataset.e;el.querySelectorAll(".crm-etapas button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));el.querySelector("#cf-perda-box").hidden=ed.etapa!=="perdido";
         const sel=el.querySelector("#cf-modelo");if(sel){sel.value=modeloPadrao(ed);sel.dispatchEvent(new Event("change",{bubbles:true}))}return}
