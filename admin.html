@@ -29,7 +29,9 @@
   .layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:24px;align-items:start}
   .layout>*{min-width:0}
   #main .tabs{flex-wrap:wrap;overflow:visible}#main .tab{font-size:15px;padding:12px 12px}
-  .side{display:flex;flex-direction:column;gap:8px;position:sticky;top:16px}
+  .side{display:flex;flex-direction:column;gap:8px;position:sticky;top:16px;max-height:calc(100vh - 32px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding:2px 6px 8px 2px;margin:-2px -6px 0 -2px}
+  /* com o painel aberto, o cabeçalho grande some em todas as telas: o menu fica sempre no mesmo lugar */
+  .wrap:has(#painel:not([hidden])) .hero{display:none}
   @media (max-width:860px){.layout{grid-template-columns:minmax(0,1fr)}.side{position:static}}
   .cli{appearance:none;text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:12px 14px;font:500 14px var(--font);text-transform:none;letter-spacing:-.005em;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
   .cli[aria-current="true"]{background:var(--navy,#0B0E2C);color:#FFFFFF;border-color:var(--navy,#0B0E2C);box-shadow:inset 4px 0 0 var(--accent-2,#6C78FF),0 8px 20px -10px rgba(39,51,230,.6)}
