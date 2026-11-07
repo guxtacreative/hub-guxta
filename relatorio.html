@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <link rel="stylesheet" href="estilo.css">
 <link rel="stylesheet" href="tema-claro.css">
+<link rel="stylesheet" href="componentes.css">
 <style>
   body{padding-block:24px 64px}
   .wrap{max-width:900px;gap:28px}
@@ -79,7 +80,9 @@
     const {data,error}=await sb.rpc("portal_relatorio",{p_token:token||null,p_ciclo:cicloId,p_cliente:clienteQ||null});
     if(error){erro("Não conseguimos carregar o relatório agora. Tente de novo.");return}
     if(!data){erro(token?"Este relatório não está disponível.":"Entre no Hub com seu e-mail e senha e abra o relatório de novo pela aba Relatório.");return}
-    montar(window.GlaraRelatorio.doPortal(data));
+    const D=window.GlaraRelatorio.doPortal(data);
+    try{const v=await sb.rpc("portal_verba",{p_token:token||null,p_cliente:clienteQ||null});D.verba=v&&!v.error&&v.data&&v.data.ativa?v.data:null}catch(_){}
+    montar(D);
   }
 
   async function carregar(){
@@ -101,7 +104,8 @@
     const posts=ps.data, ids=posts.map(p=>p.id);
     const dc=ids.length?await sb.from("decisoes").select("*").in("post_id",ids):{data:[]};
     const dec={};(dc.data||[]).forEach(d=>dec[d.post_id]=d);
-    montar({ciclo,cliente:cl.data,posts,dec,nRoteiros:rs.data.length,nStories:ss.data.length,pedidos:pd.data,anuncios:ad.data,ciclos:cs.data});
+    let verba=null;if(cl.data.verba_ativa){try{const v=await sb.rpc("verba_admin",{p_cliente:ciclo.cliente_id});verba=v.error?null:v.data}catch(_){}}
+    montar({ciclo,cliente:cl.data,posts,dec,nRoteiros:rs.data.length,nStories:ss.data.length,pedidos:pd.data,anuncios:ad.data,ciclos:cs.data,verba});
   }
 
   function montar(D){

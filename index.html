@@ -53,7 +53,7 @@
 <body>
 <div class="topo-progresso" aria-hidden="true"><i id="progresso"></i></div>
 <div class="wrap">
-  <div class="brandbar"><img class="logo" src="logo.png" alt="" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='logo.svg'}else{this.remove()}"><span class="eyebrow" id="eyebrow">Hub de Marketing</span>
+  <div class="brandbar"><img class="logo" src="logo.png" alt="GUXTA HUB" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='logo.svg'}else{this.remove()}"><span class="eyebrow marca-tag" id="eyebrow">Onde estratégia, criação e gestão se encontram</span>
     <div class="sino-box" id="sino-box" hidden>
       <button type="button" class="sino" id="sino" aria-expanded="false" aria-controls="sino-pop" aria-label="Novidades"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge" id="sino-n" hidden></span></button>
       <div class="sino-pop" id="sino-pop" hidden role="dialog" aria-label="Novidades"></div>
@@ -211,6 +211,7 @@
 
     <section id="panel-anuncios" class="list" role="tabpanel" aria-labelledby="tab-anuncios" style="margin-top:22px" hidden>
       <div class="dash-intro"><h2>Seu investimento em anúncios</h2><p class="intro">Cada real investido e o que ele trouxe, com os números lançados dia a dia direto do Gerenciador de Anúncios. Use o período e a campanha para comparar, e baixe a planilha para conferir.</p></div>
+      <article class="card" id="verba-box" hidden></article>
       <article class="card dash" id="ads-box"></article>
     </section>
 
@@ -459,7 +460,7 @@
     const cli=dados.cliente||{};
     if(corPropria(cli.cor_destaque))document.documentElement.style.setProperty("--accent",cli.cor_destaque);
     document.title=(cfg.plataforma||"Hub de Marketing")+" · "+(cli.nome||"");
-    $("#eyebrow").textContent=cfg.plataforma||"Hub de Marketing";
+    
     $("#titulo").innerHTML="Olá, <mark>"+esc((cli.nome||"").split(" ")[0])+"</mark>";
     $("#hero-tag").textContent=cli.plano_nome||cfg.plataforma||"Hub de Marketing";
     if(!dados.ciclo){$("#erro").textContent="Ainda não há conteúdo publicado para você. Você recebe um aviso quando o próximo mês estiver pronto.";$("#erro").hidden=false;$("#app").hidden=true;return}
@@ -472,7 +473,7 @@
     renderPosts();renderGuias();renderResultados();renderPedidosTudo();renderAnuncios();renderPlanoDash();
     if(window.GlaraPagamentos&&!pagMod)pagMod=window.GlaraPagamentos.criar({sb,P,modo:()=>modo,base,banner:$("#pg-faixa"),tab:$("#tab-pagamentos"),panel:$("#panel-pagamentos"),
       toast:m=>toastPed(m,true),abrir:()=>{const t=$("#tab-pagamentos");t.click();t.scrollIntoView({block:"nearest"})},sair:()=>$("#tab-aprovar").click()});
-    Promise.all([carregarRelatorio(),carregarDocumentos(),pagMod?pagMod.carregar():null,carregarLoja()]).then(()=>{novidadesRender();irAbaInicial()});novidadesRender();renderInicio();
+    Promise.all([carregarVerba().then(carregarRelatorio),carregarDocumentos(),pagMod?pagMod.carregar():null,carregarLoja()]).then(()=>{novidadesRender();irAbaInicial()});novidadesRender();renderInicio();
     atualizarInvestimento();
   }
   let pagMod=null;
@@ -598,7 +599,7 @@
     const {data,error}=await sb.rpc("portal_investimento",{...P(),p_ciclo:pedido});
     if(error||!data||!dados||!dados.ciclo||dados.ciclo.id!==pedido)return;
     if(data.ciclo===pedido){dados.anuncios=data.rows||[]}
-    invMeses=data.meses||[];renderAnuncios();novidadesRender();renderInicio();
+    invMeses=data.meses||[];await carregarVerba(true);renderAnuncios();novidadesRender();renderInicio();
   }
   function cicloInvestimento(){clearInterval(invTimer);invTimer=setInterval(()=>{if(!document.hidden&&$("#tab-anuncios").getAttribute("aria-selected")==="true")atualizarInvestimento()},60000)}
   cicloInvestimento();
@@ -613,7 +614,7 @@
     const tab=$("#tab-relatorio");
     if(error||!data){tab.hidden=true;if(tab.getAttribute("aria-selected")==="true")$("#tab-aprovar").click();return}
     tab.hidden=false;
-    $("#rel-box").innerHTML=window.GlaraRelatorio.html(window.GlaraRelatorio.doPortal(data),{marca:cfg.marca,plataforma:cfg.plataforma,portal:true});
+    const D=window.GlaraRelatorio.doPortal(data);D.verba=verba;$("#rel-box").innerHTML=window.GlaraRelatorio.html(D,{marca:cfg.marca,plataforma:cfg.plataforma,portal:true});
     $("#rel-pdf").href="relatorio.html?ciclo="+encodeURIComponent(pedido)+(modo==="link"?"&c="+encodeURIComponent(token):"&cliente="+encodeURIComponent(clienteId));
   }
 
@@ -646,9 +647,31 @@
     $("#docs-note").textContent="";
     if(janela)janela.location.href=data.signedUrl;else{const a=document.createElement("a");a.href=data.signedUrl;a.download=d.nome_arquivo||"";document.body.appendChild(a);a.click();a.remove()}
   });
+  /* ---------- verba dos anúncios (saldo, campanhas, adicionar verba) ---------- */
+  let verba=null, verbaValor=null;
+  async function carregarVerba(sem){
+    if(!sb)return;let r;try{r=await sb.rpc("portal_verba",P())}catch(e){r={error:e}}
+    verba=r&&!r.error&&r.data&&r.data.ativa?r.data:null;
+    if(!sem&&dados)renderAnuncios();
+  }
+  function renderVerba(){const box=$("#verba-box");if(!box)return;
+    box.hidden=!verba;if(!verba){box.innerHTML="";return}
+    box.innerHTML=window.GlaraAnuncios.verbaHTML(verba,{portal:true});
+    if(verbaValor){const b=box.querySelector(`[data-verba="v"][data-v="${verbaValor}"]`);b&&b.setAttribute("aria-pressed","true")}}
+  document.addEventListener("click",async e=>{const b=e.target.closest("[data-verba]");if(!b)return;
+    const inp=$("#vb-valor");
+    if(b.dataset.verba==="v"){verbaValor=+b.dataset.v;if(inp)inp.value="";document.querySelectorAll('[data-verba="v"]').forEach(x=>x.setAttribute("aria-pressed",String(x===b)));return}
+    if(b.dataset.verba==="pedir"){
+      const v=inp&&inp.value.trim()?window.GlaraAnuncios.parseMoeda(inp.value):verbaValor;
+      if(!v||v<20){toastPed("Escolha ou digite um valor de pelo menos R$ 20.");return}
+      b.disabled=true;b.textContent="Gerando…";
+      const {data,error}=await sb.rpc("portal_verba_pedir",{...P(),p_valor:v});
+      if(error||!data||!data.token){b.disabled=false;b.textContent="Gerar pagamento";toastPed("Não deu para gerar agora. Tente de novo em instantes.");return}
+      location.href="pagar.html?t="+encodeURIComponent(data.token)}});
   function renderAnuncios(){
-    const rows=dados.anuncios||[], tab=$("#tab-anuncios");tab.hidden=!rows.length;
-    if(!rows.length){if(tab.getAttribute("aria-selected")==="true")$("#tab-aprovar").click();return}
+    const rows=dados.anuncios||[], tab=$("#tab-anuncios");tab.hidden=!rows.length&&!verba;
+    renderVerba();
+    if(!rows.length&&!verba){if(tab.getAttribute("aria-selected")==="true")$("#tab-aprovar").click();return}
     window.GlaraAnuncios.montar($("#ads-box"),rows,{admin:false,ao_vivo:true,meses:invMeses,arquivo:"investimento_"+slug((dados.cliente||{}).nome||"cliente")});
   }
   /* ---------- pedidos ---------- */

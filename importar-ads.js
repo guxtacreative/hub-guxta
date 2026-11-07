@@ -86,7 +86,22 @@
     // junta linhas repetidas do mesmo dia e campanha (ex.: relatório por conjunto de anúncios)
     const mapa=new Map();for(const r of rows){const k=r.data+"|"+r.campanha;const x=mapa.get(k);
       if(x){["investimento","impressoes","alcance","cliques","resultados"].forEach(f=>x[f]+=r[f]);x.investimento=Math.round(x.investimento*100)/100;if(!x.tipo_resultado)x.tipo_resultado=r.tipo_resultado}else mapa.set(k,{...r})}
-    return {rows:[...mapa.values()].sort((a,b)=>a.data.localeCompare(b.data)||a.campanha.localeCompare(b.campanha)),avisos:[...avisos]};
+    // situação, orçamento e datas das campanhas (se o relatório tiver essas colunas)
+    const hx=linhas[hi].map(x=>sem(x)), col=nomes=>{for(const n of nomes){const i=hx.indexOf(n);if(i>=0)return i}return -1};
+    const cSt=col(["veiculacao da campanha","campaign delivery","veiculacao","delivery"]),
+          cOr=col(["orcamento da campanha","campaign budget","orcamento do conjunto de anuncios","ad set budget","orcamento","budget"]),
+          cTo=col(["tipo de orcamento da campanha","campaign budget type","tipo de orcamento do conjunto de anuncios","ad set budget type","tipo de orcamento","budget type"]),
+          cIn=col(["inicio","starts","data de inicio","start date"]), cFi=col(["termino","ends","data de termino","end date"]);
+    const campanhas={};
+    if(cSt>=0||cOr>=0||cIn>=0||cFi>=0){
+      for(const l of linhas.slice(hi+1)){const camp=String(l[m.campanha]??"").trim();if(!camp||/^total|^resultados de/i.test(sem(camp)))continue;
+        const o=campanhas[camp]||(campanhas[camp]={});
+        if(cSt>=0){const v=sem(l[cSt]);const st=/inativ|inactive|nao esta|not deliver|not_deliver|desativ|off|pausad|paused/.test(v)?"pausada":/conclu|complet|encerr|ended/.test(v)?"encerrada":/agend|schedul/.test(v)?"agendada":/ativ|active|on\b/.test(v)?"ativa":"";if(st)o.status=st}
+        if(cOr>=0){const tipoOr=cTo>=0?sem(l[cTo]):"";const val=numero(l[cOr]);if(val>0&&!/vital|lifetime|total/.test(tipoOr))o.orcamento_dia=Math.round(val*100)/100}
+        if(cIn>=0){const d=data(l[cIn]);if(d)o.inicio=d}
+        if(cFi>=0){const d=data(l[cFi]);if(d)o.fim=d}}
+      Object.keys(campanhas).forEach(k=>{if(!Object.keys(campanhas[k]).length)delete campanhas[k]})}
+    return {campanhas,rows:[...mapa.values()].sort((a,b)=>a.data.localeCompare(b.data)||a.campanha.localeCompare(b.campanha)),avisos:[...avisos]};
   }
   window.GlaraImportAds={lerArquivo,csv,numero,data,tipo};
 })();
