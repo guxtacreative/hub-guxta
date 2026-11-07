@@ -27,7 +27,8 @@
     sub=r2(sub);custo=r2(custo);const total=Math.max(r2(sub-N(desconto)),0);return {sub,custo,total,lucro:r2(total-custo)}};
 
   function criar(el,sb,ctx){
-    let orcs=[], produtos=[], empresa={}, pedidos=null, lancOrc=[], cupons=null, nOfertas=0, cupEd=null, filtroL="todos", sub="lista", filtro="abertos", busca="", buscaP="", atual=null, salvarCatalogo=true, sujo=false;
+    const LOJA=ctx.modo==="loja";
+    let orcs=[], produtos=[], empresa={}, pedidos=null, lancOrc=[], cupons=null, nOfertas=0, cupEd=null, filtroL="todos", filtroP=LOJA?"loja":"todos", sub=LOJA?"produtos":"lista", filtro="abertos", busca="", buscaP="", atual=null, salvarCatalogo=true, sujo=false;
     const toast=ctx.toast||(m=>console.log(m)), falha=ctx.falha||((a,e)=>toast("Não deu para "+a+"."));
     const clientes=()=>(ctx.clientes&&ctx.clientes())||[];
     const nomeCli=o=>{const c=clientes().find(x=>x.id===o.cliente_id);return c?c.nome:(o.cliente_nome||"")};
@@ -63,7 +64,27 @@
         ${k("",taxa==null?"–":pct(taxa),"Taxa de aprovação",dec.length?`${dec.length} respondido${dec.length===1?"":"s"}`:"")}
       </div>`;
     }
-    function topoHTML(){
+    function topoLojaHTML(){
+      const naLoja=produtos.filter(p=>p.na_loja).length, aguard=pedidos?pedidos.filter(x=>x.status==="fechado").length:0, aband=pedidos?pedidos.filter(x=>x.status==="abandonado").length:0;
+      const mes=hojeISO().slice(0,7), pagosMes=pedidos?pedidos.filter(x=>x.status==="pago"&&String(x.pago_em||"").slice(0,7)===mes):[];
+      const k=(cls,n,t,s)=>`<div class="tk-kpi ${cls}"><b>${n}</b><span>${t}</span>${s?`<small>${s}</small>`:""}</div>`;
+      return `<section class="card tk-head">
+        <div class="head"><div><span class="eyebrow">Só você vê</span><h2>Loja</h2></div>
+          <div class="orc-st-bts"><a class="btn small ghost" href="${esc(linkLoja())}" target="_blank" rel="noopener">Ver a loja</a><button class="btn primary" data-o="prod-novo">${I.mais} Novo produto</button></div></div>
+        <div class="tk-kpis orc-kpis">
+          ${k("",naLoja,"Produtos na loja",`${produtos.length} cadastrado${produtos.length===1?"":"s"} no total`)}
+          ${k("money",brl(pagosMes.reduce((s,x)=>s+N(x.total),0)),"Vendido no mês",`${pagosMes.length} pedido${pagosMes.length===1?"":"s"}`)}
+          ${k("",aguard,"Aguardando pagamento","")}
+          ${k(aband?"late":"",aband,"Carrinhos abandonados",aband?"vale chamar no WhatsApp":"")}
+        </div>
+        <div class="seg orc-seg" role="group" aria-label="Seção">
+          <button type="button" data-o-sub="produtos" aria-pressed="${sub==="produtos"}">Produtos <b>${naLoja}</b></button>
+          <button type="button" data-o-sub="loja" aria-pressed="${sub==="loja"}">Pedidos e link${aguard?` <b>${aguard}</b>`:""}</button>
+          <button type="button" data-o-sub="cupons" aria-pressed="${sub==="cupons"}">Cupons</button>
+          <button type="button" data-o-sub="empresa" aria-pressed="${sub==="empresa"}">Entrega e retirada</button>
+        </div></section>`;
+    }
+    function topoHTML(){if(LOJA)return topoLojaHTML();
       return `<section class="card tk-head">
         <div class="head"><div><span class="eyebrow">Só você vê</span><h2>Orçamentos</h2></div>
           <button class="btn primary" data-o="novo">${I.mais} Novo orçamento</button></div>
@@ -107,14 +128,15 @@
 
     /* ---------- produtos salvos ---------- */
     function produtosHTML(){
-      const q=buscaP.trim().toLowerCase(), vis=produtos.filter(p=>!q||(p.nome+" "+p.descricao+" "+p.fornecedor+" "+p.categoria).toLowerCase().includes(q));
-      return `<div class="tk-bar"><p class="note" style="margin:0">Custo e lucro ficam guardados aqui. Ao salvar um orçamento, produtos novos entram sozinhos e os valores alterados são atualizados.</p>
+      const q=buscaP.trim().toLowerCase(), vis=produtos.filter(p=>(filtroP==="todos"||(filtroP==="loja"?p.na_loja:!p.na_loja))&&(!q||(p.nome+" "+p.descricao+" "+p.fornecedor+" "+p.categoria).toLowerCase().includes(q)));
+      return `<div class="tk-bar">${LOJA?`<div class="summary" role="group" aria-label="Filtrar produtos">${[["loja","Na loja",produtos.filter(p=>p.na_loja).length],["fora","Fora da loja",produtos.filter(p=>!p.na_loja).length],["todos","Todos",produtos.length]].map(([v,t,n])=>`<button class="chip" data-p-f="${v}" aria-pressed="${filtroP===v}">${t} <b>${n}</b></button>`).join("")}</div>`
+          :`<p class="note" style="margin:0">Custo e lucro ficam guardados aqui. Ao salvar um orçamento, produtos novos entram sozinhos e os valores alterados são atualizados.</p>`}
           <div class="tk-tools"><input type="search" id="prod-busca" placeholder="Buscar produto" value="${esc(buscaP)}" aria-label="Buscar produto"><button class="btn small primary" data-o="prod-novo">${I.mais} Novo produto</button></div></div>
         <div class="orc-lista">${vis.map(p=>{const lucroR=r2(N(p.preco)-N(p.custo));return `<button type="button" class="orc-row prod-row" data-p-id="${p.id}">
             <span class="orc-t"><b>${esc(p.nome)}${p.na_loja?` <span class="badge-loja">Na loja</span>`:""}${p.preco_tipo==="m2"?` <span class="badge-loja m2">por m²</span>`:""}</b><small>${esc([p.descricao,p.fornecedor&&("Fornecedor: "+p.fornecedor),(p.faixas||[]).length?(p.faixas.length+" faixa"+(p.faixas.length>1?"s":"")+" de quantidade"):""].filter(Boolean).join(" · ")||"Sem especificação")}</small></span>
             <span class="prod-c"><small>Custo</small><b>${brl(p.custo)}</b></span>
             <span class="prod-c"><small>Lucro</small><b class="ok-txt">${p.lucro_tipo==="pct"?pct(p.lucro):brl(p.lucro)}</b></span>
-            <span class="orc-v"><b>${brl(p.preco)}</b><small>por ${esc(p.unidade)} · +${brl(lucroR)}</small></span></button>`}).join("")||`<div class="empty">${produtos.length?"Nenhum produto encontrado.":"Nenhum produto salvo ainda."}</div>`}</div>
+            <span class="orc-v"><b>${brl(p.preco)}</b><small>por ${esc(p.unidade)} · +${brl(lucroR)}</small></span></button>`}).join("")||`<div class="empty">${LOJA&&filtroP==="loja"?"Nenhum produto na loja ainda. Clique em Novo produto, ou em “Fora da loja” para escolher um produto que você já tem e marcar “Mostrar este produto na loja”.":produtos.length?"Nenhum produto encontrado.":"Nenhum produto salvo ainda."}</div>`}</div>
         <dialog class="tk-dlg" id="orc-dlg"></dialog>`;
     }
     function prodForm(p){
@@ -533,6 +555,7 @@
       const f=e.target.closest("[data-o-f]");if(f){filtro=f.dataset.oF;render();return}
       if(e.target.closest("#pf-ptipo [data-ptipo]")){const bt=e.target.closest("[data-ptipo]");el.querySelectorAll("#pf-ptipo button").forEach(x=>x.setAttribute("aria-pressed",String(x===bt)));
         if(bt.dataset.ptipo==="m2"){const u=el.querySelector("#pf-un");if(u&&!/m/i.test(u.value))u.value="m²"}pfTipoAplica();calcProdForm();return}
+      const pf_=e.target.closest("[data-p-f]");if(pf_){filtroP=pf_.dataset.pF;render();return}
       const lf=e.target.closest("[data-l-f]");if(lf){filtroL=lf.dataset.lF;render();return}
       const row=e.target.closest("[data-o-id]");if(row){const o=orcs.find(x=>x.id===row.dataset.oId);if(o)abrir(o);return}
       const pr=e.target.closest("[data-p-id]");if(pr){prodEd=produtos.find(x=>x.id===pr.dataset.pId);abrirDlg(prodForm(prodEd));pfTipoAplica();calcProdForm();return}
@@ -540,7 +563,7 @@
       const a=b.dataset.o;
       if(a==="novo")return novo();
       if(a==="voltar"){if(sujo&&b.dataset.confirm!=="1"){b.dataset.confirm="1";b.innerHTML="Sair sem salvar?";toast("Há mudanças não salvas. Clique de novo para sair sem salvar.");return}
-        atual=null;sub="lista";render();return}
+        atual=null;sub=LOJA?"loja":"lista";render();return}
       if(a==="item-add"){lerCabecalho();atual.itens.push(itemVazio());const box=el.querySelector("#orc-itens");box.insertAdjacentHTML("beforeend",itemHTML(atual.itens[atual.itens.length-1],atual.itens.length-1));box.lastElementChild.querySelector("input").focus();sujo=true;return}
       if(a==="item-rm"){const div=b.closest(".oi"), k=+div.dataset.k;lerCabecalho();atual.itens.splice(k,1);if(!atual.itens.length)atual.itens.push(itemVazio());el.querySelector("#orc-itens").innerHTML=atual.itens.map(itemHTML).join("");atualizarResumo();sujo=true;return}
       if(a==="salvar")return salvar();
@@ -573,7 +596,7 @@
       if(a==="arte-baixar"){const {data,error}=await sb.storage.from("loja-artes").createSignedUrl(b.dataset.c,600,{download:b.dataset.n||true});
         if(error||!data)return falha("abrir a arte",error||{});const l=document.createElement("a");l.href=data.signedUrl;l.target="_blank";l.rel="noopener";document.body.appendChild(l);l.click();l.remove();return}
       if(a==="ped-orc"){const o=orcs.find(x=>x.id===b.dataset.id);if(o)abrir(o);return}
-      if(a==="prod-novo"){prodEd={};abrirDlg(prodForm(prodEd));pfTipoAplica();calcProdForm();return}
+      if(a==="prod-novo"){prodEd=LOJA?{na_loja:true}:{};if(sub!=="produtos"){sub="produtos";render()}abrirDlg(prodForm(prodEd));pfTipoAplica();calcProdForm();return}
       if(a==="prod-salvar"){e.preventDefault();
         const v=s=>el.querySelector(s).value, nome=v("#pf-nome").trim();if(!nome){toast("Dê um nome ao produto.");return}
         const dup=produtos.find(p=>p.nome.toLowerCase()===nome.toLowerCase()&&p.id!==prodEd.id);if(dup){toast("Já existe um produto com esse nome.");return}

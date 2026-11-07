@@ -86,6 +86,7 @@
       <button class="cli cli-tarefas" id="btn-agenda" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 14h2M12 14h2M16 14h2M8 18h2M12 18h2"/></svg></span>Agenda</button>
       <button class="cli cli-tarefas" id="btn-crm" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>CRM · Contatos<span class="badge" id="crm-badge" hidden></span></button>
       <button class="cli cli-tarefas" id="btn-orcamentos" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span>Orçamentos<span class="badge" id="orc-badge" hidden></span></button>
+      <button class="cli cli-tarefas" id="btn-loja" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 13v8h14v-8M10 21v-5h4v5"/></svg></span>Loja</button>
       <button class="cli cli-tarefas" id="btn-midia" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l15-6v14L3 13z"/><path d="M7 12.5V18a2 2 0 0 0 4 0v-4"/><path d="M21 9v6"/></svg></span>Plano de mídia</button>
       <button class="cli cli-tarefas" id="btn-financeiro" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg></span>Financeiro<span class="badge" id="fin-badge" hidden></span></button>
       <button class="cli cli-tarefas" id="btn-notas" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.5z"/><path d="M15 3v6h6M7 13h10M7 17h6"/></svg></span>Notas</button>
@@ -203,6 +204,7 @@
       return `<button class="cli" data-cli="${c.id}" aria-current="${vista==="cliente"&&cliAtual&&cliAtual.id===c.id}"><span class="cli-nome">${esc(c.nome)}</span>${c.ativo?"":"<small>desativado</small>"}${bolha(n,[(a.pedidos?a.pedidos+" pedido(s) novo(s)":""),(a.ajustes?a.ajustes+" ajuste(s) pedido(s)":"")].filter(Boolean).join(" · "))}${a.aprovados_24h&&!n?`<span class="dot-ok" title="${a.aprovados_24h} aprovação(ões) nas últimas 24 h"></span>`:""}</button>`}).join(""):`<p class="note">Nenhum cliente ainda.</p>`;
     $("#btn-tarefas").setAttribute("aria-current",String(vista==="tarefas"));
     $("#btn-orcamentos").setAttribute("aria-current",String(vista==="orcamentos"));
+    $("#btn-loja").setAttribute("aria-current",String(vista==="loja"));
     $("#btn-crm").setAttribute("aria-current",String(vista==="crm"));
     $("#btn-financeiro").setAttribute("aria-current",String(vista==="financeiro"));
     $("#btn-agenda").setAttribute("aria-current",String(vista==="agenda"));
@@ -231,6 +233,10 @@
     window.GlaraOrcamentos.criar($("#orc-root"),sb,Object.assign({toast,falha,clientes:()=>clientes,mudou:carregarAlertas},extra||{}));
     if(window.matchMedia("(max-width:860px)").matches)$("#main").scrollIntoView({block:"start"});else window.scrollTo({top:0});}
   $("#btn-orcamentos").addEventListener("click",()=>abrirOrcamentos());
+  $("#btn-loja").addEventListener("click",()=>{vista="loja";renderClientes();
+    $("#main").innerHTML=`<div id="loja-root" class="list"></div>`;
+    window.GlaraOrcamentos.criar($("#loja-root"),sb,{toast,falha,clientes:()=>clientes,mudou:carregarAlertas,modo:"loja"});
+    if(window.matchMedia("(max-width:860px)").matches)$("#main").scrollIntoView({block:"start"});else window.scrollTo({top:0})});
   $("#btn-crm").addEventListener("click",()=>{vista="crm";renderClientes();
     $("#main").innerHTML=`<div id="crm-root" class="list"></div>`;
     const ab_=crmAbrir;crmAbrir=null;
