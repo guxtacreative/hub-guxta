@@ -10,16 +10,16 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap">
 <style>
-  :root{--red:#0071E3;--red-d:#0077ED;--ink:#111111;--muted:#6B6B6B;--line:#E6E6E6;--soft:#F5F5F5;--ok:#19A33B;--bg:#F2F2F2;
-    --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",system-ui,"Segoe UI",Roboto,Arial,sans-serif;--assina:"Caveat","Segoe Script","Brush Script MT",cursive}
+  :root{--red:#E30613;--red-d:#B8000E;--ink:#111111;--muted:#6B6B6B;--line:#E6E6E6;--soft:#F5F5F5;--ok:#19A33B;--bg:#F2F2F2;
+    --font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--assina:"Caveat","Segoe Script","Brush Script MT",cursive}
   *{box-sizing:border-box}
   html,body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--font);-webkit-text-size-adjust:100%}
   a{color:inherit}
-  .topo{background:linear-gradient(135deg,#1D1D1F 0%,#2C2C2E 100%);color:#fff;padding:22px 16px 74px}
+  .topo{background:linear-gradient(135deg,#0A0A0A 0%,#1A0003 55%,#5C0008 100%);color:#fff;padding:22px 16px 74px}
   .topo-in{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
   .topo img{height:34px;width:auto;display:block}
   .topo .nome-emp{font:900 24px var(--font)}
-  .topo .eyebrow{font:800 11px var(--font);letter-spacing:.16em;text-transform:uppercase;color:#64ACFF;margin:0}
+  .topo .eyebrow{font:800 11px var(--font);letter-spacing:.16em;text-transform:uppercase;color:#FF6B73;margin:0}
   .topo h1{margin:4px 0 0;font:900 clamp(26px,5vw,38px)/1.08 var(--font);letter-spacing:-.02em}
   .topo p{margin:6px 0 0;color:#D6D6D6}
   main{max-width:760px;margin:-54px auto 0;padding:0 16px 60px;display:flex;flex-direction:column;gap:14px}
@@ -33,7 +33,7 @@
   .passos li.feito::before{content:"✓";background:var(--ok);border-color:var(--ok);color:#fff}
   .passos li.feito::after{background:var(--ok)}
   .passos li.atual{color:var(--ink)}
-  .passos li.atual::before{border-color:var(--red);color:var(--red);box-shadow:0 0 0 4px rgba(0,113,227,.15)}
+  .passos li.atual::before{border-color:var(--red);color:var(--red);box-shadow:0 0 0 4px rgba(227,6,19,.15)}
   h2{margin:0 0 4px;font:800 20px/1.25 var(--font);letter-spacing:-.01em}
   .sub{margin:0 0 14px;color:var(--muted);font-size:14px}
   .itens{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
@@ -45,7 +45,7 @@
   .itens .v small{display:block}
   .tots{display:flex;flex-direction:column;gap:6px;margin-top:10px}
   .tots div{display:flex;justify-content:space-between;font-size:14px}
-  .tots .t{background:#1D1D1F;color:#fff;border-radius:12px;padding:14px 16px;margin-top:6px;align-items:baseline}
+  .tots .t{background:var(--red);color:#fff;border-radius:12px;padding:14px 16px;margin-top:6px;align-items:baseline}
   .tots .t span{font:800 11px var(--font);letter-spacing:.14em;text-transform:uppercase}
   .tots .t b{font:900 26px var(--font);letter-spacing:-.01em}
   .blocos{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
@@ -63,7 +63,7 @@
   .check.ok{border-color:var(--ok);background:#F1FAF3}
   .acoes{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:18px}
   .b{appearance:none;border:1.5px solid #D4D4D4;background:#fff;color:var(--ink);font:700 15px var(--font);padding:13px 22px;border-radius:999px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;min-height:48px}
-  .b.pri{background:var(--red);border-color:var(--red);box-shadow:0 8px 20px -8px rgba(0,113,227,.55);color:#fff}
+  .b.pri{background:var(--red);border-color:var(--red);color:#fff}
   .b.pri:hover{background:var(--red-d)}
   .b.ok{background:var(--ok);border-color:var(--ok);color:#fff}
   .b[disabled]{opacity:.5;cursor:not-allowed}

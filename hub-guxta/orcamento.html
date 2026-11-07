@@ -10,14 +10,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
-  :root{--red:#0071E3;--ink:#111111;--muted:#6B6B6B;--line:#E6E6E6;--soft:#F6F6F6;--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",system-ui,"Segoe UI",Roboto,Arial,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace}
+  :root{--red:#E30613;--ink:#111111;--muted:#6B6B6B;--line:#E6E6E6;--soft:#F6F6F6;--font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace}
   *{box-sizing:border-box}
   html,body{margin:0;background:#E9E9E9;color:var(--ink);font:400 14px/1.45 var(--font);-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .bar{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px 16px;background:#0A0A0A;color:#FFFFFF}
   .bar p{margin:0;font-size:13px;color:#BDBDBD;flex:1 1 220px}
   .bar .bts{display:flex;gap:8px;flex-wrap:wrap}
   .b{appearance:none;border:1px solid #3A3A3A;background:#1A1A1A;color:#FFFFFF;font:700 14px var(--font);padding:10px 16px;border-radius:999px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
-  .b.pri{background:var(--red);border-color:var(--red);box-shadow:0 8px 20px -8px rgba(0,113,227,.55)}
+  .b.pri{background:var(--red);border-color:var(--red)}
   .b.ok{background:#19A33B;border-color:#19A33B}
   .b[disabled]{opacity:.6;cursor:wait}
   .palco{padding:24px 16px 60px;display:flex;justify-content:center}
@@ -54,7 +54,7 @@
   .fim{display:grid;grid-template-columns:1fr 260px;gap:18px;align-items:start}
   .tots{display:flex;flex-direction:column;gap:6px;break-inside:avoid}
   .tots div{display:flex;justify-content:space-between;font-size:13.5px;padding:0 4px}
-  .tots .t{background:#1D1D1F;color:#FFFFFF;border-radius:10px;padding:12px 14px;margin-top:4px;align-items:baseline}
+  .tots .t{background:var(--red);color:#FFFFFF;border-radius:10px;padding:12px 14px;margin-top:4px;align-items:baseline}
   .tots .t span{font:800 11px var(--font);letter-spacing:.12em;text-transform:uppercase}
   .tots .t b{font:900 24px var(--font);letter-spacing:-.01em}
   .info{display:grid;gap:12px}
