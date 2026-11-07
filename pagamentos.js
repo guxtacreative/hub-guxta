@@ -168,9 +168,9 @@
     function cartaoHTML(it){if(!it.cartao||!(it.parcelas||[]).length)return "";
       const ps=it.parcelas, n=escolha[it.id]||1, sel=ps.find(p=>p.n===n)||ps[0], semJ=ps.filter(p=>!p.juros).length;
       return `<div class="pg-meio pg-cartao"><h4>${I.cartao} Cartão de crédito</h4>
-        <p class="note">${semJ>1?`Até ${semJ}x sem juros. `:""}${ps.length>semJ?`Em mais vezes, juros de ${pct(D.config.cartao_juros_mes)} ao mês. `:""}Escolha as parcelas e pague com segurança pelo Mercado Pago.</p>
+        <p class="note">${D.config.cartao_modo==="mp"?`No cartão, o valor à vista é ${brl(ps[0].total)}${ps.length>1?"; parcelado, com os juros do Mercado Pago":""}. `:`${semJ>1?`Até ${semJ}x sem juros. `:""}${ps.length>semJ?`Em mais vezes, juros de ${pct(D.config.cartao_juros_mes)} ao mês. `:""}`}Escolha as parcelas e pague com segurança pelo Mercado Pago.</p>
         <div class="pg-parc" role="radiogroup" aria-label="Número de parcelas">${ps.map(p=>`<label class="pg-parc-op ${p.n===sel.n?"on":""}"><input type="radio" name="pg-n-${it.id}" value="${p.n}" data-pg-n="${it.id}" ${p.n===sel.n?"checked":""}>
-          <b>${p.n}x</b><span>${brl(p.parcela)}</span><small>${p.juros?"total "+brl(p.total):p.n>1?"sem juros":"à vista"}</small></label>`).join("")}</div>
+          <b>${p.n}x</b><span>${brl(p.parcela)}</span><small>${p.juros?"total "+brl(p.total):p.n>1?"sem juros":D.config.cartao_modo==="mp"?"à vista":"à vista"}</small></label>`).join("")}</div>
         ${mpBtn(it,sel.n,`Pagar ${sel.n}x de ${brl(sel.parcela)} no cartão`)}
         <small class="note">No Mercado Pago, confirme em <b>${sel.n}x</b>.</small></div>`}
     function boletoHTML(it){const c=D.config;

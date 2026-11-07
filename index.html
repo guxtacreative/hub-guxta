@@ -480,8 +480,13 @@
   let lojaCarregada=false;
   async function carregarLoja(){if(lojaCarregada)return;const tab=$("#tab-loja"), box=$("#panel-loja");
     let r;try{r=await sb.rpc("loja_ver")}catch(e){r={error:e}}
-    const L=r&&!r.error&&r.data;if(!L||!L.ativa||!(L.produtos||[]).length){tab.hidden=true;return}
+    const L=r&&!r.error&&r.data;if(!L||!L.ativa){tab.hidden=true;return}
     lojaCarregada=true;tab.hidden=false;
+    if(!(L.produtos||[]).length){const f=String(L.telefone||"").replace(/\D/g,""),fone=f?(f.length<=11?"55"+f:f):"";
+      const wa=fone?`https://wa.me/${fone}?text=${encodeURIComponent("Olá! Quero saber dos serviços avulsos e do material gráfico.")}`:"";
+      box.innerHTML=`<section class="card lj-portal-h"><div><span class="eyebrow">Loja</span><h2>Serviços avulsos e material gráfico</h2>
+        <p class="note" style="margin:4px 0 0">Pacotes de posts, captação e edição de vídeo, sites, cartões, banners e mais. A loja está sendo montada; enquanto isso, peça pelo WhatsApp.</p></div>
+        <div class="lj-portal-acoes">${L.tem_planos?`<a class="btn" href="planos.html" target="_blank" rel="noopener">Ver os planos</a>`:""}${wa?`<a class="btn primary" href="${wa}" target="_blank" rel="noopener">Falar no WhatsApp</a>`:""}</div></section>`;return}
     const brl=v=>(Number(v)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
     const ap=p=>p.preco_tipo==="m2"?Number(p.preco_m2)||0:Math.min(...(p.faixas||[]).map(f=>Number(f.preco)||0));
     const ord=[...L.produtos].sort((a,b)=>(a.tipo==="servico"?0:1)-(b.tipo==="servico"?0:1));

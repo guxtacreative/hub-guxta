@@ -1124,3 +1124,16 @@ html[data-tema="escuro"] .btn.pg-mp-btn.pg-mp-btn.pg-mp-btn.pg-mp-btn:hover,html
 @media (max-width:600px){.lj-portal{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .lj-portal-h{text-align:left}
 .lj-portal-h>div{flex:1 1 320px;min-width:0}
+.lj-portal-h>div.lj-portal-acoes{flex:0 1 auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#panel-loja>.lj-portal-h{flex-direction:row;align-items:center}
+/* cobrança: juros do Mercado Pago ou meus juros */
+.cf-modo{display:flex;flex-wrap:wrap;gap:6px}
+.cf-modo label{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid var(--line);border-radius:999px;cursor:pointer;font-weight:600;font-size:14px;background:var(--surface,#fff)}
+.cf-modo label:has(input:checked){border-color:var(--red,#E30613);color:var(--red,#E30613)}
+.cf-modo input{accent-color:var(--red,#E30613);margin:0}
+.cf-mp{display:flex;flex-direction:column;gap:10px}
+.cf-mp[hidden],.cf-pr[hidden]{display:none!important}
+.cf-taxas{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px}
+.cf-taxas label{display:flex;align-items:center;gap:6px;padding:4px 4px 4px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface,#fff)}
+.cf-taxas span{font-weight:700;font-size:13px;min-width:26px}
+.cf-taxas input{min-height:34px;padding:4px 6px;width:100%;min-width:0;border:0;background:transparent}

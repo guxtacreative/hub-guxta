@@ -204,6 +204,7 @@
         <div class="actions" style="margin:0"><a class="btn small av-wa" href="https://wa.me/${wa}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">${I.wa} ${wa?"Mandar no WhatsApp":"Mandar no WhatsApp (escolher contato)"}</a></div>
       </fieldset>`}
     const foneWa=t=>{let d=String(t||"").replace(/\D/g,"");if(!d)return "";if(d.startsWith("00"))d=d.slice(2);if(d.length===10||d.length===11)d="55"+d;return d.length>=12?d:""};
+    const TAXAS_MP={2:9.64,3:11.23,4:11.36,5:14.31,6:14.32,7:16.72,8:16.73,9:19.69,10:20.65,11:20.66,12:22.11};
     // configuração do Pix, mensagem e Mercado Pago
     function cobFormHTML(){const e=EMP, st=CST||{};
       const TIPOS=[["","Detectar sozinho"],["cnpj","CNPJ"],["cpf","CPF"],["email","E-mail"],["telefone","Telefone"],["aleatoria","Chave aleatória"]];
@@ -232,14 +233,24 @@
           <label class="check"><input type="checkbox" id="cf-mp" ${e.mp_ativo?"checked":""}> Aceitar pagamentos pelo Mercado Pago, com baixa automática</label>
           <label class="check"><input type="checkbox" id="cf-mpix" ${e.mp_pix!==false?"checked":""}> O cliente pode gerar um Pix pelo Mercado Pago (confirma sozinho, sem ele precisar avisar)</label>
           <label class="check"><input type="checkbox" id="cf-mbol" ${e.mp_boleto!==false?"checked":""}> O cliente pode gerar o próprio boleto pelo Mercado Pago (no lugar de pedir para você)</label>
+          <div class="seg cf-modo" role="radiogroup" aria-label="Juros do parcelamento">
+            <label><input type="radio" name="cf-modo" id="cf-modo-mp" value="mp" ${(e.cartao_modo||"mp")==="mp"?"checked":""}> Juros do Mercado Pago</label>
+            <label><input type="radio" name="cf-modo" id="cf-modo-pr" value="proprio" ${(e.cartao_modo||"mp")==="proprio"?"checked":""}> Meus juros</label></div>
           <div class="grid2">
             <div><label class="label" for="cf-pmax">Parcelar em até</label><select id="cf-pmax">${[1,2,3,4,5,6,7,8,9,10,11,12].map(n=>`<option value="${n}" ${N(e.cartao_parcelas||12)===n?"selected":""}>${n}x</option>`).join("")}</select></div>
-            <div><label class="label" for="cf-psj">Sem juros até</label><select id="cf-psj">${[1,2,3,4,5,6,7,8,9,10,11,12].map(n=>`<option value="${n}" ${N(e.cartao_sem_juros||1)===n?"selected":""}>${n===1?"só à vista":n+"x"}</option>`).join("")}</select></div>
-            <div><label class="label" for="cf-pj">Seus juros ao mês (%)</label><input type="number" id="cf-pj" min="0" max="20" step="0.01" value="${esc(e.cartao_juros_mes??2.99)}"></div>
             <div><label class="label" for="cf-pmin">Parcela mínima (R$)</label><input type="text" id="cf-pmin" inputmode="decimal" value="${num(e.cartao_parcela_min??50)}"></div>
+            <div class="cf-pr"><label class="label" for="cf-psj">Sem juros até</label><select id="cf-psj">${[1,2,3,4,5,6,7,8,9,10,11,12].map(n=>`<option value="${n}" ${N(e.cartao_sem_juros||1)===n?"selected":""}>${n===1?"só à vista":n+"x"}</option>`).join("")}</select></div>
+            <div class="cf-pr"><label class="label" for="cf-pj">Seus juros ao mês (%)</label><input type="number" id="cf-pj" min="0" max="20" step="0.01" value="${esc(e.cartao_juros_mes??2.99)}"></div>
+          </div>
+          <div class="cf-mp">
+            <label class="check"><input type="checkbox" id="cf-rep" ${e.cartao_repassar!==false?"checked":""}> Repassar ao cliente a taxa da venda no cartão, para eu receber o valor cheio</label>
+            <div class="grid2"><div><label class="label" for="cf-tv">Taxa da venda no cartão (%)</label><input type="number" id="cf-tv" min="0" max="30" step="0.01" value="${esc(e.cartao_taxa_venda??4.98)}"></div></div>
+            <span class="label">Taxa de parcelamento paga pelo cliente (%), igual à do Mercado Pago</span>
+            <div class="cf-taxas">${[2,3,4,5,6,7,8,9,10,11,12].map(n=>`<label><span>${n}x</span><input type="number" id="cf-tx-${n}" min="0" max="60" step="0.01" value="${esc(((e.cartao_taxas||TAXAS_MP)[n]??TAXAS_MP[n]))}"></label>`).join("")}</div>
           </div>
           <div class="fin-sim" id="cf-sim" aria-live="polite"></div>
-          <p class="note" style="margin:0">Importante: na sua conta do Mercado Pago, ative o <b>parcelamento sem juros</b> até o mesmo número de parcelas. Assim o cliente paga só os seus juros (que já cobrem a taxa do Mercado Pago), e não os do Mercado Pago por cima.</p>
+          <p class="note cf-mp" style="margin:0">Use com a conta do Mercado Pago em <b>Parcelado cliente</b> (Seu negócio › Custos). O link vai com o valor à vista (já com a taxa repassada) e o Mercado Pago soma os juros dele nas parcelas. Confira se as taxas acima são as mesmas do app.</p>
+          <p class="note cf-pr" style="margin:0">Use com a conta do Mercado Pago em <b>parcelamento sem juros</b> até o mesmo número de parcelas. Assim o cliente paga só os seus juros, e não os do Mercado Pago por cima.</p>
           <p class="note" style="margin:0">${st.mp_token?`Access Token salvo, termina em <b>${esc(st.mp_fim||"")}</b>${st.mp_teste?" (modo de teste)":""}.`:"Sem Access Token ainda."} No Mercado Pago: <b>Seu negócio › Configurações › Credenciais</b> (ou developers.mercadopago.com.br › Suas integrações) e copie o <b>Access Token de produção</b>.</p>
           <div class="row"><div><label class="label" for="cf-mptok">${st.mp_token?"Trocar o Access Token":"Access Token"}</label><input type="password" id="cf-mptok" autocomplete="off" spellcheck="false" placeholder="APP_USR-…"></div>
             <div style="flex:0 0 auto"><button type="button" class="btn small" data-f="mp-token">Salvar token</button></div></div>
@@ -248,13 +259,20 @@
         <div class="actions"><button type="submit" class="btn primary">Salvar</button><button type="button" class="btn ghost" data-f="fechar">Cancelar</button></div></form>`}
     // simulação da tabela do cartão (mesma conta do banco)
     function simular(){const box=el.querySelector("#cf-sim");if(!box)return;const v=id=>el.querySelector(id).value;
-      const max=+v("#cf-pmax")||12, sj=+v("#cf-psj")||1, i=parseNum(v("#cf-pj"))/100, min=parseNum(v("#cf-pmin")), base=1000, ps=[];
+      const f=el.querySelector("#cob-form"), modo=(el.querySelector('input[name="cf-modo"]:checked')||{}).value||"mp";
+      if(f){f.querySelectorAll(".cf-mp").forEach(x=>x.hidden=modo!=="mp");f.querySelectorAll(".cf-pr").forEach(x=>x.hidden=modo==="mp")}
+      const max=+v("#cf-pmax")||12, min=parseNum(v("#cf-pmin")), base=1000, ps=[];
+      if(modo==="mp"){const tv=el.querySelector("#cf-rep").checked?parseNum(v("#cf-tv")):0, b=tv>0?Math.round(base/(1-tv/100)*100)/100:base;
+        for(let n=1;n<=max;n++){const tx=n===1?0:parseNum(v("#cf-tx-"+n)), t=Math.round(b*(1+tx/100)*100)/100, p=n===1?t:Math.ceil(t/n*100-1e-6)/100;if(n>1&&p<min)break;ps.push({n,p,t,j:tx>0})}
+        const liq=Math.round(b*(1-parseNum(v("#cf-tv"))/100)*100)/100;
+        box.innerHTML=`<span class="label">Como fica uma cobrança de ${brl(base)} no cartão (você recebe cerca de ${brl(liq)})</span><div class="fin-sim-g">${ps.map(x=>`<span class="${x.j?"j":""}"><b>${x.n}x</b> ${brl(x.p)}<small>${x.n>1?"total "+brl(x.t):"à vista "+brl(x.t)}</small></span>`).join("")}</div>`;return}
+      const sj=+v("#cf-psj")||1, i=parseNum(v("#cf-pj"))/100;
       for(let n=1;n<=max;n++){const p=(n<=sj||!i)?Math.ceil(base/n*100)/100:Math.ceil(base*i/(1-Math.pow(1+i,-n))*100)/100;if(n>1&&p<min)break;ps.push({n,p,t:Math.round(p*n*100)/100,j:n>sj&&i>0})}
       box.innerHTML=`<span class="label">Como fica uma cobrança de ${brl(base)}</span><div class="fin-sim-g">${ps.map(x=>`<span class="${x.j?"j":""}"><b>${x.n}x</b> ${brl(x.p)}<small>${x.j?"total "+brl(x.t):x.n>1?"sem juros":"à vista"}</small></span>`).join("")}</div>`}
     // redesenha o formulário de cobrança sem perder o que já foi digitado
     function redesenharCob(){const f=el.querySelector("#cob-form");const val={};
-      f.querySelectorAll("input,select,textarea").forEach(i=>{if(i.id&&i.id!=="cf-mptok")val[i.id]=i.type==="checkbox"?i.checked:i.value});
-      dlg().innerHTML=cobFormHTML();Object.entries(val).forEach(([id,v])=>{const i=el.querySelector("#"+id);if(i){if(i.type==="checkbox")i.checked=v;else i.value=v}});simular()}
+      f.querySelectorAll("input,select,textarea").forEach(i=>{if(i.id&&i.id!=="cf-mptok")val[i.id]=i.type==="checkbox"||i.type==="radio"?i.checked:i.value});
+      dlg().innerHTML=cobFormHTML();Object.entries(val).forEach(([id,v])=>{const i=el.querySelector("#"+id);if(i){if(i.type==="checkbox"||i.type==="radio")i.checked=v;else i.value=v}});simular()}
     function calcForm(){const c=el.querySelector("#ff-calc");if(!c)return;const v=parseNum(el.querySelector("#ff-valor").value),k=parseNum(el.querySelector("#ff-custo").value),en=parseNum((el.querySelector("#ff-centr")||{}).value),t=k+en,lu=v-t;
       c.innerHTML=t?(t>v?`<span class="neg">Os custos passam do valor recebido.</span>`:`<span class="fin-div"><span><i class="fin-sw c"></i>Impressão <b>${brl(k)}</b></span>${en?`<span><i class="fin-sw en"></i>Entrega <b>${brl(en)}</b></span>`:""}<span><i class="fin-sw l"></i>Lucro <b class="ok-txt">${brl(lu)}</b> (${v?Math.round(lu/v*100):0}% do valor)</span></span>`):"Sem custo: o valor inteiro é seu (serviço ou plano)."}
     function recForm(r){
@@ -347,7 +365,9 @@
           cobranca_dias:Math.min(30,Math.max(0,parseInt(v("#cf-dias"))||0)),cobranca_msg:v("#cf-msg").trim(),cobranca_email:el.querySelector("#cf-email").checked,
           boleto_pedido:el.querySelector("#cf-bol").checked,mp_ativo:el.querySelector("#cf-mp").checked,mp_pix:el.querySelector("#cf-mpix").checked,mp_boleto:el.querySelector("#cf-mbol").checked,
           atraso_multa:Math.min(20,Math.max(0,parseNum(v("#cf-multa")))),atraso_juros_mes:Math.min(20,Math.max(0,parseNum(v("#cf-jatr")))),atraso_carencia:Math.min(60,Math.max(0,parseInt(v("#cf-car"))||0)),
-          cartao_parcelas:+v("#cf-pmax")||12,cartao_sem_juros:Math.min(+v("#cf-psj")||1,+v("#cf-pmax")||12),cartao_juros_mes:Math.min(20,Math.max(0,parseNum(v("#cf-pj")))),cartao_parcela_min:Math.max(0,r2(parseNum(v("#cf-pmin"))))};
+          cartao_parcelas:+v("#cf-pmax")||12,cartao_sem_juros:Math.min(+v("#cf-psj")||1,+v("#cf-pmax")||12),cartao_juros_mes:Math.min(20,Math.max(0,parseNum(v("#cf-pj")))),cartao_parcela_min:Math.max(0,r2(parseNum(v("#cf-pmin")))),
+          cartao_modo:(el.querySelector('input[name="cf-modo"]:checked')||{}).value||"mp",cartao_repassar:el.querySelector("#cf-rep").checked,cartao_taxa_venda:Math.min(30,Math.max(0,parseNum(v("#cf-tv")))),
+          cartao_taxas:Object.fromEntries([2,3,4,5,6,7,8,9,10,11,12].map(n=>[String(n),Math.min(60,Math.max(0,parseNum(v("#cf-tx-"+n))))]))};
         if(dados.mp_ativo&&!(CST||{}).mp_token){toast("Salve o Access Token do Mercado Pago antes de ligar.");return}
         if(dados.pix&&window.GlaraPix&&!window.GlaraPix.brcode({chave:dados.pix,tipo:dados.pix_tipo,nome:dados.pix_nome,cidade:dados.pix_cidade,valor:1})){toast("Confira a chave Pix.");return}
         const {data,error}=await sb.from("empresa").update(dados).eq("id",1).select().single();if(error)return falha("salvar o Pix",error);
