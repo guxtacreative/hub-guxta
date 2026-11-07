@@ -87,7 +87,7 @@
       <button class="cli cli-tarefas" id="btn-crm" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>CRM · Contatos<span class="badge" id="crm-badge" hidden></span></button>
       <button class="cli cli-tarefas" id="btn-orcamentos" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span>Orçamentos<span class="badge" id="orc-badge" hidden></span></button>
       <button class="cli cli-tarefas" id="btn-loja" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 13v8h14v-8M10 21v-5h4v5"/></svg></span>Loja</button>
-      <button class="cli cli-tarefas" id="btn-midia" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l15-6v14L3 13z"/><path d="M7 12.5V18a2 2 0 0 0 4 0v-4"/><path d="M21 9v6"/></svg></span>Plano de mídia</button>
+      <button class="cli cli-tarefas" id="btn-midia" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l15-6v14L3 13z"/><path d="M7 12.5V18a2 2 0 0 0 4 0v-4"/><path d="M21 9v6"/></svg></span>Planos e mídia</button>
       <button class="cli cli-tarefas" id="btn-financeiro" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg></span>Financeiro<span class="badge" id="fin-badge" hidden></span></button>
       <button class="cli cli-tarefas" id="btn-notas" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.5z"/><path d="M15 3v6h6M7 13h10M7 17h6"/></svg></span>Notas</button>
       <button class="cli cli-tarefas" id="btn-avisos" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>Avisos e lembretes<span class="badge calma" id="av-badge" hidden></span></button>
@@ -121,6 +121,7 @@
 <script src="agenda.js"></script>
 <script src="notas.js"></script>
 <script src="planomidia.js"></script>
+<script src="planos.js"></script>
 <script src="avisos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
@@ -273,9 +274,13 @@
   $("#btn-notas").addEventListener("click",()=>{vista="notas";renderClientes();
     $("#main").innerHTML=`<div id="nt-root" class="list"></div>`;
     window.GlaraNotas.criar($("#nt-root"),sb,{toast,falha,clientes:()=>clientes});rolarMain()});
-  $("#btn-midia").addEventListener("click",()=>{vista="midia";renderClientes();
-    $("#main").innerHTML=`<div id="pm-root" class="list"></div>`;
-    window.GlaraPlanoMidia.criar($("#pm-root"),sb,{toast,falha,clientes:()=>clientes});rolarMain()});
+  let midiaAba="planos";
+  function abrirMidia(){vista="midia";renderClientes();
+    $("#main").innerHTML=`<div class="seg orc-seg pm-abas" role="group" aria-label="Seção"><button type="button" data-pm-aba="planos" aria-pressed="${midiaAba==="planos"}">Planos de serviço</button><button type="button" data-pm-aba="midia" aria-pressed="${midiaAba==="midia"}">Plano de mídia (anúncios)</button></div><div id="pm-root" class="list"></div>`;
+    if(midiaAba==="planos"&&window.GlaraPlanos)window.GlaraPlanos.criar($("#pm-root"),sb,{toast,falha});
+    else window.GlaraPlanoMidia.criar($("#pm-root"),sb,{toast,falha,clientes:()=>clientes});
+    $("#main").querySelectorAll("[data-pm-aba]").forEach(b=>b.addEventListener("click",()=>{midiaAba=b.dataset.pmAba;abrirMidia()}));rolarMain()}
+  $("#btn-midia").addEventListener("click",abrirMidia);
   $("#novo-cliente").addEventListener("submit",async e=>{
     e.preventDefault();const nome=$("#nc-nome").value.trim();if(!nome)return;
     const {data,error}=await sb.from("clientes").insert({nome}).select().single();

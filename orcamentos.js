@@ -133,7 +133,7 @@
           :`<p class="note" style="margin:0">Custo e lucro ficam guardados aqui. Ao salvar um orçamento, produtos novos entram sozinhos e os valores alterados são atualizados.</p>`}
           <div class="tk-tools"><input type="search" id="prod-busca" placeholder="Buscar produto" value="${esc(buscaP)}" aria-label="Buscar produto"><button class="btn small primary" data-o="prod-novo">${I.mais} Novo produto</button></div></div>
         <div class="orc-lista">${vis.map(p=>{const lucroR=r2(N(p.preco)-N(p.custo));return `<button type="button" class="orc-row prod-row" data-p-id="${p.id}">
-            <span class="orc-t"><b>${esc(p.nome)}${p.na_loja?` <span class="badge-loja">Na loja</span>`:""}${p.preco_tipo==="m2"?` <span class="badge-loja m2">por m²</span>`:""}</b><small>${esc([p.descricao,p.fornecedor&&("Fornecedor: "+p.fornecedor),(p.faixas||[]).length?(p.faixas.length+" faixa"+(p.faixas.length>1?"s":"")+" de quantidade"):""].filter(Boolean).join(" · ")||"Sem especificação")}</small></span>
+            <span class="orc-t"><b>${esc(p.nome)}${p.na_loja?` <span class="badge-loja">Na loja</span>`:""}${p.preco_tipo==="m2"?` <span class="badge-loja m2">por m²</span>`:""}${p.tipo==="servico"?` <span class="badge-loja m2">serviço</span>`:""}</b><small>${esc([p.descricao,p.fornecedor&&("Fornecedor: "+p.fornecedor),(p.faixas||[]).length?(p.faixas.length+" faixa"+(p.faixas.length>1?"s":"")+" de quantidade"):""].filter(Boolean).join(" · ")||"Sem especificação")}</small></span>
             <span class="prod-c"><small>Custo</small><b>${brl(p.custo)}</b></span>
             <span class="prod-c"><small>Lucro</small><b class="ok-txt">${p.lucro_tipo==="pct"?pct(p.lucro):brl(p.lucro)}</b></span>
             <span class="orc-v"><b>${brl(p.preco)}</b><small>por ${esc(p.unidade)} · +${brl(lucroR)}</small></span></button>`}).join("")||`<div class="empty">${LOJA&&filtroP==="loja"?"Nenhum produto na loja ainda. Clique em Novo produto, ou em “Fora da loja” para escolher um produto que você já tem e marcar “Mostrar este produto na loja”.":produtos.length?"Nenhum produto encontrado.":"Nenhum produto salvo ainda."}</div>`}</div>
@@ -157,10 +157,13 @@
         <p class="orc-calc" id="pf-calc"></p>
         <fieldset class="orc-fs"><legend>Loja online</legend>
           <label class="check"><input type="checkbox" id="pf-loja" ${p.na_loja?"checked":""}> Mostrar este produto na loja</label>
+          <div><span class="label">Tipo</span><div class="seg" role="radiogroup" aria-label="Tipo de produto" id="pf-tipoprod">
+            <button type="button" data-tp="grafico" aria-pressed="${(p.tipo||"grafico")!=="servico"}">Material gráfico</button><button type="button" data-tp="servico" aria-pressed="${p.tipo==="servico"}">Serviço (vídeo, posts, site…)</button></div>
+            <small class="note">Serviço não pergunta arte nem entrega na loja. Use as faixas para os pacotes (ex.: 4, 8 ou 12 posts).</small></div>
           <div class="grid2">
             <div><label class="label" for="pf-cat">Categoria</label><input type="text" id="pf-cat" list="pf-cats" value="${esc(p.categoria||"")}" placeholder="Ex.: Cartões, Banners, Panfletos"><datalist id="pf-cats">${[...new Set(produtos.map(x=>x.categoria).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
             <div><label class="label" for="pf-prazo">Prazo de produção</label><input type="text" id="pf-prazo" value="${esc(p.prazo||"")}" placeholder="Ex.: 5 dias úteis após aprovar a arte"></div>
-            <div><label class="label" for="pf-arte">Valor da criação da arte (R$)</label><input type="text" id="pf-arte" inputmode="decimal" value="${num(p.arte_valor||0)}"><small class="note">Somado quando o cliente não tem a arte pronta.</small></div>
+            <div class="pf-graf"><label class="label" for="pf-arte">Valor da criação da arte (R$)</label><input type="text" id="pf-arte" inputmode="decimal" value="${num(p.arte_valor||0)}"><small class="note">Somado quando o cliente não tem a arte pronta.</small></div>
             <div><span class="label">Foto</span><div class="pf-foto">${p.foto?`<img src="${esc(p.foto)}" alt="" id="pf-foto-img">`:`<span class="pf-foto-vazia" id="pf-foto-img">Sem foto</span>`}
               <label class="btn small">Escolher foto<input type="file" id="pf-foto-arq" accept="image/jpeg,image/png,image/webp" hidden></label>${p.foto?`<button type="button" class="btn small ghost" data-o="foto-tira">Tirar</button>`:""}</div>
               <input type="hidden" id="pf-foto" value="${esc(p.foto||"")}"></div>
@@ -174,7 +177,8 @@
           ${novo?"":`<button type="button" class="btn danger small" data-o="prod-apagar" data-id="${p.id}" style="margin-left:auto">Apagar</button>`}</div></form>`;
     }
     const pfTipo=()=>{const b=el.querySelector("#pf-ptipo [aria-pressed=true]");return b?b.dataset.ptipo:"faixas"};
-    const pfTipoAplica=()=>{const f=el.querySelector("#prod-form");if(f)f.classList.toggle("pf-m2",pfTipo()==="m2")};
+    const pfTp=()=>{const b=el.querySelector("#pf-tipoprod [aria-pressed=true]");return b?b.dataset.tp:"grafico"};
+    const pfTipoAplica=()=>{const f=el.querySelector("#prod-form");if(f){f.classList.toggle("pf-m2",pfTipo()==="m2");f.classList.toggle("pf-serv",pfTp()==="servico")}};
     function fxRow(f){return `<div class="fx-row"><div><label class="label">Quantidade</label><input type="text" inputmode="numeric" data-fx="qtd" value="${f.qtd!==""&&f.qtd!=null?String(f.qtd):""}" placeholder="Ex.: 500"></div>
       <div><label class="label">Seu custo (R$)</label><input type="text" inputmode="decimal" data-fx="custo" value="${f.custo!==""&&f.custo!=null?num(f.custo):""}" placeholder="0,00"></div>
       <span class="fx-p"><small>Preço na loja</small><b>–</b></span><button type="button" class="tk-x" data-o="fx-rm" aria-label="Tirar esta faixa">✕</button></div>`}
@@ -224,10 +228,15 @@
         <div class="head"><h2>Configurações da loja</h2></div>
         <label class="check"><input type="checkbox" id="lj-ativa" ${e.loja_ativa!==false?"checked":""}> Loja aberta</label>
         <div class="grid2">
-          <div><label class="label" for="lj-tit">Título</label><input type="text" id="lj-tit" value="${esc(e.loja_titulo||"Material gráfico")}"></div>
+          <div><label class="label" for="lj-tit">Título</label><input type="text" id="lj-tit" value="${esc(e.loja_titulo||"Serviços e material gráfico")}"></div>
           <div><label class="label" for="lj-idv">Valor da criação de identidade visual (R$)</label><input type="text" id="lj-idv" inputmode="decimal" value="${num(e.identidade_valor||0)}"></div>
         </div>
         <div><label class="label" for="lj-txt">Texto de abertura</label><textarea id="lj-txt" style="min-height:60px">${esc(e.loja_texto||"")}</textarea></div>
+        <fieldset class="orc-fs"><legend>Faixa dos planos de assessoria</legend>
+          <label class="check"><input type="checkbox" id="lj-cta" ${e.loja_cta_ativo!==false?"checked":""}> Mostrar na loja a faixa falando dos planos (com “Ver os planos” e WhatsApp)</label>
+          <div><label class="label" for="lj-ctat">Título</label><input type="text" id="lj-ctat" value="${esc(e.loja_cta_titulo||"Assessoria de marketing e gestão de redes sociais")}"></div>
+          <div><label class="label" for="lj-ctax">Texto</label><textarea id="lj-ctax" style="min-height:56px">${esc(e.loja_cta_texto||"")}</textarea></div>
+          <p class="note" style="margin:0">Os planos você monta em <b>Planos e mídia</b>. O WhatsApp usa o telefone de Dados no PDF.</p></fieldset>
         <div><label class="label" for="lj-idi">O que vem na identidade visual</label><input type="text" id="lj-idi" value="${esc(e.identidade_info||"")}"></div>
         <p class="note" style="margin:0">Retirada, entrega e valor do frete ficam em <b>Dados no PDF</b>. O valor da arte é de cada produto. O cliente paga tudo de uma vez pelo Mercado Pago.</p>
         <div class="actions"><button type="submit" class="btn primary">Salvar configurações</button></div></form>`;
@@ -555,6 +564,8 @@
       const f=e.target.closest("[data-o-f]");if(f){filtro=f.dataset.oF;render();return}
       if(e.target.closest("#pf-ptipo [data-ptipo]")){const bt=e.target.closest("[data-ptipo]");el.querySelectorAll("#pf-ptipo button").forEach(x=>x.setAttribute("aria-pressed",String(x===bt)));
         if(bt.dataset.ptipo==="m2"){const u=el.querySelector("#pf-un");if(u&&!/m/i.test(u.value))u.value="m²"}pfTipoAplica();calcProdForm();return}
+      const tp_=e.target.closest("#pf-tipoprod [data-tp]");if(tp_){el.querySelectorAll("#pf-tipoprod button").forEach(x=>x.setAttribute("aria-pressed",String(x===tp_)));
+        if(tp_.dataset.tp==="servico"){const c=el.querySelector("#pf-cat");if(c&&!c.value)c.value="Serviços"}pfTipoAplica();return}
       const pf_=e.target.closest("[data-p-f]");if(pf_){filtroP=pf_.dataset.pF;render();return}
       const lf=e.target.closest("[data-l-f]");if(lf){filtroL=lf.dataset.lF;render();return}
       const row=e.target.closest("[data-o-id]");if(row){const o=orcs.find(x=>x.id===row.dataset.oId);if(o)abrir(o);return}
@@ -601,7 +612,7 @@
         const v=s=>el.querySelector(s).value, nome=v("#pf-nome").trim();if(!nome){toast("Dê um nome ao produto.");return}
         const dup=produtos.find(p=>p.nome.toLowerCase()===nome.toLowerCase()&&p.id!==prodEd.id);if(dup){toast("Já existe um produto com esse nome.");return}
         const campos={nome,descricao:v("#pf-desc").trim(),unidade:v("#pf-un").trim()||"un",fornecedor:v("#pf-forn").trim(),custo:r2(parseNum(v("#pf-custo"))),lucro_tipo:v("#pf-tipo"),lucro:r2(parseNum(v("#pf-lucro"))),
-          na_loja:el.querySelector("#pf-loja").checked,preco_tipo:pfTipo(),area_min:Math.max(0,parseNum(v("#pf-amin"))),categoria:v("#pf-cat").trim()||"Gráfica",prazo:v("#pf-prazo").trim(),arte_valor:Math.max(0,r2(parseNum(v("#pf-arte")))),foto:v("#pf-foto"),faixas:lerFaixas()};
+          na_loja:el.querySelector("#pf-loja").checked,tipo:pfTp(),preco_tipo:pfTipo(),area_min:Math.max(0,parseNum(v("#pf-amin"))),categoria:v("#pf-cat").trim()||"Gráfica",prazo:v("#pf-prazo").trim(),arte_valor:Math.max(0,r2(parseNum(v("#pf-arte")))),foto:v("#pf-foto"),faixas:lerFaixas()};
         if(campos.preco_tipo==="m2"&&!/m/i.test(campos.unidade))campos.unidade="m²";
         if(campos.na_loja&&campos.preco_tipo==="faixas"&&!campos.faixas.length){toast("Para mostrar na loja, cadastre pelo menos uma faixa de quantidade com custo.");return}
         if(campos.na_loja&&campos.preco_tipo==="m2"&&!(campos.custo>0)){toast("Informe o custo do m² para mostrar na loja.");return}
@@ -670,7 +681,8 @@
         const i=cupons.findIndex(x=>x.id===data.id);if(i>=0)cupons[i]=data;else cupons.unshift(data);fecharDlg();render();toast(cupEd.id?"Cupom salvo.":"Cupom criado. Agora é só mandar.");return}
       if(e.target.id==="loja-form"){const v=s=>el.querySelector(s).value;
         const campos={loja_ativa:el.querySelector("#lj-ativa").checked,loja_titulo:v("#lj-tit").trim()||"Material gráfico",loja_texto:v("#lj-txt").trim(),
-          identidade_valor:Math.max(0,r2(parseNum(v("#lj-idv")))),identidade_info:v("#lj-idi").trim()};
+          identidade_valor:Math.max(0,r2(parseNum(v("#lj-idv")))),identidade_info:v("#lj-idi").trim(),
+          loja_cta_ativo:el.querySelector("#lj-cta").checked,loja_cta_titulo:v("#lj-ctat").trim(),loja_cta_texto:v("#lj-ctax").trim()};
         const {data,error}=await sb.from("empresa").update(campos).eq("id",1).select().single();if(error)return falha("salvar a loja",error);
         empresa=data;toast("Loja salva.");render();return}
       if(e.target.id==="prod-form"){el.querySelector('[data-o="prod-salvar"]').click();return}

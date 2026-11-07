@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Planos</title>
+<meta name="description" content="Planos de assessoria de marketing e gestão de redes sociais.">
+<link rel="icon" type="image/png" href="icone.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+<style>
+  :root{--red:#E30613;--red-d:#B8000E;--ink:#111111;--muted:#6B6B6B;--line:#E6E6E6;--soft:#F5F5F5;--ok:#19A33B;--bg:#F2F2F2;
+    --font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--font);-webkit-text-size-adjust:100%}
+  [hidden]{display:none!important}
+  .topo{background:linear-gradient(135deg,#0A0A0A 0%,#1A0003 55%,#5C0008 100%);color:#fff;padding:20px 16px 76px}
+  .topo-in{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+  .topo img{height:32px;width:auto;display:block}
+  .nome-emp{font:900 22px var(--font)}
+  .eyebrow{font:800 11px var(--font);letter-spacing:.16em;text-transform:uppercase;color:#FF6B73;margin:0}
+  .topo h1{margin:4px 0 0;font:900 clamp(28px,5vw,42px)/1.06 var(--font);letter-spacing:-.02em}
+  .topo p.lead{margin:8px 0 0;color:#D6D6D6;max-width:640px}
+  main{max-width:1152px;margin:-50px auto 0;padding:0 16px 60px;display:flex;flex-direction:column;gap:16px}
+  .planos{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;align-items:stretch}
+  .plano{position:relative;background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px 22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 18px 40px -28px rgba(0,0,0,.35)}
+  .plano.destaque{border:2px solid var(--red);box-shadow:0 24px 50px -28px rgba(227,6,19,.55)}
+  .plano.foco{outline:4px solid rgba(227,6,19,.25);outline-offset:4px}
+  .selo{position:absolute;top:-12px;left:22px;background:var(--red);color:#fff;font:800 11px var(--font);letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:999px}
+  .plano h2{margin:0;font:900 22px/1.15 var(--font);letter-spacing:-.01em}
+  .plano .desc{margin:0;color:var(--muted);font-size:14px;min-height:1.5em}
+  .preco{display:flex;align-items:baseline;gap:6px}
+  .preco b{font:900 34px var(--font);letter-spacing:-.02em}
+  .preco span{color:var(--muted);font-weight:600}
+  .itens{list-style:none;margin:0;padding:14px 0 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:9px;flex:1}
+  .itens li{display:grid;grid-template-columns:22px 1fr;gap:8px;align-items:start;font-size:14.5px}
+  .itens .ic{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:900}
+  .itens .sim .ic{background:#E8F7EC;color:#0E7A2A}
+  .itens .nao{color:#A3A3A3}
+  .itens .nao .ic{background:var(--soft);color:#B5B5B5}
+  .itens .nao span:last-child{text-decoration:line-through}
+  .itens b{font-weight:800}
+  .b{appearance:none;border:1.5px solid #D4D4D4;background:#fff;color:var(--ink);font:700 15px var(--font);padding:13px 20px;border-radius:999px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px}
+  .b.pri{background:var(--red);border-color:var(--red);color:#fff}
+  .b.pri:hover{background:var(--red-d)}
+  .card{background:#fff;border-radius:18px;padding:20px;border:1px solid var(--line)}
+  .obs{color:var(--muted);font-size:13px;margin:0}
+  .vazio{text-align:center;color:var(--muted)}
+  .rodape{text-align:center;color:var(--muted);font-size:12.5px;padding:10px 16px 30px}
+  .extra{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+  .extra p{margin:0}
+  @media (max-width:600px){.plano{padding:22px 18px}}
+</style>
+</head>
+<body>
+<header class="topo"><div class="topo-in">
+  <div id="logo"><img src="logo-escuro.png" alt="" onerror="this.parentNode.innerHTML='<span class=nome-emp>GUXTA</span>'"></div>
+  <div><p class="eyebrow" id="eyebrow">Planos</p><h1>Assessoria de marketing e gestão de redes sociais</h1><p class="lead">Escolha o plano que combina com o momento da sua marca. Todos com planejamento mensal, aprovação dos conteúdos pelo portal e relatório.</p></div>
+</div></header>
+<main id="main"><section class="card vazio">Carregando os planos…</section></main>
+<p class="rodape" id="rodape"></p>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(async function(){
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const N=v=>Number(v)||0;
+  const brl=v=>N(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL",minimumFractionDigits:N(v)%1?2:0});
+  const cfg=window.GLARA_CONFIG||{};
+  const urlSupabase=u=>{u=String(u||"").trim();let m=u.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);if(m)return "https://"+m[1]+".supabase.co";m=u.match(/^(?:https?:\/\/)?([a-z0-9-]+\.supabase\.(?:co|in))/i);if(m)return "https://"+m[1].toLowerCase();return u.replace(/\/+$/,"")};
+  const main=$("#main");
+  if(!window.supabase||!cfg.supabaseUrl){main.innerHTML=`<section class="card vazio">Não foi possível carregar agora.</section>`;return}
+  const sb=window.supabase.createClient(urlSupabase(cfg.supabaseUrl),String(cfg.supabaseAnonKey||"").trim(),{auth:{persistSession:false}});
+  const {data:D,error}=await sb.rpc("planos_ver");
+  if(error||!D){main.innerHTML=`<section class="card vazio">Não foi possível carregar os planos agora.</section>`;return}
+  const emp=D.empresa||cfg.marca||"GUXTA";document.title="Planos · "+emp;$("#eyebrow").textContent="Planos · "+emp;
+  $("#rodape").innerHTML=[`<b>${esc(emp)}</b>`,D.documento,D.telefone,D.email,D.site].filter(Boolean).map(x=>x.startsWith("<b>")?x:esc(x)).join(" · ");
+  const f=String(D.telefone||"").replace(/\D/g,""), fone=f?(f.length<=11?"55"+f:f):"";
+  const wa=t=>fone?`https://wa.me/${fone}?text=${encodeURIComponent(t)}`:"";
+  const foco=new URLSearchParams(location.search).get("p");
+  const lista=D.planos||[], itens=D.itens||[];
+  if(!lista.length){main.innerHTML=`<section class="card vazio">Os planos estão sendo atualizados. ${fone?`<a href="${wa("Olá! Quero saber mais sobre os planos de assessoria.")}">Fale com a gente no WhatsApp</a>.`:""}</section>`;return}
+  const linha=(it,v)=>{const tem=v===true||(typeof v==="string"&&v.trim()&&v.trim()!=="0");
+    return `<li class="${tem?"sim":"nao"}"><span class="ic" aria-hidden="true">${tem?"✓":"✕"}</span><span>${typeof v==="string"&&v.trim()?`<b>${esc(v.trim())}</b> `:""}${esc(it.nome)}<span class="sr" hidden>${tem?" (incluso)":" (não incluso)"}</span></span></li>`};
+  main.innerHTML=`<section class="planos">${lista.map(p=>{const v=p.valores||{};
+      return `<article class="plano${p.destaque?" destaque":""}${foco===p.id?" foco":""}" id="pl-${p.id}">${p.destaque?`<span class="selo">Mais escolhido</span>`:""}
+        <h2>${esc(p.nome)}</h2><p class="desc">${esc(p.descricao)}</p>
+        <div class="preco"><b>${brl(p.preco)}</b><span>/${esc(p.periodo||"mês")}</span></div>
+        <ul class="itens">${itens.filter(it=>v[it.id]!==undefined&&v[it.id]!==null&&v[it.id]!=="").map(it=>linha(it,v[it.id])).join("")}</ul>
+        ${p.obs?`<p class="obs">${esc(p.obs)}</p>`:""}
+        ${fone?`<a class="b${p.destaque?" pri":""}" href="${wa(`Olá! Tenho interesse no plano ${p.nome} (${brl(p.preco)}/${p.periodo||"mês"}). Pode me explicar como funciona?`)}" target="_blank" rel="noopener">Quero o plano ${esc(p.nome)}</a>`:""}
+      </article>`}).join("")}</section>
+    <section class="card extra"><p>Precisa de algo avulso? Pacotes de posts, captação e edição de vídeo, sites e material gráfico estão na loja.</p><a class="b" href="loja.html">Ver a loja →</a></section>`;
+  if(foco){const el=document.getElementById("pl-"+foco);el&&el.scrollIntoView({block:"center"})}
+})();
+</script>
+</body>
+</html>

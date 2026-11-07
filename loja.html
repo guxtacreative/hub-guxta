@@ -16,6 +16,11 @@
   html,body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--font);-webkit-text-size-adjust:100%}
   a{color:inherit}
   button{font:inherit;color:inherit}
+  .cta{display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#0A0A0A 0%,#1A0003 55%,#5C0008 100%);color:#fff;border-radius:18px;padding:24px}
+  .cta h2{color:#fff;margin:4px 0 6px;font-size:22px}
+  .cta p{margin:0;color:#D6D6D6;max-width:620px}
+  .cta-b{display:flex;flex-wrap:wrap;gap:10px}
+  .cta-b .b:not(.pri){background:transparent;color:#fff;border-color:rgba(255,255,255,.5)}
   [hidden]{display:none!important}
   .topo{background:linear-gradient(135deg,#0A0A0A 0%,#1A0003 55%,#5C0008 100%);color:#fff;padding:18px 16px 70px}
   .topo-in{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
@@ -193,10 +198,12 @@
   let cat="", busca="", modo="vitrine", passo=1, calc=null;
   const salvarLocal=()=>{guarda.set("carrinho",car);guarda.set("dados",dados);guarda.set("identidade",identidade);guarda.set("entrega",entrega);if(token)guarda.set("token",token)};
   const subtotal=()=>car.reduce((s,i)=>s+precoIt(i),0);
-  const artesTot=()=>car.reduce((s,i)=>s+(i.arte==="criar"?N(prod(i.produto_id).arte_valor):0),0);
-  const precisaId=()=>car.some(i=>i.arte==="criar");
+  const artesTot=()=>car.reduce((s,i)=>s+(!ehServ(i)&&i.arte==="criar"?N(prod(i.produto_id).arte_valor):0),0);
+  const ehServ=i=>{const p=prod(i.produto_id);return !!p&&p.tipo==="servico"};
+  const fisico=()=>car.some(i=>!ehServ(i));
+  const precisaId=()=>car.some(i=>!ehServ(i)&&i.arte==="criar");
   const idTot=()=>precisaId()&&identidade==="criar"?N(L.identidade_valor):0;
-  const frete=()=>entrega==="entrega"?N(ent.valor):0;
+  const frete=()=>fisico()&&entrega==="entrega"?N(ent.valor):0;
   const total=()=>subtotal()+artesTot()+idTot()+frete();
 
   // pedido já fechado neste aparelho? mostra o link de pagamento
@@ -209,6 +216,10 @@
   const cats=[...new Set(P.map(p=>p.categoria).filter(Boolean))];
   const aPartir=p=>ehM2(p)?N(p.preco_m2):Math.min(...(p.faixas||[]).map(f=>N(f.preco)));
   const fotoHTML=p=>p.foto?`<img src="${esc(p.foto)}" alt="" loading="lazy">`:`<span class="ini" aria-hidden="true">${esc((p.nome||"?").trim().slice(0,1).toUpperCase())}</span>`;
+  function ctaHTML(){const c=L.cta;if(!c)return "";const f=String(L.telefone||"").replace(/\D/g,""), fone=f?(f.length<=11?"55"+f:f):"";
+    const msg=encodeURIComponent(`Olá! Vi a loja e quero saber mais sobre os planos de ${String(c.titulo||"assessoria").toLowerCase()}.`);
+    return `<section class="cta"><div><p class="eyebrow" style="color:#FF6B73">Para a sua marca crescer</p><h2>${esc(c.titulo)}</h2><p>${esc(c.texto)}</p></div>
+      <div class="cta-b">${L.tem_planos?`<a class="b pri" href="planos.html">Ver os planos →</a>`:""}${fone?`<a class="b" href="https://wa.me/${fone}?text=${msg}" target="_blank" rel="noopener">Falar no WhatsApp</a>`:""}</div></section>`}
   function vitrine(){
     const q=busca.trim().toLowerCase(), vis=P.filter(p=>(!cat||p.categoria===cat)&&(!q||(p.nome+" "+p.descricao+" "+p.categoria).toLowerCase().includes(q)));
     const pend=guarda.get("pendente",null);
@@ -217,7 +228,7 @@
         <input type="search" class="busca" id="busca" placeholder="Buscar produto" aria-label="Buscar produto" value="${esc(busca)}"></div></section>
       <section class="grade" id="grade">${vis.map(p=>`<button type="button" class="prod" data-p="${p.id}"><span class="foto">${fotoHTML(p)}</span>
         <span class="prod-c">${p.categoria?`<small class="cat">${esc(p.categoria)}</small>`:""}<b>${esc(p.nome)}</b><p>${esc(p.descricao)}</p>
-          <span class="apartir">${ehM2(p)?"por m²":"a partir de"}<strong>${brl(aPartir(p))}${ehM2(p)?"<small> /m²</small>":""}</strong></span></span></button>`).join("")||`<div class="card vazio" style="grid-column:1/-1">${P.length?"Nenhum produto encontrado.":"Nenhum produto disponível ainda."}</div>`}</section>`;
+          <span class="apartir">${ehM2(p)?"por m²":"a partir de"}<strong>${brl(aPartir(p))}${ehM2(p)?"<small> /m²</small>":""}</strong></span></span></button>`).join("")||`<div class="card vazio" style="grid-column:1/-1">${P.length?"Nenhum produto encontrado.":"Nenhum produto disponível ainda."}</div>`}</section>${ctaHTML()}`;
     barra();
   }
   function barra(){const n=car.length;$("#n-carrinho").textContent=n;$("#barra").hidden=!(n&&modo==="vitrine");
@@ -228,7 +239,7 @@
       <div class="dlg-h"><h2>${esc(p.nome)}</h2><button type="button" class="x" data-fechar aria-label="Fechar">✕</button></div>
       <div class="dlg-b">${p.foto?`<div class="foto" style="border-radius:14px;margin-bottom:12px">${fotoHTML(p)}</div>`:""}
         ${p.descricao?`<p style="margin:0 0 8px">${esc(p.descricao)}</p>`:""}
-        <div class="info">${p.prazo?`<span>⏱ Produção: ${esc(p.prazo)}</span>`:""}<span>🎨 Criação de arte: ${N(p.arte_valor)?"+ "+brl(p.arte_valor)+" se precisar":"sem custo extra"}</span></div>
+        <div class="info">${p.prazo?`<span>⏱ Produção: ${esc(p.prazo)}</span>`:""}${p.tipo==="servico"?"":`<span>🎨 Criação de arte: ${N(p.arte_valor)?"+ "+brl(p.arte_valor)+" se precisar":"sem custo extra"}</span>`}</div>
         <p class="h3" style="margin-top:14px">Escolha a quantidade</p>
         <div class="faixas" role="radiogroup" aria-label="Quantidade">${p.faixas.map(f=>`<label class="faixa${N(f.qtd)===sel?" on":""}"><input type="radio" name="fx" value="${f.qtd}" ${N(f.qtd)===sel?"checked":""}>
           <b>${qtdF(f.qtd)} ${esc(p.unidade||"un")}</b><span class="v">${brl(f.preco)}${N(f.qtd)>1?`<small>${brl(N(f.preco)/N(f.qtd))} cada</small>`:""}</span></label>`).join("")}</div></div>
@@ -272,8 +283,9 @@
   function fechar(){if(dlg.open&&typeof dlg.close==="function")dlg.close();dlg.removeAttribute("open")}
 
   /* ---------- finalizar pedido ---------- */
-  const ETAPAS=["Carrinho","Seus dados","Arte","Entrega","Pagamento"];
-  const passosHTML=()=>`<ol class="passos" style="grid-template-columns:repeat(${ETAPAS.length},1fr)" aria-label="Etapas">${ETAPAS.map((t,k)=>`<li class="${k+1<passo?"feito":k+1===passo?"atual":""}"${k+1===passo?' aria-current="step"':""}>${t}</li>`).join("")}</ol>`;
+  const ETAPAS_=[[1,"Carrinho"],[2,"Seus dados"],[3,"Arte"],[4,"Entrega"],[5,"Pagamento"]];
+  const etapas=()=>ETAPAS_.filter(([n])=>fisico()||(n!==3&&n!==4));
+  const passosHTML=()=>{const E=etapas();return `<ol class="passos" style="grid-template-columns:repeat(${E.length},1fr)" aria-label="Etapas">${E.map(([n,t])=>`<li class="${n<passo?"feito":n===passo?"atual":""}"${n===passo?' aria-current="step"':""}>${t}</li>`).join("")}</ol>`};
   const docFmt=d=>{d=String(d||"").replace(/\D/g,"");if(d.length===11)return d.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,"$1.$2.$3-$4");if(d.length===14)return d.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,"$1.$2.$3/$4-$5");return d};
   function cpfOk(c){c=c.replace(/\D/g,"");if(c.length!==11||/^(\d)\1+$/.test(c))return false;let s=0;for(let i=0;i<9;i++)s+=+c[i]*(10-i);let d=(s*10)%11%10;if(d!==+c[9])return false;s=0;for(let i=0;i<10;i++)s+=+c[i]*(11-i);d=(s*10)%11%10;return d===+c[10]}
   function cnpjOk(c){c=c.replace(/\D/g,"");if(c.length!==14||/^(\d)\1+$/.test(c))return false;const calc=n=>{let s=0,p=n-7;for(let i=0;i<n;i++){s+=+c[i]*p--;if(p<2)p=9}const r=s%11;return r<2?0:11-r};return calc(12)===+c[12]&&calc(13)===+c[13]}
@@ -282,7 +294,7 @@
   const endTxt=a=>[[a.rua,a.numero].filter(Boolean).join(", "),a.complemento,a.bairro,[a.cidade,a.uf].filter(Boolean).join("/"),a.cep?"CEP "+cepFmt(a.cep):""].filter(Boolean).join(" · ");
   const resumoLinhas=()=>`<div class="linhas"><div><span>Produtos</span><b>${brl(subtotal())}</b></div>
       ${artesTot()?`<div><span>Criação de arte</span><b>${brl(artesTot())}</b></div>`:""}${idTot()?`<div><span>Identidade visual</span><b>${brl(idTot())}</b></div>`:""}
-      ${entrega?`<div><span>${entrega==="entrega"?"Entrega":"Retirada"}</span><b>${frete()?brl(frete()):"Sem custo"}</b></div>`:""}</div>
+      ${entrega&&fisico()?`<div><span>${entrega==="entrega"?"Entrega":"Retirada"}</span><b>${frete()?brl(frete()):"Sem custo"}</b></div>`:""}</div>
     <div class="tot"><span>Total</span><b>${brl(total())}</b></div>`;
 
   function checkout(){
@@ -324,14 +336,14 @@
       </div><p class="erro" id="erro"></p>${resumoLinhas()}
       <div class="acoes"><button class="b pri" data-ir="5">Continuar →</button><button class="link" data-ir="3">Voltar</button></div>`}
     if(passo===5)corpo=`<h2>Resumo e pagamento</h2><p class="sub">Confira e pague o valor integral por <b>Pix</b>, <b>cartão de crédito</b> ou <b>boleto</b>, pelo Mercado Pago. A confirmação é automática.</p>
-      <ul class="itens">${car.map(i=>{const p=prod(i.produto_id),f={preco:precoIt(i)};return `<li><span><b>${esc(p.nome)}</b><br><small>${qtdTxt(i,p)} · ${i.arte==="tem"?"arte enviada ("+esc((i.arquivo||{}).nome||"")+"), será revisada":"criação da arte"+(N(p.arte_valor)?" + "+brl(p.arte_valor):"")}</small></span><span class="v">${brl(f.preco)}</span></li>`}).join("")}</ul>
+      <ul class="itens">${car.map(i=>{const p=prod(i.produto_id),f={preco:precoIt(i)};return `<li><span><b>${esc(p.nome)}</b><br><small>${qtdTxt(i,p)} · ${p.tipo==="servico"?"serviço":i.arte==="tem"?"arte enviada ("+esc((i.arquivo||{}).nome||"")+"), será revisada":"criação da arte"+(N(p.arte_valor)?" + "+brl(p.arte_valor):"")}</small></span><span class="v">${brl(f.preco)}</span></li>`}).join("")}</ul>
       ${resumoLinhas()}
-      <p class="sub" style="margin:12px 0 0">${esc(dados.nome)} · ${esc(dados.telefone)}${entrega==="entrega"?" · entrega em "+esc(endTxt(d)):" · retirada no nosso endereço"}</p>
+      <p class="sub" style="margin:12px 0 0">${esc(dados.nome)} · ${esc(dados.telefone)}${!fisico()?"":entrega==="entrega"?" · entrega em "+esc(endTxt(d)):" · retirada no nosso endereço"}</p>
       <p class="erro" id="erro"></p>
       <div class="acoes"><button class="b ok" id="pagar">Ir para o pagamento · ${brl(total())} →</button><button class="link" data-ir="4">Voltar</button></div>`;
     main.innerHTML=`<section class="card">${passosHTML()}</section><section class="card">${corpo}</section>`;
   }
-  function arteHTML(){return car.map((i,k)=>{const p=prod(i.produto_id);return `<div class="arte-it"><h3>${esc(p.nome)} · ${qtdTxt(i,p)}</h3>
+  function arteHTML(){return car.map((i,k)=>{const p=prod(i.produto_id);if(p.tipo==="servico")return "";return `<div class="arte-it"><h3>${esc(p.nome)} · ${qtdTxt(i,p)}</h3>
       <div class="opcoes" role="radiogroup" aria-label="Arte de ${esc(p.nome)}">
         <label class="opc${i.arte==="tem"?" on":""}"><input type="radio" name="arte-${k}" value="tem" data-arte="${k}" ${i.arte==="tem"?"checked":""}><span class="opc-t"><b>Já tenho a arte</b></span><small>Envie o arquivo. A equipe revisa antes de imprimir.</small></label>
         <label class="opc${i.arte==="criar"?" on":""}"><input type="radio" name="arte-${k}" value="criar" data-arte="${k}" ${i.arte==="criar"?"checked":""}><span class="opc-t"><b>Quero que criem</b><span class="opc-v">${N(p.arte_valor)?"+ "+brl(p.arte_valor):"Sem custo"}</span></span><small>A gente cria a arte e manda para você aprovar.</small></label>
@@ -375,11 +387,12 @@
     i.arquivo={caminho,nome:file.name.slice(0,160)};salvarLocal();await salvarServidor();checkout();toast("Arte recebida! Vamos revisar antes de imprimir.")}
 
   async function ir(p){const er=$("#erro");
+    if(!fisico()&&(p===3||p===4))p=p>passo?5:2;
     if(passo===2&&p>2){lerDados();if(!validarDados())return;
       const b=main.querySelector('[data-ir="3"]');b&&(b.disabled=true);const e=await salvarServidor();b&&(b.disabled=false);if(e){er.textContent=msgErro(e.message||"");return}}
     if(passo===2&&p<2)lerDados();
-    if(passo===3&&p>3){const k=car.findIndex(i=>!i.arte);if(k>=0){er.textContent="Escolha uma opção de arte para cada produto.";return}
-      const s=car.findIndex(i=>i.arte==="tem"&&!i.arquivo);if(s>=0){er.textContent="Envie o arquivo da arte (ou escolha que a gente crie).";return}
+    if(passo===3&&p>3){const k=car.findIndex(i=>!ehServ(i)&&!i.arte);if(k>=0){er.textContent="Escolha uma opção de arte para cada produto.";return}
+      const s=car.findIndex(i=>!ehServ(i)&&i.arte==="tem"&&!i.arquivo);if(s>=0){er.textContent="Envie o arquivo da arte (ou escolha que a gente crie).";return}
       if(precisaId()&&!identidade){er.textContent="Diga se você já tem identidade visual.";return}
       await salvarServidor()}
     if(passo===4&&p>4){if(!entrega){er.textContent="Escolha retirada ou entrega.";return}

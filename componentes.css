@@ -1080,3 +1080,47 @@ html[data-tema="escuro"] .btn.pg-mp-btn.pg-mp-btn.pg-mp-btn.pg-mp-btn:hover,html
 .cup-h{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
 .cup-h small{display:block;color:var(--muted);font-size:12.5px;margin-top:4px}
 .cup-cod{font:800 17px var(--mono,var(--font));letter-spacing:.06em;border:1.5px dashed var(--accent,#E30613);border-radius:8px;padding:2px 10px;margin-right:8px;color:var(--accent,#E30613)}
+/* planos de serviço */
+.pm-abas{margin:0 0 14px}
+.pl-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:14px}
+.pl-card{position:relative;background:var(--surface,#fff);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.pl-card.destaque{border:2px solid var(--accent,#E30613)}
+.pl-card.off{opacity:.65}
+.pl-selo{position:absolute;top:-11px;left:16px;background:var(--accent,#E30613);color:#fff;font:800 10.5px var(--font);letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border-radius:999px}
+.pl-h{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.pl-h small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+.pl-nome{font-size:18px}
+.pl-preco{font-size:20px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pl-preco small{font-size:12px;color:var(--muted);font-weight:600}
+.pl-itens{list-style:none;margin:0;padding:10px 0 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px;font-size:13.5px;flex:1}
+.pl-itens li{display:flex;gap:8px}
+.pl-itens li span{width:16px;flex:none;font-weight:900;color:#0E7A2A}
+.pl-itens li.nao{color:var(--muted)}
+.pl-itens li.nao span{color:#B5B5B5}
+.pl-it-lista{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.pl-it-lista li{display:flex;gap:6px;align-items:center}
+.pl-it-lista input{flex:1;min-width:0}
+.pl-it-novo{display:flex;gap:8px}
+.pl-it-novo input{flex:1;min-width:0}
+.pl-preco-in{display:grid;grid-template-columns:1fr 120px;gap:10px}
+.pl-ed-it{display:flex;flex-direction:column;gap:8px}
+.pl-ed-row{display:grid;grid-template-columns:1fr 150px 150px;gap:8px;align-items:center}
+.pl-ed-nome{font-size:14px;font-weight:600}
+.pl-ed-row input[hidden]{display:block!important;visibility:hidden}
+@media (max-width:640px){.pl-ed-row{grid-template-columns:1fr 1fr}.pl-ed-nome{grid-column:1/-1}.pl-ed-row input[hidden]{display:none!important}}
+#prod-form.pf-serv .pf-graf{display:none}
+/* aba Loja no portal */
+.lj-portal-h{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between}
+.lj-portal{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:14px}
+.lj-portal-p{display:flex;flex-direction:column;background:var(--surface,#fff);border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;transition:transform .15s}
+.lj-portal-p:hover{transform:translateY(-2px)}
+.lj-portal-f{aspect-ratio:4/3;background:var(--soft);display:grid;place-items:center;overflow:hidden}
+.lj-portal-f img{width:100%;height:100%;object-fit:cover}
+.lj-portal-f i{font:900 22px var(--font);font-style:normal;width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:var(--accent,#E30613);color:#fff}
+.lj-portal-t{padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.lj-portal-t small{color:var(--accent,#E30613);font:800 10.5px var(--font);letter-spacing:.1em;text-transform:uppercase}
+.lj-portal-t span{color:var(--muted);font-size:13px}
+.lj-portal-t strong{color:var(--ink)}
+@media (max-width:600px){.lj-portal{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.lj-portal-h{text-align:left}
+.lj-portal-h>div{flex:1 1 320px;min-width:0}

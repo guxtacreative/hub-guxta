@@ -144,6 +144,7 @@
       <button class="tab" role="tab" id="tab-relatorio" data-tab="relatorio" aria-selected="false" hidden><span class="tab-t">Relatório</span><span class="badge" hidden></span></button>
       <button class="tab" role="tab" id="tab-pagamentos" data-tab="pagamentos" aria-selected="false" hidden><span class="tab-t">Pagamentos</span><span class="badge" hidden></span></button>
       <button class="tab" role="tab" id="tab-contrato" data-tab="contrato" aria-selected="false" hidden><span class="tab-t">Contrato</span><span class="badge" hidden></span></button>
+      <button class="tab" role="tab" id="tab-loja" data-tab="loja" aria-selected="false" hidden><span class="tab-t">Loja</span><span class="badge" hidden></span></button>
     </nav>
 
     <section id="panel-inicio" class="list pi" role="tabpanel" aria-labelledby="tab-inicio" style="margin-top:22px"></section>
@@ -229,6 +230,8 @@
 
     <section id="panel-pagamentos" class="list pg-painel" role="tabpanel" aria-labelledby="tab-pagamentos" style="margin-top:22px" hidden></section>
 
+    <section id="panel-loja" class="list" role="tabpanel" aria-labelledby="tab-loja" style="margin-top:22px" hidden></section>
+
     <section id="panel-contrato" class="list" role="tabpanel" aria-labelledby="tab-contrato" style="margin-top:22px" hidden>
       <p class="intro">Seu contrato assinado e os outros documentos do nosso trabalho ficam guardados aqui, só para quem tem acesso com e-mail e senha.</p>
       <div class="docs" id="docs"></div>
@@ -291,7 +294,7 @@
   /* ---------- abas ---------- */
   document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
     document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",String(x===t)));
-    ["inicio","aprovar","plano","roteiros","stories","pedidos","resultados","anuncios","relatorio","pagamentos","contrato"].forEach(n=>$("#panel-"+n).hidden=n!==t.dataset.tab);
+    ["inicio","aprovar","plano","roteiros","stories","pedidos","resultados","anuncios","relatorio","pagamentos","contrato","loja"].forEach(n=>$("#panel-"+n).hidden=n!==t.dataset.tab);
     if(t.dataset.tab==="inicio"&&dados)renderInicio();
     if(t.dataset.tab==="relatorio"&&dados)carregarRelatorio();
     if(t.dataset.tab==="contrato"&&dados)carregarDocumentos();
@@ -469,10 +472,25 @@
     renderPosts();renderGuias();renderResultados();renderPedidosTudo();renderAnuncios();renderPlanoDash();
     if(window.GlaraPagamentos&&!pagMod)pagMod=window.GlaraPagamentos.criar({sb,P,modo:()=>modo,base,banner:$("#pg-faixa"),tab:$("#tab-pagamentos"),panel:$("#panel-pagamentos"),
       toast:m=>toastPed(m,true),abrir:()=>{const t=$("#tab-pagamentos");t.click();t.scrollIntoView({block:"nearest"})},sair:()=>$("#tab-aprovar").click()});
-    Promise.all([carregarRelatorio(),carregarDocumentos(),pagMod?pagMod.carregar():null]).then(()=>{novidadesRender();irAbaInicial()});novidadesRender();renderInicio();
+    Promise.all([carregarRelatorio(),carregarDocumentos(),pagMod?pagMod.carregar():null,carregarLoja()]).then(()=>{novidadesRender();irAbaInicial()});novidadesRender();renderInicio();
     atualizarInvestimento();
   }
   let pagMod=null;
+  /* aba Loja: serviços avulsos e material gráfico da loja online */
+  let lojaCarregada=false;
+  async function carregarLoja(){if(lojaCarregada)return;const tab=$("#tab-loja"), box=$("#panel-loja");
+    let r;try{r=await sb.rpc("loja_ver")}catch(e){r={error:e}}
+    const L=r&&!r.error&&r.data;if(!L||!L.ativa||!(L.produtos||[]).length){tab.hidden=true;return}
+    lojaCarregada=true;tab.hidden=false;
+    const brl=v=>(Number(v)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+    const ap=p=>p.preco_tipo==="m2"?Number(p.preco_m2)||0:Math.min(...(p.faixas||[]).map(f=>Number(f.preco)||0));
+    const ord=[...L.produtos].sort((a,b)=>(a.tipo==="servico"?0:1)-(b.tipo==="servico"?0:1));
+    box.innerHTML=`<section class="card lj-portal-h"><div><span class="eyebrow">Loja</span><h2>Serviços avulsos e material gráfico</h2>
+        <p class="note" style="margin:4px 0 0">Precisa de algo além do seu plano? Peça e pague por aqui: pacotes de posts, captação e edição de vídeo, sites, cartões, banners e mais.</p></div>
+        <a class="btn primary" href="loja.html?origem=portal" target="_blank" rel="noopener">Abrir a loja</a></section>
+      <div class="lj-portal">${ord.map(p=>`<a class="lj-portal-p" href="loja.html?p=${encodeURIComponent(p.id)}&origem=portal" target="_blank" rel="noopener">
+          <span class="lj-portal-f">${p.foto?`<img src="${esc(p.foto)}" alt="" loading="lazy">`:`<i aria-hidden="true">${esc((p.nome||"?").slice(0,1).toUpperCase())}</i>`}</span>
+          <span class="lj-portal-t"><small>${esc(p.categoria||"")}</small><b>${esc(p.nome)}</b><span>${p.preco_tipo==="m2"?"por m² ":"a partir de "}<strong>${brl(ap(p))}</strong></span></span></a>`).join("")}</div>`}
   /* link dos e-mails e do WhatsApp: ?aba=aprovar ou ?aba=relatorio abre direto na aba */
   let abaInicial=(new URLSearchParams(location.search).get("aba")||"").replace(/[^a-z]/g,"");
   function irAbaInicial(){if(!abaInicial)return;const t=document.getElementById("tab-"+abaInicial);abaInicial="";
@@ -515,7 +533,7 @@
   function novidadesRender(){
     if(!dados)return;
     const N=calcularNovidades(), pend=dados.posts.filter(p=>estado(p)==="pend").length;
-    document.querySelectorAll("#app .tab").forEach(t=>{const k=t.dataset.tab, b=t.querySelector(".badge");if(!b||k==="pagamentos")return;
+    document.querySelectorAll("#app .tab").forEach(t=>{const k=t.dataset.tab, b=t.querySelector(".badge");if(!b||k==="pagamentos"||k==="loja")return;
       const n=k==="aprovar"?pend:(N[k]?N[k].n:0);b.hidden=!n;b.textContent=n>99?"99+":n;
       b.setAttribute("aria-label",k==="aprovar"?`${n} aguardando sua decisão`:`${n} novidade(s)`);
       b.classList.toggle("calma",k==="aprovar"&&!(N.aprovar&&N.aprovar.n));});
