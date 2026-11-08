@@ -1,9 +1,9 @@
 /* =====================================================================
    Hub de Marketing · V4 leve
-   Mesmo vermelho e estilo da V4, com menos vermelho em área grande:
-   faixa principal clara com linha vermelha embaixo, nome do cliente em vermelho,
-   abas selecionadas só com borda vermelha, menu lateral branco com
-   ícones vermelhos e item selecionado em vermelho.
+   Mesmo verde e estilo da V4, com menos verde em área grande:
+   faixa principal clara com linha verde embaixo, nome do cliente em verde,
+   abas selecionadas só com borda verde, menu lateral branco com
+   ícones verdes e item selecionado em verde.
    As barras de progresso seguem coloridas (anel.js).
    Carregado por último: tirar este arquivo volta à V4 cheia.
    ===================================================================== */
@@ -20,16 +20,16 @@ html .hero select option{color:#111111}
 html #app{margin-top:18px}
 html .ini-ico{background:#111111;box-shadow:none}
 
-/* abas e botões de escolha: selecionado transparente com borda vermelha */
+/* abas e botões de escolha: selecionado transparente com borda verde */
 html .tab[aria-selected="true"]{background:transparent;color:var(--accent);border:1.5px solid var(--accent);box-shadow:none}
 html .tab[aria-selected="true"] b{color:var(--accent)}
 html .seg button[aria-pressed="true"]{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
 
-/* menu lateral: branco, ícones vermelhos; selecionado cinza claro */
+/* menu lateral: branco, ícones verdes; selecionado cinza claro */
 html .cli{background:var(--surface,#FFFFFF)!important;color:var(--ink)!important;border:1px solid var(--line)!important;box-shadow:none!important}
 html .cli:hover{border-color:#D6D6D6!important}
 html .cli-tarefas .cli-ico{background:var(--accent);color:#FFFFFF}
-html .cli[aria-current="true"],html #clientes .cli[aria-current="true"]{background:var(--accent)!important;color:#FFFFFF!important;border-color:var(--accent)!important;box-shadow:0 10px 22px -12px rgba(227,6,19,.55)!important}
+html .cli[aria-current="true"],html #clientes .cli[aria-current="true"]{background:var(--accent)!important;color:#FFFFFF!important;border-color:var(--accent)!important;box-shadow:0 10px 22px -12px rgba(0,200,117,.55)!important}
 html .cli[aria-current="true"] small{color:rgba(255,255,255,.8)}
 html .cli[aria-current="true"] .cli-ico{background:#FFFFFF;color:var(--accent)}
 html .cli[aria-current="true"] .badge{background:#FFFFFF;color:var(--accent)}

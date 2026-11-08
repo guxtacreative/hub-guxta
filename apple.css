@@ -37,7 +37,7 @@ html a{color:var(--accent)}
 html h1,html h2,html h3{font-family:var(--display);letter-spacing:-.022em}
 html .eyebrow::before{background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent)}
 
-/* ---------- faixa principal: cartão claro, sem brilho vermelho ---------- */
+/* ---------- faixa principal: cartão claro, sem brilho verde ---------- */
 html .hero{background:var(--surface);color:var(--ink);border-radius:28px;box-shadow:var(--sombra);border:1px solid var(--line);padding:clamp(26px,4.5vw,48px) clamp(22px,5vw,52px)}
 html .hero::before,html .hero::after{display:none}
 html .hero h1{color:var(--ink);font-weight:700}
@@ -88,9 +88,9 @@ html[data-tema="escuro"] input,html[data-tema="escuro"] select,html[data-tema="e
 /* ícones dos quadros do painel: pretos */
 html .ini-ico{background:#1D1D1F;color:#FFFFFF;box-shadow:none}
 html[data-tema="escuro"] .ini-ico{background:#F5F5F7;color:#1D1D1F}
-/* realces de passar o mouse: azul em vez de vermelho */
+/* realces de passar o mouse: azul em vez de verde */
 html .ini-card.clicavel:hover,html .ini-item:hover,html .orc-row:hover{border-color:color-mix(in srgb,var(--azul) 45%,transparent)}
-/* fundo do modo escuro sem brilho vermelho; dicas em cinza */
+/* fundo do modo escuro sem brilho verde; dicas em cinza */
 html[data-tema="escuro"] body{background:var(--bg)}
 html .tip{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-left:3px solid var(--azul)}
 html[data-tema="escuro"] .tip,html[data-tema="escuro"] .extrabox{background:var(--surface);color:var(--ink)}

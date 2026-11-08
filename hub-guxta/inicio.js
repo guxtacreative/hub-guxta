@@ -77,7 +77,7 @@
     }
     function rosca(){
       const p=D.pedidos||{}, t=D.tarefas||{};
-      const seg=[["Pedidos novos",N(p.recebidos),"var(--seg1,var(--alerta,#A3E635))"],["Pedidos em produção",N(p.producao),"var(--seg2,var(--accent))"],["Tarefas a fazer",N(t.a_fazer),"var(--seg3,var(--ink))"],["Tarefas fazendo",N(t.fazendo),"var(--seg4,var(--muted))"],["Aguardando retorno",N(t.aguardando),"var(--seg5,var(--line))"]];
+      const seg=[["Pedidos novos",N(p.recebidos),"var(--seg1,var(--alerta,#00C875))"],["Pedidos em produção",N(p.producao),"var(--seg2,var(--accent))"],["Tarefas a fazer",N(t.a_fazer),"var(--seg3,var(--ink))"],["Tarefas fazendo",N(t.fazendo),"var(--seg4,var(--muted))"],["Aguardando retorno",N(t.aguardando),"var(--seg5,var(--line))"]];
       const tot=seg.reduce((a,x)=>a+x[1],0), r=52, C=2*Math.PI*r;let acc=0;
       const arcos=tot?seg.filter(x=>x[1]).map(x=>{const len=x[1]/tot*C, a=`<circle cx="70" cy="70" r="${r}" fill="none" stroke="${x[2]}" stroke-width="16" stroke-dasharray="${Math.max(0,len-2)} ${C}" stroke-dashoffset="${-acc}" transform="rotate(-90 70 70)"><title>${esc(x[0])}: ${x[1]}</title></circle>`;acc+=len;return a}).join(""):`<circle cx="70" cy="70" r="${r}" fill="none" stroke="var(--line)" stroke-width="16"/>`;
       return `<section class="ini-box ini-rosca"><header><span class="ini-ico">${I.alvo}</span><h3>Demandas</h3><span class="note">em aberto</span></header>

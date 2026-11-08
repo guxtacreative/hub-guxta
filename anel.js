@@ -2,7 +2,7 @@
    progresso(): um arco grosso com degradê, bolinha no fim e trilho cinza.
    segmentos(): rosca em partes, com pontas arredondadas e espaço entre elas. */
 (function(){
-  // escala do Apple Card: vermelho → laranja → amarelo → verde
+  // escala do Apple Card: verde → laranja → amarelo → verde
   const ESCALA=[[0,[255,59,48]],[.45,[255,149,0]],[.72,[255,204,0]],[1,[52,199,89]]];
   function corEscala(t){t=Math.max(0,Math.min(1,t));
     for(let i=1;i<ESCALA.length;i++){if(t<=ESCALA[i][0]){const [a,ca]=ESCALA[i-1],[b,cb]=ESCALA[i],k=(t-a)/((b-a)||1);

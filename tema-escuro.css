@@ -1,7 +1,7 @@
-/* Hub de Marketing · modo escuro no estilo V4 (preto com brilho vermelho). Liga com o botão de contraste: html[data-tema="escuro"] */
-html[data-tema="escuro"]{--bg:#060606; --surface:#111111; --surface-2:#1B1B1B; --line:#262626; --soft:#171717; --ink:#EDEDED; --muted:#9C9C9C; --accent:#FF2B2B; --accent-dark:#FF4D4D; --alerta:#FF2B2B; --accent-soft:rgba(255,43,43,.14); --accent-soft2:rgba(255,43,43,.32); --rosa:rgba(255,43,43,.14); --warn-bg:rgba(247,185,40,.14); --warn:#F7B928; --ok:#2BC452; --ok-txt:#4BE077; --ch-bar:#3A3A3A; --sombra:none; color-scheme:dark}
-html[data-tema="escuro"] body{background:radial-gradient(60% 50% at 0% 0%,rgba(227,6,19,.22),transparent 70%),radial-gradient(50% 40% at 100% 30%,rgba(227,6,19,.12),transparent 70%),var(--bg);background-attachment:fixed;color:var(--ink)}
-html[data-tema="escuro"] body.modo-auth{background:radial-gradient(60% 50% at 100% 0%,rgba(227,6,19,.25),transparent 70%),var(--bg)}
+/* Hub de Marketing · modo escuro no estilo V4 (preto com brilho verde). Liga com o botão de contraste: html[data-tema="escuro"] */
+html[data-tema="escuro"]{--bg:#060606; --surface:#111111; --surface-2:#1B1B1B; --line:#262626; --soft:#171717; --ink:#EDEDED; --muted:#9C9C9C; --accent:#00C875; --accent-dark:#00E687; --alerta:#00C875; --accent-soft:rgba(0,200,117,.14); --accent-soft2:rgba(0,200,117,.32); --rosa:rgba(0,200,117,.14); --warn-bg:rgba(247,185,40,.14); --warn:#F7B928; --ok:#2BC452; --ok-txt:#4BE077; --ch-bar:#3A3A3A; --sombra:none; color-scheme:dark}
+html[data-tema="escuro"] body{background:radial-gradient(60% 50% at 0% 0%,rgba(0,200,117,.22),transparent 70%),radial-gradient(50% 40% at 100% 30%,rgba(0,200,117,.12),transparent 70%),var(--bg);background-attachment:fixed;color:var(--ink)}
+html[data-tema="escuro"] body.modo-auth{background:radial-gradient(60% 50% at 100% 0%,rgba(0,200,117,.25),transparent 70%),var(--bg)}
 html[data-tema="escuro"] h1,html[data-tema="escuro"] h2,html[data-tema="escuro"] h3,html[data-tema="escuro"] b,html[data-tema="escuro"] strong{color:var(--ink)}
 html[data-tema="escuro"] .hero h1,html[data-tema="escuro"] .hero mark{color:#FFFFFF}
 html[data-tema="escuro"] .eyebrow{color:var(--ink)}
@@ -13,7 +13,7 @@ html[data-tema="escuro"] .caption{color:#D2D2D2}
 html[data-tema="escuro"] .empty{border-style:dashed}
 html[data-tema="escuro"] input[type=text],html[data-tema="escuro"] input[type=date],html[data-tema="escuro"] input[type=datetime-local],html[data-tema="escuro"] input[type=tel],html[data-tema="escuro"] input[type=email],html[data-tema="escuro"] input[type=password],html[data-tema="escuro"] input[type=number],html[data-tema="escuro"] input[type=url],html[data-tema="escuro"] input[type=search],html[data-tema="escuro"] select,html[data-tema="escuro"] textarea,html[data-tema="escuro"] .auth input{background:var(--surface-2)!important;border-color:#2C2C2C!important;color:var(--ink)}
 html[data-tema="escuro"] input::placeholder,html[data-tema="escuro"] textarea::placeholder{color:#7C7C7C}
-html[data-tema="escuro"] input:focus,html[data-tema="escuro"] select:focus,html[data-tema="escuro"] textarea:focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(255,43,43,.25)}
+html[data-tema="escuro"] input:focus,html[data-tema="escuro"] select:focus,html[data-tema="escuro"] textarea:focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(0,200,117,.25)}
 html[data-tema="escuro"] select option{background:var(--surface);color:var(--ink)}
 html[data-tema="escuro"] .label,html[data-tema="escuro"] .intro,html[data-tema="escuro"] .note,html[data-tema="escuro"] .meta,html[data-tema="escuro"] .ck-count,html[data-tema="escuro"] .tk-cli,html[data-tema="escuro"] .tk-prog small{color:var(--muted)}
 html[data-tema="escuro"] .tab{background:#161616;border-color:#2A2A2A;color:#CFCFCF}
@@ -29,10 +29,10 @@ html[data-tema="escuro"] .chip[aria-pressed="true"]{background:#FFFFFF!important
 html[data-tema="escuro"] .seg button[aria-pressed="true"]{background:#FFFFFF;color:#000000}
 html[data-tema="escuro"] .status.ok{background:rgba(43,196,82,.16);color:#4BE077}
 html[data-tema="escuro"] .status.adj{background:var(--warn-bg);color:var(--warn)}
-html[data-tema="escuro"] .status.pend{background:rgba(255,43,43,.14);color:#FF7A7A}
+html[data-tema="escuro"] .status.pend{background:rgba(0,200,117,.14);color:#FF7A7A}
 html[data-tema="escuro"] .status.prod{background:#1E1E1E;color:var(--ink)}
-html[data-tema="escuro"] .sticker{background:rgba(255,43,43,.14);color:#FF7A7A}
-html[data-tema="escuro"] .tip,html[data-tema="escuro"] .extrabox{background:rgba(255,43,43,.08);color:var(--ink)}
+html[data-tema="escuro"] .sticker{background:rgba(0,200,117,.14);color:#FF7A7A}
+html[data-tema="escuro"] .tip,html[data-tema="escuro"] .extrabox{background:rgba(0,200,117,.08);color:var(--ink)}
 html[data-tema="escuro"] .tip b{color:#FF7A7A}
 html[data-tema="escuro"] .warnbox{background:var(--warn-bg);color:var(--ink)}
 html[data-tema="escuro"] .bar{background:#242424}
@@ -62,10 +62,10 @@ html[data-tema="escuro"] summary,html[data-tema="escuro"] details,html[data-tema
 html[data-tema="escuro"] .label{color:var(--muted)}
 html[data-tema="escuro"] .doc-info small{color:var(--muted)}
 html[data-tema="escuro"] .badge{box-shadow:0 0 0 2px #0C0C0C}
-html[data-tema="escuro"] .tk-kpi.late{background:rgba(255,43,43,.1)!important}
+html[data-tema="escuro"] .tk-kpi.late{background:rgba(0,200,117,.1)!important}
 html[data-tema="escuro"] .tk-prazo.late{background:var(--accent)!important;color:#FFFFFF}
 html[data-tema="escuro"] .tk-prazo.today{background:#FDE68A!important;color:#5A2E00}
 html[data-tema="escuro"] .tk-prazo.soon{background:rgba(253,230,138,.18)!important;color:#FDE68A}
 html[data-tema="escuro"] .dl.neutro,html[data-tema="escuro"] .dl.eq{background:#1E1E1E;color:#A5A5A5}
 html[data-tema="escuro"] .kpi{background:#080808;border-color:#222222}
-html[data-tema="escuro"] .caption{background:rgba(255,43,43,.09)!important;border:0!important;border-left:3px solid #FF2B2B!important;color:#F1D9DA}
+html[data-tema="escuro"] .caption{background:rgba(0,200,117,.09)!important;border:0!important;border-left:3px solid #00C875!important;color:#F1D9DA}
