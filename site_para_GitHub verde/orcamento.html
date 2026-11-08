@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Orçamento</title>
+<link rel="icon" type="image/png" href="icone.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  :root{--red:#0075DE;--ink:#111111;--muted:#6B6B6B;--line:#E6E6E6;--soft:#F6F6F6;--font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:#E9E9E9;color:var(--ink);font:400 14px/1.45 var(--font);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .bar{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px 16px;background:#0A0A0A;color:#FFFFFF}
+  .bar p{margin:0;font-size:13px;color:#BDBDBD;flex:1 1 220px}
+  .bar .bts{display:flex;gap:8px;flex-wrap:wrap}
+  .b{appearance:none;border:1px solid #3A3A3A;background:#1A1A1A;color:#FFFFFF;font:700 14px var(--font);padding:10px 16px;border-radius:999px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+  .b.pri{background:var(--red);border-color:var(--red)}
+  .b.ok{background:#19A33B;border-color:#19A33B}
+  .b[disabled]{opacity:.6;cursor:wait}
+  .palco{padding:24px 16px 60px;display:flex;justify-content:center}
+  .escala{width:210mm;max-width:100%}
+  .folha{width:210mm;min-height:296mm;background:#FFFFFF;padding:16mm 15mm 14mm;box-shadow:0 20px 50px -25px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:18px;transform-origin:top left}
+  .msg{background:#FFFFFF;border-radius:12px;padding:28px;max-width:520px;text-align:center}
+  /* cabeçalho */
+  .cab{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding-bottom:16px;border-bottom:4px solid var(--red)}
+  .cab img{height:44px;width:auto;display:block}
+  .cab .nome-emp{font:900 26px var(--font);letter-spacing:-.02em}
+  .doc{text-align:right}
+  .doc .eyebrow{font:800 11px var(--font);letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+  .doc .n{font:900 30px/1.05 var(--font);letter-spacing:-.02em;margin:2px 0 6px}
+  .doc small{display:block;color:var(--muted);font-size:12px}
+  .partes{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .parte{background:var(--soft);border-radius:10px;padding:12px 14px}
+  .parte .rot{font:800 10px var(--font);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+  .parte b{display:block;font-size:15px}
+  .parte span{display:block;font-size:12.5px;color:#3A3A3A}
+  h1.tit{margin:0;font:800 20px/1.25 var(--font);letter-spacing:-.01em}
+  /* tabela */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead th{background:#0A0A0A;color:#FFFFFF;font:700 10.5px var(--font);letter-spacing:.1em;text-transform:uppercase;padding:9px 10px;text-align:left}
+  thead th:first-child{border-radius:8px 0 0 8px}thead th:last-child{border-radius:0 8px 8px 0}
+  td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  td.i{color:var(--muted);font:600 12px var(--mono);width:28px}
+  td.p b{display:block;font-size:13.5px}
+  td.p small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+  .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+  th.num{text-align:right}
+  td.tot{font-weight:700}
+  /* totais */
+  .fim{display:grid;grid-template-columns:1fr 260px;gap:18px;align-items:start}
+  .tots{display:flex;flex-direction:column;gap:6px;break-inside:avoid}
+  .tots div{display:flex;justify-content:space-between;font-size:13.5px;padding:0 4px}
+  .tots .t{background:var(--red);color:#FFFFFF;border-radius:10px;padding:12px 14px;margin-top:4px;align-items:baseline}
+  .tots .t span{font:800 11px var(--font);letter-spacing:.12em;text-transform:uppercase}
+  .tots .t b{font:900 24px var(--font);letter-spacing:-.01em}
+  .info{display:grid;gap:12px}
+  .bloco{break-inside:avoid;page-break-inside:avoid}
+  .bloco h3{margin:0 0 3px;font:800 10.5px var(--font);letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+  .bloco p{margin:0;font-size:13px;white-space:pre-line}
+  .pix{display:inline-block;margin-top:4px;font:600 13px var(--mono);background:var(--soft);border-radius:6px;padding:4px 8px}
+  .aceite{margin-top:auto;display:grid;grid-template-columns:2fr 1fr;gap:24px;padding-top:28px;break-inside:avoid}
+  .aceite div{border-top:1px solid #9A9A9A;padding-top:6px;font-size:11.5px;color:var(--muted)}
+  .assinado{margin-top:auto;border:1.5px solid #19A33B;border-radius:10px;padding:12px 14px;break-inside:avoid;background:#F3FBF5}
+  .ass-nome{font:700 30px/1.1 "Segoe Script","Brush Script MT",cursive;color:#005BAB;border-bottom:1px solid #9A9A9A;padding-bottom:4px}
+  .ass-dados{font-size:11.5px;color:#3A3A3A;margin-top:6px}
+  .rodape{display:flex;flex-wrap:wrap;gap:4px 14px;justify-content:center;font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+  @page{size:A4;margin:0}
+  @media print{html,body{background:#FFFFFF}.bar{display:none!important}.palco{padding:0}.folha{box-shadow:none;transform:none!important;min-height:285mm}.escala{height:auto!important}}
+  @media (max-width:820px){.palco{padding:12px 8px 40px;justify-content:flex-start}}
+</style>
+</head>
+<body>
+<div class="bar" id="bar" hidden>
+  <p id="bar-txt">Este é o documento do cliente: custo e lucro não aparecem aqui.</p>
+  <div class="bts">
+    <a class="b" href="admin.html">‹ Painel</a>
+    <button class="b" id="imprimir" type="button">Imprimir</button>
+    <button class="b ok" id="enviado" type="button" hidden>Marcar como enviado</button>
+    <button class="b pri" id="baixar" type="button">Baixar PDF</button>
+  </div>
+</div>
+<div class="palco"><div class="escala" id="escala"><div id="root" class="msg">Carregando o orçamento…</div></div></div>
+
+<script src="config.js"></script>
+<script src="orcamentos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+(async function(){
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const N=v=>Number(v)||0;
+  const brl=v=>N(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+  const qtd=v=>N(v).toLocaleString("pt-BR",{maximumFractionDigits:2});
+  const dmy=iso=>{if(!iso)return"";const [y,m,d]=String(iso).slice(0,10).split("-");return d+"/"+m+"/"+y};
+  const nro=n=>String(n||0).padStart(4,"0");
+  const slug=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-zA-Z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40);
+  const cfg=window.GLARA_CONFIG||{};
+  const urlSupabase=u=>{u=String(u||"").trim();let m=u.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);if(m)return "https://"+m[1]+".supabase.co";m=u.match(/^(?:https?:\/\/)?([a-z0-9-]+\.supabase\.(?:co|in))/i);if(m)return "https://"+m[1].toLowerCase();return u.replace(/\/+$/,"")};
+  const erro=t=>{$("#root").className="msg";$("#root").innerHTML=t};
+  const id=new URLSearchParams(location.search).get("id");
+  if(!window.supabase||!cfg.supabaseUrl)return erro("Configuração do Supabase não encontrada.");
+  if(!id)return erro("Orçamento não informado. Abra o PDF pelo painel.");
+  const sb=window.supabase.createClient(urlSupabase(cfg.supabaseUrl),String(cfg.supabaseAnonKey||"").trim());
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session)return erro(`Entre no painel primeiro para ver este orçamento.<br><br><a class="b pri" href="admin.html">Ir para o painel</a>`);
+  const [a,b]=await Promise.all([sb.from("orcamentos").select("*").eq("id",id).maybeSingle(),sb.from("empresa").select("*").eq("id",1).maybeSingle()]);
+  if(a.error||!a.data)return erro("Não encontrei este orçamento. "+esc(a.error?a.error.message:""));
+  let o=a.data;const e=b.data||{};
+  let cliNome=o.cliente_nome;
+  if(o.cliente_id){const c=await sb.from("clientes").select("nome").eq("id",o.cliente_id).maybeSingle();if(c.data&&!cliNome)cliNome=c.data.nome}
+  const t=window.GlaraOrcamentos?window.GlaraOrcamentos.totais(o.itens,o.desconto):{sub:N(o.subtotal),total:N(o.total)};
+  const emp=e.nome||cfg.marca||"GUXTA";
+  const contatos=[e.telefone,e.email,e.site,e.endereco].filter(Boolean);
+  document.title=`Orcamento-${nro(o.numero)}-${slug(cliNome)||"cliente"}`;
+
+  $("#root").className="folha";
+  $("#root").innerHTML=`
+    <header class="cab">
+      <div><img src="logo.png" alt="${esc(emp)}" onerror="this.outerHTML='<span class=nome-emp>${esc(emp)}</span>'"></div>
+      <div class="doc"><div class="eyebrow">Orçamento</div><div class="n">Nº ${nro(o.numero)}</div>
+        <small>Emitido em ${dmy(String(o.atualizado_em||o.criado_em).slice(0,10))}</small>${o.validade?`<small>Válido até <b>${dmy(o.validade)}</b></small>`:""}</div>
+    </header>
+    <section class="partes">
+      <div class="parte"><div class="rot">Para</div><b>${esc(cliNome||"Cliente")}</b>${o.cliente_contato?`<span>${esc(o.cliente_contato)}</span>`:""}</div>
+      <div class="parte"><div class="rot">De</div><b>${esc(emp)}</b>${e.documento?`<span>${esc(e.documento)}</span>`:""}${contatos.slice(0,2).map(x=>`<span>${esc(x)}</span>`).join("")}</div>
+    </section>
+    ${o.titulo?`<h1 class="tit">${esc(o.titulo)}</h1>`:""}
+    <table>
+      <thead><tr><th>#</th><th>Produto</th><th class="num">Qtd</th><th class="num">Valor unit.</th><th class="num">Total</th></tr></thead>
+      <tbody>${(o.itens||[]).map((i,k)=>`<tr><td class="i">${String(k+1).padStart(2,"0")}</td>
+        <td class="p"><b>${esc(i.nome)}</b>${i.descricao?`<small>${esc(i.descricao)}</small>`:""}</td>
+        <td class="num">${qtd(i.qtd)} ${esc(i.unidade||"")}</td><td class="num">${brl(i.preco)}</td><td class="num tot">${brl(Math.round(N(i.qtd)*N(i.preco)*100)/100)}</td></tr>`).join("")}</tbody>
+    </table>
+    <section class="fim">
+      <div class="info">
+        ${o.condicoes?`<div class="bloco"><h3>Condições de pagamento</h3><p>${esc(o.condicoes)}</p></div>`:""}
+        ${o.prazo_entrega?`<div class="bloco"><h3>Prazo de entrega</h3><p>${esc(o.prazo_entrega)}</p></div>`:""}
+        ${e.pix?`<div class="bloco"><h3>Pix</h3><span class="pix">${esc(e.pix)}</span></div>`:""}
+        ${o.observacoes?`<div class="bloco"><h3>Observações</h3><p>${esc(o.observacoes)}</p></div>`:""}
+      </div>
+      <div class="tots">
+        <div><span>Subtotal</span><b>${brl(t.sub)}</b></div>
+        ${N(o.desconto)?`<div><span>Desconto</span><b>− ${brl(o.desconto)}</b></div>`:""}
+        <div class="t"><span>Total</span><b>${brl(t.total)}</b></div>
+      </div>
+    </section>
+    ${o.assinado_em&&o.assinatura&&o.assinatura.nome?`<section class="assinado"><div class="ass-nome">${esc(o.assinatura.nome)}</div>
+      <div class="ass-dados">Assinado online por <b>${esc(o.assinatura.nome)}</b>${o.assinatura.documento?` · ${String(o.assinatura.documento).length>11?"CNPJ":"CPF"} ${esc(String(o.assinatura.documento).replace(/^(\d{3})\d{5}(\d{3})$/,"$1.•••.•••-$2"))}`:""}${o.assinatura.empresa?" · "+esc(o.assinatura.empresa):""}<br>em ${new Date(o.assinado_em).toLocaleString("pt-BR")}${o.assinatura.ip?" · IP "+esc(o.assinatura.ip):""}</div></section>`
+      :`<section class="aceite"><div>De acordo · nome e assinatura</div><div>Data</div></section>`}
+    <footer class="rodape"><b>${esc(emp)}</b>${contatos.map(x=>`<span>${esc(x)}</span>`).join("")}</footer>`;
+  $("#bar").hidden=false;
+  if(o.status==="rascunho")$("#enviado").hidden=false;
+
+  // no celular, encolhe a folha A4 para caber na tela
+  function ajustar(){const f=$("#root"), w=$("#escala").clientWidth, base=f.offsetWidth, s=Math.min(1,w/base);
+    f.style.transform=s<1?`scale(${s})`:"";$("#escala").style.height=s<1?(f.offsetHeight*s)+"px":"";}
+  ajustar();addEventListener("resize",ajustar);if(document.fonts)document.fonts.ready.then(ajustar);
+
+  $("#imprimir").addEventListener("click",()=>window.print());
+  $("#enviado").addEventListener("click",async()=>{const r=await sb.from("orcamentos").update({status:"enviado"}).eq("id",o.id).select().single();
+    if(!r.error){o=r.data;$("#enviado").hidden=true;$("#bar-txt").textContent="Marcado como enviado. Acompanhe a resposta do cliente no painel."}});
+  $("#baixar").addEventListener("click",async()=>{
+    const bt=$("#baixar");if(!window.html2pdf){window.print();return}
+    bt.disabled=true;bt.textContent="Gerando…";
+    const f=$("#root"), tr=f.style.transform;f.style.transform="";
+    try{
+      await html2pdf().set({margin:0,filename:document.title+".pdf",image:{type:"jpeg",quality:.96},
+        html2canvas:{scale:2,useCORS:true,backgroundColor:"#FFFFFF",windowWidth:900},
+        jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},pagebreak:{mode:["css","legacy"],avoid:["tr",".bloco",".tots",".aceite"]}}).from(f).save();
+      if(o.status==="rascunho")$("#bar-txt").textContent="PDF baixado. Depois de mandar para o cliente, clique em Marcar como enviado.";
+    }catch(err){console.error(err);window.print()}
+    f.style.transform=tr;bt.disabled=false;bt.textContent="Baixar PDF";ajustar();
+  });
+})();
+</script>
+</body>
+</html>
