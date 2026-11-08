@@ -315,26 +315,37 @@
       sub="editor";sujo=false;render();setTimeout(()=>{const i=el.querySelector("#oe-cli");i&&i.focus()},30);
     }
     function abrir(o){atual=JSON.parse(JSON.stringify(o));atual.itens=atual.itens&&atual.itens.length?atual.itens:[itemVazio()];sub="editor";sujo=false;render();window.scrollTo({top:0})}
+    // troca entre "por unidade" e "por m²" sem redesenhar o item (o cursor continua onde estava)
+    function modoItem(div,m2){const k=div.dataset.k, q=s=>div.querySelector(s);
+      div.classList.toggle("oi-em-m2",m2);q(".oi-m2").hidden=!m2;
+      div.querySelectorAll('[data-o="item-modo"]').forEach(x=>x.setAttribute("aria-pressed",String((x.dataset.v==="m2")===m2)));
+      const u=q('[data-f="unidade"]');if(u){u.value=m2?"m²":(/m²|m2/i.test(u.value)?"un":u.value);u.closest("div").hidden=m2}
+      q(`label[for="oi-q${k}"]`).textContent=m2?"Área total (m²)":"Qtd";q(`label[for="oi-c${k}"]`).textContent=m2?"Custo do m²":"Custo un.";q(`label[for="oi-p${k}"]`).textContent=m2?"Preço do m²":"Preço un."}
     function itemHTML(i,k){
       const lucroItem=r2(N(i.qtd)*(N(i.preco)-N(i.custo))), tot=r2(N(i.qtd)*N(i.preco)), noCat=produtos.some(p=>p.id===i.produto_id||p.nome.toLowerCase()===String(i.nome||"").trim().toLowerCase());
-      return `<div class="oi" data-k="${k}">
+      const m2=/m²|m2/i.test(i.unidade||"");
+      return `<div class="oi${m2?" oi-em-m2":""}" data-k="${k}">
         <div class="oi-a">
           <div class="oi-nome"><label class="label" for="oi-n${k}">Produto ${k+1}${noCat?` <span class="oi-cat" title="Está nos produtos salvos">${I.salvo} salvo</span>`:""}</label><input type="text" id="oi-n${k}" data-f="nome" list="orc-prods" value="${esc(i.nome)}" placeholder="Digite ou escolha um produto salvo" autocomplete="off"></div>
           <div class="oi-desc"><label class="label" for="oi-d${k}">Especificação</label><input type="text" id="oi-d${k}" data-f="descricao" value="${esc(i.descricao)}" placeholder="Medida, papel, cores, acabamento"></div>
           <button type="button" class="oi-rm" data-o="item-rm" aria-label="Remover produto ${k+1}">${I.lixo}</button>
         </div>
-        <div class="oi-b">
-          <div><label class="label" for="oi-q${k}">Qtd${/m²|m2/i.test(i.unidade||"")?" (m²)":""}</label><input type="text" id="oi-q${k}" data-f="qtd" inputmode="decimal" value="${String(N(i.qtd)).replace(".",",")}"></div>
-          <div><label class="label" for="oi-u${k}">Unidade</label><input type="text" id="oi-u${k}" data-f="unidade" list="orc-unid" value="${esc(i.unidade||"un")}"></div>
-          <div><label class="label" for="oi-c${k}">Custo un.</label><input type="text" id="oi-c${k}" data-f="custo" inputmode="decimal" value="${num(i.custo)}"></div>
-          <div><label class="label" for="oi-l${k}">Lucro</label><div class="orc-lucro"><input type="text" id="oi-l${k}" data-f="lucro" inputmode="decimal" value="${String(r2(i.lucro)).replace(".",",")}"><select data-f="lucro_tipo" aria-label="Tipo de lucro do produto ${k+1}"><option value="pct" ${i.lucro_tipo!=="valor"?"selected":""}>%</option><option value="valor" ${i.lucro_tipo==="valor"?"selected":""}>R$</option></select></div></div>
-          <div><label class="label" for="oi-p${k}">Preço un.</label><input type="text" id="oi-p${k}" data-f="preco" inputmode="decimal" value="${num(i.preco)}" class="oi-preco"></div>
-          <div class="oi-tot"><span class="label">Total</span><b data-tot>${brl(tot)}</b><small class="ok-txt" data-luc>+ ${brl(lucroItem)} de lucro</small></div>
-        </div>
-        <div class="oi-m2"${/m²|m2/i.test(i.unidade||"")?"":" hidden"}><span class="label">Calcular m²</span>
+        <div class="oi-modo" role="group" aria-label="Como cobrar o produto ${k+1}"><span class="label">Cobrar</span>
+          <button type="button" data-o="item-modo" data-v="un" aria-pressed="${!m2}">Por unidade</button>
+          <button type="button" data-o="item-modo" data-v="m2" aria-pressed="${m2}">Por m² (lona, adesivo, banner)</button></div>
+        <div class="oi-m2"${m2?"":" hidden"}><span class="label">Medida de cada peça</span>
           <input type="text" data-m2="l" inputmode="decimal" value="${i.largura?String(i.largura).replace(".",","):""}" placeholder="Largura (cm)" aria-label="Largura em cm"><span>×</span>
           <input type="text" data-m2="a" inputmode="decimal" value="${i.altura?String(i.altura).replace(".",","):""}" placeholder="Altura (cm)" aria-label="Altura em cm"><span>×</span>
-          <input type="text" data-m2="q" inputmode="numeric" value="${i.pecas||""}" placeholder="Peças" aria-label="Quantidade de peças"><small class="note">preenche a Qtd em m²</small></div></div>`;
+          <input type="text" data-m2="q" inputmode="numeric" value="${i.pecas||""}" placeholder="Peças" aria-label="Quantidade de peças">
+          <small class="note" data-m2-res>${i.largura&&i.altura&&i.pecas?`= ${String(Math.round(i.largura*i.altura/10000*i.pecas*10000)/10000).replace(".",",")} m²`:"a área total vai para a Qtd (m²)"}</small></div>
+        <div class="oi-b">
+          <div><label class="label" for="oi-q${k}">${m2?"Área total (m²)":"Qtd"}</label><input type="text" id="oi-q${k}" data-f="qtd" inputmode="decimal" value="${String(N(i.qtd)).replace(".",",")}"></div>
+          <div${m2?" hidden":""}><label class="label" for="oi-u${k}">Unidade</label><input type="text" id="oi-u${k}" data-f="unidade" list="orc-unid" value="${esc(i.unidade||"un")}"></div>
+          <div><label class="label" for="oi-c${k}">${m2?"Custo do m²":"Custo un."}</label><input type="text" id="oi-c${k}" data-f="custo" inputmode="decimal" value="${num(i.custo)}"></div>
+          <div><label class="label" for="oi-l${k}">Lucro</label><div class="orc-lucro"><input type="text" id="oi-l${k}" data-f="lucro" inputmode="decimal" value="${String(r2(i.lucro)).replace(".",",")}"><select data-f="lucro_tipo" aria-label="Tipo de lucro do produto ${k+1}"><option value="pct" ${i.lucro_tipo!=="valor"?"selected":""}>%</option><option value="valor" ${i.lucro_tipo==="valor"?"selected":""}>R$</option></select></div></div>
+          <div><label class="label" for="oi-p${k}">${m2?"Preço do m²":"Preço un."}</label><input type="text" id="oi-p${k}" data-f="preco" inputmode="decimal" value="${num(i.preco)}" class="oi-preco"></div>
+          <div class="oi-tot"><span class="label">Total</span><b data-tot>${brl(tot)}</b><small class="ok-txt" data-luc>+ ${brl(lucroItem)} de lucro</small></div>
+        </div></div>`;
     }
     function resumoHTML(){
       const t=totais(atual.itens,atual.desconto), mg=t.total?t.lucro/t.total*100:0, sob=t.custo?t.lucro/t.custo*100:0;
@@ -494,7 +505,7 @@
       let cat={novos:0,atualizados:0};
       if(salvarCatalogo)cat=await guardarCatalogo(itens);
       atual.itens=itens.map(i=>({produto_id:i.produto_id||null,nome:String(i.nome||"").trim(),descricao:i.descricao||"",unidade:i.unidade||"un",qtd:N(i.qtd),custo:r2(i.custo),lucro_tipo:i.lucro_tipo==="valor"?"valor":"pct",lucro:r2(i.lucro),preco:r2(i.preco)}));
-      const campos={contato_id:atual.contato_id||null,cliente_id:atual.cliente_id,cliente_nome:atual.cliente_nome,cliente_contato:atual.cliente_contato,titulo:atual.titulo,itens:atual.itens,desconto:atual.desconto,
+      const campos={contato_id:atual.contato_id||null,cliente_id:atual.cliente_id,cliente_nome:atual.cliente_nome,cliente_contato:atual.cliente_contato,titulo:atual.titulo,itens:atual.itens.map(({_modo,...x})=>x),desconto:atual.desconto,
         validade:atual.validade,prazo_entrega:atual.prazo_entrega,condicoes:atual.condicoes,observacoes:atual.observacoes,status:atual.status,tem_entrega:atual.tem_entrega!==false};
       const q=atual.id?sb.from("orcamentos").update(campos).eq("id",atual.id):sb.from("orcamentos").insert(campos);
       const {data,error}=await q.select().single();
@@ -576,6 +587,10 @@
       if(a==="voltar"){if(sujo&&b.dataset.confirm!=="1"){b.dataset.confirm="1";b.innerHTML="Sair sem salvar?";toast("Há mudanças não salvas. Clique de novo para sair sem salvar.");return}
         atual=null;sub=LOJA?"loja":"lista";render();return}
       if(a==="item-add"){lerCabecalho();atual.itens.push(itemVazio());const box=el.querySelector("#orc-itens");box.insertAdjacentHTML("beforeend",itemHTML(atual.itens[atual.itens.length-1],atual.itens.length-1));box.lastElementChild.querySelector("input").focus();sujo=true;return}
+      if(a==="item-modo"){const div=b.closest(".oi"), k=+div.dataset.k;lerCabecalho();const it=atual.itens[k];it._modo=true;
+        it.unidade=b.dataset.v==="m2"?"m²":(/m²|m2/i.test(it.unidade||"")?"un":(it.unidade||"un"));
+        modoItem(div,b.dataset.v==="m2");if(b.dataset.v==="m2"){const l=div.querySelector('[data-m2="l"]');l&&l.focus()}
+        atualizarResumo();sujo=true;return}
       if(a==="item-rm"){const div=b.closest(".oi"), k=+div.dataset.k;lerCabecalho();atual.itens.splice(k,1);if(!atual.itens.length)atual.itens.push(itemVazio());el.querySelector("#orc-itens").innerHTML=atual.itens.map(itemHTML).join("");atualizarResumo();sujo=true;return}
       if(a==="salvar")return salvar();
       if(a==="pdf"){const w=window.open("","_blank");const d=await salvar();if(!d){w&&w.close();return}
@@ -634,11 +649,14 @@
         it.largura=g("l");it.altura=g("a");it.pecas=Math.max(0,Math.round(g("q")));
         if(it.largura&&it.altura&&it.pecas){const q=Math.round(it.largura*it.altura/10000*it.pecas*10000)/10000;d.querySelector('[data-f="qtd"]').value=String(q).replace(".",",");
           {const de=d.querySelector('[data-f="descricao"]'), resto=de.value.replace(/^[\d.,]+×[\d.,]+ cm · \d+ peças?( · )?/,"");de.value=`${String(it.largura).replace(".",",")}×${String(it.altura).replace(".",",")} cm · ${it.pecas} peça${it.pecas>1?"s":""}`+(resto?" · "+resto:"")}
-          lerItem(d,"qtd")}sujo=true;return}
+          lerItem(d,"qtd")}
+        {const r=d.querySelector('[data-m2-res]');if(r)r.textContent=it.largura&&it.altura&&it.pecas?`= ${String(Math.round(it.largura*it.altura/10000*it.pecas*10000)/10000).replace(".",",")} m²`:"a área total vai para a Qtd (m²)"}sujo=true;return}
       if(t.dataset.f==="unidade"){const d=t.closest(".oi");const h=d&&d.querySelector(".oi-m2");if(h)h.hidden=!/m²|m2/i.test(t.value)}
       const div=t.closest(".oi");if(div&&t.dataset.f){if(t.dataset.f==="nome"){const k=+div.dataset.k;atual.itens[k].nome=t.value;
           const p=produtos.find(x=>x.nome.toLowerCase()===t.value.trim().toLowerCase());if(p&&atual.itens[k].produto_id!==p.id&&!N(atual.itens[k].custo)){aplicarProduto(k,p);const i=el.querySelector(`#oi-n${k}`);if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}return}
           if(atual.itens[k].produto_id&&!(produtos.find(x=>x.id===atual.itens[k].produto_id)||{}).nome?.toLowerCase().startsWith(t.value.trim().toLowerCase()))atual.itens[k].produto_id=null;
+          {const it=atual.itens[k];if(!it._modo&&(it.unidade||"un")==="un"&&/\b(lona|adesivo|banner|vinil|faixa|backdrop|envelopamento|wind ?banner)\b/i.test(t.value)){
+            it.unidade="m²";modoItem(div,true);toast("Esse produto é cobrado por m²: preencha a largura, a altura e as peças.")}}
           sujo=true;return}
         lerItem(div,t.dataset.f);return}
       if(t.id==="oe-desc"){atual.desconto=r2(parseNum(t.value));sujo=true;atualizarResumo();return}

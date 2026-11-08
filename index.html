@@ -157,6 +157,7 @@
           <button class="chip" data-f="ok" aria-pressed="false">Aprovados <b id="n-ok">0</b></button>
           <button class="chip" data-f="adj" aria-pressed="false">Com ajuste <b id="n-adj">0</b></button>
         </div>
+        <div class="vis-seg" role="group" aria-label="Como ver os posts"><button type="button" data-act="vis" data-v="lista" aria-pressed="true">Lista</button><button type="button" data-act="vis" data-v="feed" aria-pressed="false">Prévia do feed</button></div>
         <div class="whoami"><label for="nome">Quem está aprovando?</label><input type="text" id="nome" placeholder="Seu nome" autocomplete="name"></div>
       </div>
       <p class="note" id="note" aria-live="polite"></p>
@@ -367,13 +368,30 @@
     </article>`;
   }
   function contar(){const c={todos:0,pend:0,ok:0,adj:0};dados.posts.forEach(p=>{c.todos++;c[estado(p)]++});for(const k in c)$("#n-"+k).textContent=c[k];const pr=document.getElementById("progresso");if(pr)pr.style.width=(c.todos?c.ok/c.todos*100:0)+"%"}
+  /* ---------- prévia do feed (grade como no Instagram) ---------- */
+  let vis=(()=>{try{return localStorage.getItem("guxta_vis")||"lista"}catch(_){return "lista"}})();
+  function tileHTML(p){const st=estado(p), u=(p.slides||[])[0], n=(p.slides||[]).length;
+    const ico=p.formato==="Reels"?'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>':n>1?'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="7" y="7" width="13" height="13" rx="2"/><path d="M4 16V5a1 1 0 0 1 1-1h11"/></svg>':"";
+    const sel=st==="ok"?'<span class="fd-st ok" title="Aprovado">✓</span>':st==="adj"?'<span class="fd-st adj" title="Ajuste pedido">!</span>':'<span class="fd-st pend" title="Aguardando sua decisão"></span>';
+    return `<button type="button" class="fd-tile" data-act="feed-abrir" data-id="${p.id}" aria-label="${esc(p.titulo)} · ${st==="ok"?"aprovado":st==="adj"?"ajuste pedido":"aguardando sua decisão"}">
+      ${u?(ehVideo(u)?`<video src="${esc(u)}#t=0.5" muted playsinline preload="metadata"></video>`:`<img src="${esc(u)}" alt="" loading="lazy">`):`<span class="fd-sem">${esc(p.titulo)}</span>`}
+      <span class="fd-ico">${ico}</span>${sel}<span class="fd-data">${p.data?esc(fmtData(p.data)):""}</span></button>`}
+  function feedHTML(lista){const ord=lista.slice().sort((a,b)=>String(b.data||"").localeCompare(String(a.data||""))||((b.dia||0)-(a.dia||0)));
+    return `<div class="fd-wrap"><div class="fd-perfil"><span class="fd-av">${esc((dados.cliente&&dados.cliente.nome||"?").trim()[0]||"?")}</span><div><b>${esc(dados.cliente&&dados.cliente.nome||"")}</b><small>Prévia de como o feed vai ficar. Toque num post para ver, aprovar ou pedir ajuste.</small></div></div>
+      <div class="fd-grid">${ord.map(tileHTML).join("")}</div></div>`}
+  function dlg(){let d=document.getElementById("post-dlg");if(!d){d=document.createElement("dialog");d.id="post-dlg";d.className="post-dlg";d.setAttribute("aria-label","Post");
+      d.innerHTML='<button type="button" class="dlg-x" data-act="feed-fechar" aria-label="Fechar">✕</button><div class="dlg-post"></div>';document.body.appendChild(d);
+      d.addEventListener("click",e=>{if(e.target===d)d.close()})}return d}
   function renderPosts(){
     contar();
+    if(vis==="feed"){const lista=dados.posts.filter(p=>filtro==="todos"||estado(p)===filtro);
+      $("#posts").innerHTML=!dados.posts.length?`<div class="empty">Ainda não há posts para aprovar neste mês.</div>`:lista.length?feedHTML(lista):`<div class="empty">Nenhum post nesta lista.</div>`;return}
     const lista=dados.posts.filter(p=>filtro==="todos"||estado(p)===filtro);
     $("#posts").innerHTML=!dados.posts.length?`<div class="empty">Ainda não há posts para aprovar neste mês.</div>`
       :lista.length?lista.map(postHTML).join(""):`<div class="empty">Nenhum post nesta lista.</div>`;
   }
-  function renderUm(id){const p=dados.posts.find(x=>x.id===id),el=document.getElementById("p-"+id);if(!p||!el||(filtro!=="todos"&&estado(p)!==filtro&&!editando[id])){renderPosts();return}el.outerHTML=postHTML(p);contar()}
+  function renderUm(id){if(vis==="feed"){const p=dados.posts.find(x=>x.id===id),d=document.getElementById("post-dlg");if(p&&d&&d.open&&d.dataset.id===id)d.querySelector(".dlg-post").innerHTML=postHTML(p);renderPosts();return}
+    const p=dados.posts.find(x=>x.id===id),el=document.getElementById("p-"+id);if(!p||!el||(filtro!=="todos"&&estado(p)!==filtro&&!editando[id])){renderPosts();return}el.outerHTML=postHTML(p);contar()}
   function passo(id,d){const p=dados.posts.find(x=>x.id===id);slideIdx[id]=Math.max(0,Math.min(p.slides.length-1,(slideIdx[id]||0)+d));renderUm(id)}
 
   async function decidir(id,decisao,comentario){
@@ -401,6 +419,9 @@
     const b=e.target.closest("[data-act],[data-f]");if(!b||!dados)return;
     if(b.dataset.f){filtro=b.dataset.f;document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",String(c===b)));renderPosts();return}
     const id=b.dataset.id,a=b.dataset.act;
+    if(a==="vis"){vis=b.dataset.v;try{localStorage.setItem("guxta_vis",vis)}catch(_){}document.querySelectorAll('[data-act="vis"]').forEach(x=>x.setAttribute("aria-pressed",String(x===b)));renderPosts();return}
+    if(a==="feed-abrir"){const p=dados.posts.find(x=>x.id===id);if(!p)return;const d=dlg();d.dataset.id=id;d.querySelector(".dlg-post").innerHTML=postHTML(p);if(!d.open)d.showModal();return}
+    if(a==="feed-fechar"){const d=document.getElementById("post-dlg");d&&d.close();return}
     if(a==="zip"){baixarTudo(id,b);return}
     if(a==="copiar"){const p=dados.posts.find(x=>x.id===id);if(p)copiar(p.legenda||"",b);return}
     if(a==="prev")passo(id,-1);else if(a==="next")passo(id,1);

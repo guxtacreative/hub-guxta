@@ -51,7 +51,7 @@
   const progresso=t=>{const l=t.checklist||[];const f=l.filter(i=>i.ok).length;return {f,n:l.length,pc:l.length?Math.round(f/l.length*100):0}};
 
   function criar(el,sb,ctx){
-    let tarefas=[], filtro="todas", busca="", verFeitas=false, editando=null, modelos=[], pessoa="", arrastando=null;
+    let tarefas=[], filtro="todas", busca="", cliF="", verFeitas=false, editando=null, modelos=[], pessoa="", arrastando=null;
     const toast=ctx.toast||(m=>console.log(m)), falha=ctx.falha||((a,e)=>toast("Não deu para "+a+"."));
     const clientes=()=>ctx.clientes()||[];
     const nomeCliente=t=>{const c=clientes().find(x=>x.id===t.cliente_id);return c?c.nome:(t.cliente_nome||"")};
@@ -95,6 +95,7 @@
         </div>
         <div class="tk-tools">
           ${pessoa?`<button type="button" class="chip" data-tk-pessoa="" aria-pressed="true">${esc(pessoa)} ✕</button>`:""}
+          <select id="tk-fcli" aria-label="Filtrar por cliente"><option value="">Todos os clientes</option>${clientes().filter(c=>c.ativo!==false).map(c=>`<option value="${esc(c.id)}" ${cliF===c.id?"selected":""}>${esc(c.nome)}</option>`).join("")}</select>
           <input type="search" id="tk-busca" placeholder="Buscar tarefa, cliente ou etiqueta" value="${esc(busca)}" aria-label="Buscar tarefa">
           <label class="check"><input type="checkbox" id="tk-feitas" ${verFeitas?"checked":""}> Mostrar feitas</label>
         </div>
@@ -111,7 +112,7 @@
           <button class="tk-check" data-tk-act="feito" aria-label="${t.status==="feito"?"Reabrir tarefa":"Marcar como feita"}" aria-pressed="${t.status==="feito"}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></button>
         </div>
         <button class="tk-title" data-tk-act="abrir">${esc(t.titulo)}</button>
-        ${cli?`<span class="tk-cli">${esc(cli)}</span>`:""}
+        ${cli?`<span class="tk-cli">${(()=>{const c=clientes().find(x=>x.id===t.cliente_id);const ini=String(cli).trim().split(/\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase();return `<i class="tk-cli-av" style="${c&&/^#[0-9a-f]{3,8}$/i.test(c.cor_destaque||"")?"background:"+c.cor_destaque:""}" aria-hidden="true">${esc(ini)}</i>`})()}${esc(cli)}</span>`:""}
         ${(t.etiquetas||[]).length?`<div class="tk-ets">${t.etiquetas.map(etHTML).join("")}</div>`:""}
         ${t.pedido_id?`<button type="button" class="tk-ped" data-tk-act="pedido" data-cli="${esc(t.cliente_id||"")}" title="Abrir o pedido na página do cliente">Pedido do cliente ↗</button>`:""}
         ${g.n?`<div class="tk-prog" title="${g.f} de ${g.n} etapas"><div class="bar"><i style="width:${g.pc}%"></i></div><small>${g.f}/${g.n}</small></div>`:""}
@@ -125,7 +126,7 @@
     }
     function quadroHTML(){
       const q=busca.trim().toLowerCase();
-      const vis=tarefas.filter(t=>(filtro==="todas"||t.categoria===filtro)&&(!pessoa||(t.responsavel||"").trim()===pessoa)
+      const vis=tarefas.filter(t=>(filtro==="todas"||t.categoria===filtro)&&(!cliF||t.cliente_id===cliF)&&(!pessoa||(t.responsavel||"").trim()===pessoa)
         &&(!q||(t.titulo+" "+nomeCliente(t)+" "+t.notas+" "+(t.responsavel||"")+" "+(t.etiquetas||[]).join(" ")).toLowerCase().includes(q)));
       const ordem=(a,b)=>{const pa=a.prazo||"9999",pb=b.prazo||"9999";const pr={alta:0,media:1,baixa:2};return pa.localeCompare(pb)||pr[a.prioridade]-pr[b.prioridade]};
       const cols=COLS.filter(([k])=>k!=="feito"||verFeitas);
@@ -133,7 +134,7 @@
         let ls=vis.filter(t=>t.status===k).sort(ordem);if(k==="feito")ls=ls.sort((a,b)=>String(b.concluido_em).localeCompare(String(a.concluido_em))).slice(0,30);
         return `<section class="tk-col" data-col="${k}"><header><h3>${nome}</h3><span class="tk-n">${ls.length}</span></header>
           <div class="tk-list">${ls.map(cardHTML).join("")||`<p class="tk-vazio">${k==="ideia"?"Anote ideias aqui e arraste quando for produzir.":k==="a_fazer"?"Nada por aqui. Crie uma tarefa.":"Vazio"}</p>`}</div>
-          ${k==="ideia"?`<button type="button" class="tk-add-ideia" data-tk-act="nova-ideia">+ Nova ideia</button>`:""}</section>`}).join("")}</div>`;
+          ${k==="feito"?"":`<button type="button" class="tk-add-ideia tk-add-col" data-tk-act="nova-col" data-col="${k}">+ ${k==="ideia"?"Nova ideia":"Nova demanda"}</button>`}</section>`}).join("")}</div>`;
     }
     function render(){
       el.innerHTML=`<section class="card tk-head">
@@ -219,6 +220,7 @@
       const a=b.dataset.tkAct, card=b.closest("[data-tk]"), t=card&&tarefas.find(x=>x.id===card.dataset.tk);
       if(a==="nova"){abrir(null);return}
       if(a==="nova-ideia"){abrir(null,{status:"ideia",checklist:[]});return}
+      if(a==="nova-col"){const st=b.dataset.col;abrir(null,Object.assign(st==="ideia"?{status:"ideia",checklist:[]}:{status:st},cliF?{cliente_id:cliF}:{}));return}
       if(a==="capa-rm"){el.querySelector("#tk-capa").value="";const im=el.querySelector("#tk-capa-img");if(im)im.outerHTML=`<span class="tk-capa-vazia" id="tk-capa-img">Sem imagem</span>`;b.remove();return}
       if(a==="modelo-salvar"){const itens=lerChecklist().map(i=>i.t);if(!itens.length){toast("Monte a checklist primeiro.");return}
         const nome=(el.querySelector("#tk-titulo").value||"").replace(/^Pedido · /,"").trim().slice(0,60)||"Meu modelo";
@@ -245,6 +247,7 @@
     function addEtapa(){const i=el.querySelector("#tk-ck-novo");const v=i.value.trim();if(!v)return;const ul=el.querySelector("#tk-ck");ul.insertAdjacentHTML("beforeend",ckItem({t:v,ok:false},ul.children.length));i.value="";i.focus()}
     el.addEventListener("keydown",e=>{if(e.target.id==="tk-ck-novo"&&e.key==="Enter"){e.preventDefault();addEtapa()}});
     el.addEventListener("change",e=>{
+      if(e.target.id==="tk-fcli"){cliF=e.target.value;render();return}
       if(e.target.id==="tk-feitas"){verFeitas=e.target.checked;render();return}
       if(e.target.name==="tk-cat"){atualizarValor();
         // tarefa nova sem etapas marcadas: troca as etapas pelo padrão do novo tipo
