@@ -134,7 +134,7 @@
   const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const urlSupabase=u=>{u=String(u||"").trim();let m=u.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);if(m)return "https://"+m[1]+".supabase.co";m=u.match(/^(?:https?:\/\/)?([a-z0-9-]+\.supabase\.(?:co|in))/i);if(m)return "https://"+m[1].toLowerCase();return u.replace(/\/+$/,"")};
   const cfg=window.GLARA_CONFIG||{};
-  const PADRAO_COR=["","#E10600","#EE2B37","#A3E635","#C0703A","#3D4BFF","#0F8A4A","#0866FF","#1877F2"];
+  const PADRAO_COR=["","#E10600","#EE2B37","#E50914","#C0703A","#3D4BFF","#0F8A4A","#0866FF","#1877F2"];
   $("#hero-sub").textContent=(cfg.plataforma||"Hub de Marketing")+" · clientes, planejamento, aprovações, resultados, anúncios e pedidos num lugar só.";
   let toastT=null;
   const toast=m=>{const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)};

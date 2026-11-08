@@ -23,7 +23,7 @@
     "Orçamento":{cor:"#F59E0B",etapas:["Entender o pedido (briefing)","Calcular horas e custos","Montar a proposta","Enviar ao cliente","Fazer follow-up","Resposta: aprovado ou recusado"]},
     "Identidade visual":{cor:"#8B5CF6",etapas:["Briefing e questionário","Pesquisa e moodboard","Rascunhos e conceito","Apresentação ao cliente","Ajustes","Manual da marca","Entrega dos arquivos finais"]},
     "Gráfica":{cor:"#0EA5E9",etapas:["Arte final aprovada pelo cliente","Conferir medidas, sangria e CMYK","Orçar com a gráfica","Enviar o arquivo (PDF de impressão)","Aprovar a prova","Produção","Retirar e entregar"]},
-    "Conteúdo":{cor:"#A3E635",etapas:["Pauta","Texto","Design ou edição","Revisão","Agendar"]},
+    "Conteúdo":{cor:"#E30613",etapas:["Pauta","Texto","Design ou edição","Revisão","Agendar"]},
     "Site":{cor:"#2563EB",etapas:["Briefing","Estrutura das páginas","Layout","Desenvolvimento","Testes no celular","Publicação"]},
     "Tráfego":{cor:"#16A34A",etapas:["Objetivo e verba","Criativos","Público","Subir a campanha","Acompanhar e otimizar"]},
     "Reunião":{cor:"#DB2777",etapas:["Confirmar horário","Preparar a pauta","Reunião","Enviar o resumo"]},
