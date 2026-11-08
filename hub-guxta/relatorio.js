@@ -24,7 +24,7 @@
     const plano=Object.keys(lim).length&&cliente.plano_nome?` · plano ${esc(cliente.plano_nome)}`:"";
     const hoje=new Date().toLocaleDateString("pt-BR");
 
-    let h=opt.portal?"":`<div class="brandbar"><img class="logo" src="logo.png" alt="" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='logo.svg'}else{this.remove()}"><span class="eyebrow">${esc(PLAT)}</span></div>`;
+    let h=opt.portal?"":`<div class="brandbar"><img class="logo" src="logo.png" alt="" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='logo.svg'}else{this.remove()}"><span class="eyebrow marca-tag">Onde estratégia, criação e gestão se encontram</span></div>`;
     h+=`
     <header class="hero capa">
       <span class="eyebrow">Relatório mensal · ${esc(MARCA)}</span>
@@ -50,6 +50,12 @@
         <p class="intro">Números no início do mês e 30 dias depois.</p>
         ${GM.cicloHTML(ciclo)}
         ${ciclos.filter(GM.temNumeros).length>1?`<h3>Balanço mês a mês</h3>${GM.balancoHTML(ciclos)}`:""}
+      </section>`;
+    }
+    if(D.verba&&GA&&GA.verbaHTML){
+      h+=`<section class="sec quebra sec-verba"><h2>Verba e campanhas</h2>
+        <p class="intro">Quanto foi colocado para os anúncios, quanto já foi usado, o saldo e a situação de cada campanha.</p>
+        ${GA.verbaHTML(D.verba,{relatorio:true})}
       </section>`;
     }
     if(anuncios.length&&GA){

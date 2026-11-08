@@ -86,7 +86,7 @@
           const {error:eu}=await sb.storage.from(BUCKET).upload(path,novaFoto,{upsert:true,contentType:"image/jpeg"});
           if(eu)throw eu;
         }
-        const campos={user_id:uid,nome:d.querySelector("#pf-nome").value.trim(),cargo:d.querySelector("#pf-cargo").value.trim(),
+        const campos={user_id:uid,email:String(session.user.email||"").toLowerCase(),nome:d.querySelector("#pf-nome").value.trim(),cargo:d.querySelector("#pf-cargo").value.trim(),
           telefone:d.querySelector("#pf-tel").value.trim(),cidade:d.querySelector("#pf-cidade").value.trim(),
           bio:d.querySelector("#pf-bio").value.trim(),avatar_path:path,atualizado_em:new Date().toISOString()};
         const {error}=await sb.from("perfis").upsert(campos,{onConflict:"user_id"});
@@ -109,11 +109,32 @@
     if(opts.sidebar){const el=document.querySelector(opts.sidebar);if(el){if(url)el.innerHTML=`<img src="${esc(url)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;else el.textContent=iniciais(nome||session.user.email)}}
   }
 
+  // Fotos dos clientes para a lista do painel: pega a primeira pessoa de cada cliente que tenha perfil
+  async function fotosDosClientes(sb,clientes){
+    const mapa={};
+    if(!clientes||!clientes.length)return mapa;
+    const {data:usuarios}=await sb.from("cliente_usuarios").select("cliente_id,email").order("criado_em");
+    const emails=[...new Set((usuarios||[]).map(u=>String(u.email||"").toLowerCase()).filter(Boolean))];
+    if(!emails.length)return mapa;
+    const {data:perfis}=await sb.from("perfis").select("email,nome,avatar_path").in("email",emails);
+    const porEmail={};(perfis||[]).forEach(p=>{porEmail[String(p.email||"").toLowerCase()]=p});
+    for(const u of (usuarios||[])){
+      if(mapa[u.cliente_id])continue;
+      const p=porEmail[String(u.email||"").toLowerCase()];
+      if(!p)continue;
+      const url=await urlFoto(sb,p.avatar_path);
+      mapa[u.cliente_id]={nome:p.nome||"",url};
+    }
+    return mapa;
+  }
+
   function iniciar(sb,session,opts){
     opts=opts||{};
+    // guarda o e-mail no perfil (sem mexer nos outros dados) para o painel achar a foto
+    sb.from("perfis").upsert({user_id:session.user.id,email:String(session.user.email||"").toLowerCase()},{onConflict:"user_id"}).then(()=>{}).catch(()=>{});
     if(opts.botao){const b=document.querySelector(opts.botao);if(b){b.hidden=false;b.onclick=()=>abrir(sb,session,{...opts,aoSalvar:()=>{}})}}
     return aplicar(sb,session,opts).catch(()=>{});
   }
 
-  window.GlaraPerfil={iniciar,abrir,aplicar};
+  window.GlaraPerfil={iniciar,abrir,aplicar,fotosDosClientes};
 })();

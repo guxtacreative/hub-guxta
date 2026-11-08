@@ -51,10 +51,10 @@
 
     function calc(ls){
       const e=ls.filter(l=>l.tipo==="entrada"), s=ls.filter(l=>l.tipo==="saida"), P=x=>x.filter(l=>l.status==="pago"), soma=(x,k="valor")=>r2(x.reduce((t,l)=>t+N(l[k]),0));
-      const ep=P(e), sp=P(s), mat=ep.filter(l=>N(l.custo)>0);
+      const ep=P(e), sp=P(s), temC=l=>N(l.custo)>0||N(l.custo_entrega)>0, mat=ep.filter(temC);
       return {ent:soma(ep),entPrev:soma(e.filter(l=>l.status==="previsto")),sai:soma(sp),saiPrev:soma(s.filter(l=>l.status==="previsto")),
-        matVend:soma(mat),matCusto:soma(mat,"custo"),matLucro:r2(soma(mat)-soma(mat,"custo")),serv:soma(ep.filter(l=>!N(l.custo))),
-        saldo:r2(soma(ep)-soma(sp)),custoTot:soma(ep,"custo")};
+        matVend:soma(mat),matCusto:soma(mat,"custo"),matEnt:soma(mat,"custo_entrega"),matLucro:r2(soma(mat)-soma(mat,"custo")-soma(mat,"custo_entrega")),serv:soma(ep.filter(l=>!temC(l))),
+        saldo:r2(soma(ep)-soma(sp)),custoTot:soma(ep,"custo"),entTot:soma(ep,"custo_entrega")};
     }
     function boletosHTML(){
       const bs=boletos();if(!bs.length)return "";const h=hojeISO();
@@ -101,17 +101,17 @@
       const c=calc(L.filter(doMes)), aReceber=L.filter(l=>l.tipo==="entrada"&&l.status==="previsto"), aPagar=L.filter(l=>l.tipo==="saida"&&l.status==="previsto");
       const venR=aReceber.filter(vencido).length, venP=aPagar.filter(vencido).length;
       const k=(cls,v,t,s)=>`<div class="tk-kpi ${cls}"><b>${v}</b><span>${t}</span>${s?`<small>${s}</small>`:""}</div>`;
-      const partes=c.ent?[["c",c.custoTot/c.ent*100],["l",c.matLucro/c.ent*100],["sv",c.serv/c.ent*100]]:[];
+      const partes=c.ent?[["c",c.custoTot/c.ent*100],["en",c.entTot/c.ent*100],["l",c.matLucro/c.ent*100],["sv",c.serv/c.ent*100]]:[];
       return `<div class="tk-kpis fin-kpis">
           ${k("ok",brl(c.ent),"Entradas pagas",c.entPrev?brl(c.entPrev)+" ainda previsto":"")}
           ${k("late-txt",brl(c.sai),"Saídas pagas",c.saiPrev?brl(c.saiPrev)+" ainda previsto":"")}
           ${k(c.saldo<0?"late":"money",brl(c.saldo),"Saldo do mês","entradas − saídas")}
-          ${k("ok",brl(c.matLucro),"Lucro dos materiais",c.matVend?`de ${brl(c.matVend)} vendidos (custo ${brl(c.matCusto)})`:"sem venda de material no mês")}
+          ${k("ok",brl(c.matLucro),"Lucro dos materiais",c.matVend?`de ${brl(c.matVend)} vendidos · impressão ${brl(c.matCusto)}${c.matEnt?` · entrega ${brl(c.matEnt)}`:""}`:"sem venda de material no mês")}
           ${k(venR?"late":"",brl(aReceber.reduce((s,l)=>s+N(l.valor),0)),"A receber",venR?`${venR} vencido${venR>1?"s":""}`:`${aReceber.length} lançamento${aReceber.length===1?"":"s"}`)}
           ${k(venP?"late":"",brl(aPagar.reduce((s,l)=>s+N(l.valor),0)),"A pagar",venP?`${venP} vencido${venP>1?"s":""}`:`${aPagar.length} lançamento${aPagar.length===1?"":"s"}`)}
         </div>
         ${c.ent?`<div class="fin-split"><div class="fin-split-bar">${partes.map(([cl,p])=>p>0?`<i class="${cl}" style="width:${p}%"></i>`:"").join("")}</div>
-          <p><span><i class="fin-sw c"></i>Custo de materiais (repasse) <b>${brl(c.custoTot)}</b></span><span><i class="fin-sw l"></i>Lucro dos materiais <b>${brl(c.matLucro)}</b></span><span><i class="fin-sw sv"></i>Serviços e planos <b>${brl(c.serv)}</b></span></p></div>`:""}`;
+          <p><span><i class="fin-sw c"></i>Custo de impressão <b>${brl(c.custoTot)}</b></span>${c.entTot?`<span><i class="fin-sw en"></i>Custo de entrega <b>${brl(c.entTot)}</b></span>`:""}<span><i class="fin-sw l"></i>Lucro dos materiais <b>${brl(c.matLucro)}</b></span><span><i class="fin-sw sv"></i>Serviços e planos <b>${brl(c.serv)}</b></span></p></div>`:""}`;
     }
     function lancHTML(){
       const q=busca.trim().toLowerCase(), h=hojeISO();
@@ -122,12 +122,12 @@
           <div class="summary" role="group" aria-label="Filtrar">${[["todos","Tudo"],["entrada","Entradas"],["saida","Saídas"],["previsto","A receber / a pagar"]].map(([k,t])=>`<button class="chip" data-f-f="${k}" aria-pressed="${filtro===k}">${t} <b>${cont(k)}</b></button>`).join("")}</div>
           <div class="tk-tools"><input type="search" id="fin-busca" placeholder="Buscar" value="${esc(busca)}" aria-label="Buscar lançamento"><button type="button" class="btn small ghost" data-f="csv">${I.csv} CSV</button></div>
         </div>
-        <div class="fin-lista">${vis.map(l=>{const e=l.tipo==="entrada", lu=e&&N(l.custo)?r2(N(l.valor)-N(l.custo)):null, ven=vencido(l);
+        <div class="fin-lista">${vis.map(l=>{const e=l.tipo==="entrada", lu=e&&(N(l.custo)||N(l.custo_entrega))?r2(N(l.valor)-N(l.custo)-N(l.custo_entrega)):null, ven=vencido(l);
           return `<div class="fin-row ${e?"e":"s"}" data-l="${l.id}">
             <span class="fin-dt"><b>${dm(l.data).split("/")[0]}</b><small>${MES_C[+String(l.data).slice(5,7)-1]}</small></span>
-            <button type="button" class="fin-t" data-f="editar"><b>${esc(l.descricao)}</b><small>${esc([nomeCli(l),l.categoria,l.forma].filter(Boolean).join(" · "))}${lu!=null?` · <span class="ok-txt">lucro ${brl(lu)}</span> <span class="note">(custo ${brl(l.custo)})</span>`:""}</small></button>
+            <button type="button" class="fin-t" data-f="editar"><b>${esc(l.descricao)}</b><small>${esc([nomeCli(l),l.categoria,l.forma].filter(Boolean).join(" · "))}${lu!=null?` · <span class="note">impressão ${brl(l.custo)}${N(l.custo_entrega)?` · entrega ${brl(l.custo_entrega)}`:""}</span> · <span class="ok-txt">lucro ${brl(lu)}</span>`:""}</small></button>
             <button type="button" class="fin-st ${l.status==="pago"?"pago":ven?"venc":"prev"}" data-f="status" title="${l.status==="pago"?"Marcar como previsto":"Marcar como pago"}">${l.status==="pago"?(e?"Recebido":"Pago"):ven?"Vencido":"Previsto"}${l.recorrencia_id&&l.status==="previsto"?(l.boleto_em?" · boleto ok":" · sem boleto"):""}</button>
-            ${l.status==="pago"&&l.valor_pago!=null&&N(l.valor_pago)>N(l.valor)?`<span class="fin-tag pagou" title="Recebido com juros e encargos">recebido ${brl(l.valor_pago)}</span>`:""}${l.status==="previsto"&&l.cliente_pagou_em?`<span class="fin-tag pagou" title="O cliente avisou que pagou">avisou que pagou</span>`:l.status==="previsto"&&l.boleto_pedido_em&&!temBoleto(l)?`<span class="fin-tag pediu">pediu boleto</span>`:l.pago_via?`<span class="fin-tag via">${esc(l.pago_via)}</span>`:""}
+            ${l.status==="pago"&&l.valor_pago!=null&&N(l.valor_pago)>N(l.valor)?`<span class="fin-tag pagou" title="Recebido com juros e encargos">recebido ${brl(l.valor_pago)}</span>`:""}${l.cupom_codigo?`<span class="fin-tag via" title="Desconto de cupom">cupom ${esc(l.cupom_codigo)} −${brl(l.desconto)}</span>`:""}${l.status==="previsto"&&l.cliente_pagou_em?`<span class="fin-tag pagou" title="O cliente avisou que pagou">avisou que pagou</span>`:l.status==="previsto"&&l.boleto_pedido_em&&!temBoleto(l)?`<span class="fin-tag pediu">pediu boleto</span>`:l.pago_via?`<span class="fin-tag via">${esc(l.pago_via)}</span>`:""}
             <b class="fin-v">${e?"+":"−"} ${brl(l.valor)}</b></div>`}).join("")||`<div class="empty">${L.length?"Nada neste filtro.":"Nenhum lançamento ainda. Use Nova entrada e Nova saída, ou lance um orçamento aprovado."}</div>`}</div>`;
     }
     function recHTML(){
@@ -165,7 +165,8 @@
         <div><label class="label" for="ff-desc">Descrição</label><input type="text" id="ff-desc" required maxlength="200" value="${esc(l.descricao||"")}" placeholder="${e?"Ex.: Banner do congresso":"Ex.: Gráfica Rio Print"}"></div>
         <div class="grid2">
           <div><label class="label" for="ff-valor">Valor (R$)</label><input type="text" id="ff-valor" inputmode="decimal" value="${l.valor!=null?num(l.valor):""}" placeholder="0,00" required></div>
-          ${e?`<div><label class="label" for="ff-custo">Custo de material (R$)</label><input type="text" id="ff-custo" inputmode="decimal" value="${N(l.custo)?num(l.custo):""}" placeholder="0,00 se for serviço"></div>`:""}
+          ${e?`<div><label class="label" for="ff-custo">Custo de impressão / material (R$)</label><input type="text" id="ff-custo" inputmode="decimal" value="${N(l.custo)?num(l.custo):""}" placeholder="0,00 se for serviço"></div>
+          <div><label class="label" for="ff-centr">Custo de entrega (R$)</label><input type="text" id="ff-centr" inputmode="decimal" value="${N(l.custo_entrega)?num(l.custo_entrega):""}" placeholder="0,00 se não teve entrega"></div>`:""}
           <div><label class="label" for="ff-data">${e?"Data de recebimento / vencimento":"Data do pagamento / vencimento"}</label><input type="date" id="ff-data" value="${esc(l.data||hojeISO())}"></div>
           <div><label class="label" for="ff-status">Situação</label><select id="ff-status"><option value="pago" ${l.status!=="previsto"?"selected":""}>${e?"Recebido":"Pago"}</option><option value="previsto" ${l.status==="previsto"?"selected":""}>Previsto</option></select></div>
           <div><label class="label" for="ff-cat">Categoria</label><input type="text" id="ff-cat" list="ff-cats" value="${esc(l.categoria||"")}"><datalist id="ff-cats">${(e?CAT_E:CAT_S).map(x=>`<option value="${x}">`).join("")}</datalist></div>
@@ -203,6 +204,7 @@
         <div class="actions" style="margin:0"><a class="btn small av-wa" href="https://wa.me/${wa}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">${I.wa} ${wa?"Mandar no WhatsApp":"Mandar no WhatsApp (escolher contato)"}</a></div>
       </fieldset>`}
     const foneWa=t=>{let d=String(t||"").replace(/\D/g,"");if(!d)return "";if(d.startsWith("00"))d=d.slice(2);if(d.length===10||d.length===11)d="55"+d;return d.length>=12?d:""};
+    const TAXAS_MP={2:9.64,3:11.23,4:11.36,5:14.31,6:14.32,7:16.72,8:16.73,9:19.69,10:20.65,11:20.66,12:22.11};
     // configuração do Pix, mensagem e Mercado Pago
     function cobFormHTML(){const e=EMP, st=CST||{};
       const TIPOS=[["","Detectar sozinho"],["cnpj","CNPJ"],["cpf","CPF"],["email","E-mail"],["telefone","Telefone"],["aleatoria","Chave aleatória"]];
@@ -227,16 +229,28 @@
           </div>
           <p class="note" style="margin:0">Entra sozinho no Pix, no cartão e nos e-mails depois do vencimento. Para pessoa física (consumidor), a multa máxima é 2%.</p>
         </fieldset>
-        <fieldset class="fin-cob"><legend>Cartão de crédito (Mercado Pago)</legend>
-          <label class="check"><input type="checkbox" id="cf-mp" ${e.mp_ativo?"checked":""}> Aceitar cartão de crédito parcelado pelo Mercado Pago, com baixa automática</label>
+        <fieldset class="fin-cob"><legend>Mercado Pago (cartão, Pix e boleto)</legend>
+          <label class="check"><input type="checkbox" id="cf-mp" ${e.mp_ativo?"checked":""}> Aceitar pagamentos pelo Mercado Pago, com baixa automática</label>
+          <label class="check"><input type="checkbox" id="cf-mpix" ${e.mp_pix!==false?"checked":""}> O cliente pode gerar um Pix pelo Mercado Pago (confirma sozinho, sem ele precisar avisar)</label>
+          <label class="check"><input type="checkbox" id="cf-mbol" ${e.mp_boleto!==false?"checked":""}> O cliente pode gerar o próprio boleto pelo Mercado Pago (no lugar de pedir para você)</label>
+          <div class="seg cf-modo" role="radiogroup" aria-label="Juros do parcelamento">
+            <label><input type="radio" name="cf-modo" id="cf-modo-mp" value="mp" ${(e.cartao_modo||"mp")==="mp"?"checked":""}> Juros do Mercado Pago</label>
+            <label><input type="radio" name="cf-modo" id="cf-modo-pr" value="proprio" ${(e.cartao_modo||"mp")==="proprio"?"checked":""}> Meus juros</label></div>
           <div class="grid2">
             <div><label class="label" for="cf-pmax">Parcelar em até</label><select id="cf-pmax">${[1,2,3,4,5,6,7,8,9,10,11,12].map(n=>`<option value="${n}" ${N(e.cartao_parcelas||12)===n?"selected":""}>${n}x</option>`).join("")}</select></div>
-            <div><label class="label" for="cf-psj">Sem juros até</label><select id="cf-psj">${[1,2,3,4,5,6,7,8,9,10,11,12].map(n=>`<option value="${n}" ${N(e.cartao_sem_juros||1)===n?"selected":""}>${n===1?"só à vista":n+"x"}</option>`).join("")}</select></div>
-            <div><label class="label" for="cf-pj">Seus juros ao mês (%)</label><input type="number" id="cf-pj" min="0" max="20" step="0.01" value="${esc(e.cartao_juros_mes??2.99)}"></div>
             <div><label class="label" for="cf-pmin">Parcela mínima (R$)</label><input type="text" id="cf-pmin" inputmode="decimal" value="${num(e.cartao_parcela_min??50)}"></div>
+            <div class="cf-pr"><label class="label" for="cf-psj">Sem juros até</label><select id="cf-psj">${[1,2,3,4,5,6,7,8,9,10,11,12].map(n=>`<option value="${n}" ${N(e.cartao_sem_juros||1)===n?"selected":""}>${n===1?"só à vista":n+"x"}</option>`).join("")}</select></div>
+            <div class="cf-pr"><label class="label" for="cf-pj">Seus juros ao mês (%)</label><input type="number" id="cf-pj" min="0" max="20" step="0.01" value="${esc(e.cartao_juros_mes??2.99)}"></div>
+          </div>
+          <div class="cf-mp">
+            <label class="check"><input type="checkbox" id="cf-rep" ${e.cartao_repassar!==false?"checked":""}> Repassar ao cliente a taxa da venda no cartão, para eu receber o valor cheio</label>
+            <div class="grid2"><div><label class="label" for="cf-tv">Taxa da venda no cartão (%)</label><input type="number" id="cf-tv" min="0" max="30" step="0.01" value="${esc(e.cartao_taxa_venda??4.98)}"></div></div>
+            <span class="label">Taxa de parcelamento paga pelo cliente (%), igual à do Mercado Pago</span>
+            <div class="cf-taxas">${[2,3,4,5,6,7,8,9,10,11,12].map(n=>`<label><span>${n}x</span><input type="number" id="cf-tx-${n}" min="0" max="60" step="0.01" value="${esc(((e.cartao_taxas||TAXAS_MP)[n]??TAXAS_MP[n]))}"></label>`).join("")}</div>
           </div>
           <div class="fin-sim" id="cf-sim" aria-live="polite"></div>
-          <p class="note" style="margin:0">Importante: na sua conta do Mercado Pago, ative o <b>parcelamento sem juros</b> até o mesmo número de parcelas. Assim o cliente paga só os seus juros (que já cobrem a taxa do Mercado Pago), e não os do Mercado Pago por cima.</p>
+          <p class="note cf-mp" style="margin:0">Use com a conta do Mercado Pago em <b>Parcelado cliente</b> (Seu negócio › Custos). O link vai com o valor à vista (já com a taxa repassada) e o Mercado Pago soma os juros dele nas parcelas. Confira se as taxas acima são as mesmas do app.</p>
+          <p class="note cf-pr" style="margin:0">Use com a conta do Mercado Pago em <b>parcelamento sem juros</b> até o mesmo número de parcelas. Assim o cliente paga só os seus juros, e não os do Mercado Pago por cima.</p>
           <p class="note" style="margin:0">${st.mp_token?`Access Token salvo, termina em <b>${esc(st.mp_fim||"")}</b>${st.mp_teste?" (modo de teste)":""}.`:"Sem Access Token ainda."} No Mercado Pago: <b>Seu negócio › Configurações › Credenciais</b> (ou developers.mercadopago.com.br › Suas integrações) e copie o <b>Access Token de produção</b>.</p>
           <div class="row"><div><label class="label" for="cf-mptok">${st.mp_token?"Trocar o Access Token":"Access Token"}</label><input type="password" id="cf-mptok" autocomplete="off" spellcheck="false" placeholder="APP_USR-…"></div>
             <div style="flex:0 0 auto"><button type="button" class="btn small" data-f="mp-token">Salvar token</button></div></div>
@@ -245,15 +259,22 @@
         <div class="actions"><button type="submit" class="btn primary">Salvar</button><button type="button" class="btn ghost" data-f="fechar">Cancelar</button></div></form>`}
     // simulação da tabela do cartão (mesma conta do banco)
     function simular(){const box=el.querySelector("#cf-sim");if(!box)return;const v=id=>el.querySelector(id).value;
-      const max=+v("#cf-pmax")||12, sj=+v("#cf-psj")||1, i=parseNum(v("#cf-pj"))/100, min=parseNum(v("#cf-pmin")), base=1000, ps=[];
+      const f=el.querySelector("#cob-form"), modo=(el.querySelector('input[name="cf-modo"]:checked')||{}).value||"mp";
+      if(f){f.querySelectorAll(".cf-mp").forEach(x=>x.hidden=modo!=="mp");f.querySelectorAll(".cf-pr").forEach(x=>x.hidden=modo==="mp")}
+      const max=+v("#cf-pmax")||12, min=parseNum(v("#cf-pmin")), base=1000, ps=[];
+      if(modo==="mp"){const tv=el.querySelector("#cf-rep").checked?parseNum(v("#cf-tv")):0, b=tv>0?Math.round(base/(1-tv/100)*100)/100:base;
+        for(let n=1;n<=max;n++){const tx=n===1?0:parseNum(v("#cf-tx-"+n)), t=Math.round(b*(1+tx/100)*100)/100, p=n===1?t:Math.ceil(t/n*100-1e-6)/100;if(n>1&&p<min)break;ps.push({n,p,t,j:tx>0})}
+        const liq=Math.round(b*(1-parseNum(v("#cf-tv"))/100)*100)/100;
+        box.innerHTML=`<span class="label">Como fica uma cobrança de ${brl(base)} no cartão (você recebe cerca de ${brl(liq)})</span><div class="fin-sim-g">${ps.map(x=>`<span class="${x.j?"j":""}"><b>${x.n}x</b> ${brl(x.p)}<small>${x.n>1?"total "+brl(x.t):"à vista "+brl(x.t)}</small></span>`).join("")}</div>`;return}
+      const sj=+v("#cf-psj")||1, i=parseNum(v("#cf-pj"))/100;
       for(let n=1;n<=max;n++){const p=(n<=sj||!i)?Math.ceil(base/n*100)/100:Math.ceil(base*i/(1-Math.pow(1+i,-n))*100)/100;if(n>1&&p<min)break;ps.push({n,p,t:Math.round(p*n*100)/100,j:n>sj&&i>0})}
       box.innerHTML=`<span class="label">Como fica uma cobrança de ${brl(base)}</span><div class="fin-sim-g">${ps.map(x=>`<span class="${x.j?"j":""}"><b>${x.n}x</b> ${brl(x.p)}<small>${x.j?"total "+brl(x.t):x.n>1?"sem juros":"à vista"}</small></span>`).join("")}</div>`}
     // redesenha o formulário de cobrança sem perder o que já foi digitado
     function redesenharCob(){const f=el.querySelector("#cob-form");const val={};
-      f.querySelectorAll("input,select,textarea").forEach(i=>{if(i.id&&i.id!=="cf-mptok")val[i.id]=i.type==="checkbox"?i.checked:i.value});
-      dlg().innerHTML=cobFormHTML();Object.entries(val).forEach(([id,v])=>{const i=el.querySelector("#"+id);if(i){if(i.type==="checkbox")i.checked=v;else i.value=v}});simular()}
-    function calcForm(){const c=el.querySelector("#ff-calc");if(!c)return;const v=parseNum(el.querySelector("#ff-valor").value),k=parseNum(el.querySelector("#ff-custo").value);
-      c.innerHTML=k?(k>v?`<span class="neg">O custo é maior que o valor recebido.</span>`:`Seu lucro nesta entrada: <b class="ok-txt">${brl(v-k)}</b> (${v?Math.round((v-k)/v*100):0}% do valor). O restante, ${brl(k)}, paga o material.`):"Sem custo: o valor inteiro é seu (serviço ou plano)."}
+      f.querySelectorAll("input,select,textarea").forEach(i=>{if(i.id&&i.id!=="cf-mptok")val[i.id]=i.type==="checkbox"||i.type==="radio"?i.checked:i.value});
+      dlg().innerHTML=cobFormHTML();Object.entries(val).forEach(([id,v])=>{const i=el.querySelector("#"+id);if(i){if(i.type==="checkbox"||i.type==="radio")i.checked=v;else i.value=v}});simular()}
+    function calcForm(){const c=el.querySelector("#ff-calc");if(!c)return;const v=parseNum(el.querySelector("#ff-valor").value),k=parseNum(el.querySelector("#ff-custo").value),en=parseNum((el.querySelector("#ff-centr")||{}).value),t=k+en,lu=v-t;
+      c.innerHTML=t?(t>v?`<span class="neg">Os custos passam do valor recebido.</span>`:`<span class="fin-div"><span><i class="fin-sw c"></i>Impressão <b>${brl(k)}</b></span>${en?`<span><i class="fin-sw en"></i>Entrega <b>${brl(en)}</b></span>`:""}<span><i class="fin-sw l"></i>Lucro <b class="ok-txt">${brl(lu)}</b> (${v?Math.round(lu/v*100):0}% do valor)</span></span>`):"Sem custo: o valor inteiro é seu (serviço ou plano)."}
     function recForm(r){
       const novo=!r.id, cli=clientes();
       return `<form method="dialog" class="tk-form" id="rec-form">
@@ -283,8 +304,8 @@
     }
     function csv(){
       const base=mes==="tudo"?L:L.filter(doMes), q=v=>`"${String(v??"").replace(/"/g,'""')}"`, n=v=>N(v).toFixed(2).replace(".",",");
-      const linhas=[["Data","Tipo","Descrição","Cliente / fornecedor","Categoria","Forma","Situação","Valor","Custo","Lucro"].map(q).join(";")]
-        .concat(base.map(l=>[dmy(l.data),l.tipo==="entrada"?"Entrada":"Saída",l.descricao,nomeCli(l),l.categoria,l.forma,l.status==="pago"?"Pago":"Previsto",n(l.valor),n(l.custo),l.tipo==="entrada"?n(N(l.valor)-N(l.custo)):""].map((v,i)=>i>=7?v:q(v)).join(";")));
+      const linhas=[["Data","Tipo","Descrição","Cliente / fornecedor","Categoria","Forma","Situação","Valor","Custo de impressão","Custo de entrega","Lucro"].map(q).join(";")]
+        .concat(base.map(l=>[dmy(l.data),l.tipo==="entrada"?"Entrada":"Saída",l.descricao,nomeCli(l),l.categoria,l.forma,l.status==="pago"?"Pago":"Previsto",n(l.valor),n(l.custo),n(l.custo_entrega),l.tipo==="entrada"?n(N(l.valor)-N(l.custo)-N(l.custo_entrega)):""].map((v,i)=>i>=7?v:q(v)).join(";")));
       const blob=new Blob(["﻿"+linhas.join("\r\n")],{type:"text/csv;charset=utf-8"}), a=document.createElement("a");
       a.href=URL.createObjectURL(blob);a.download="financeiro_"+(mes==="tudo"?"completo":mes)+".csv";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
     }
@@ -300,7 +321,7 @@
       if(a==="tudo"){mes="tudo";render();return}
       if(a==="nova"){ed={tipo:b.dataset.tipo,status:"pago"};abrirDlg(form(ed));setTimeout(()=>{const i=el.querySelector("#ff-desc");i&&i.focus()},30);return}
       if(a==="tipo"){const d=el.querySelector("#fin-form");const keep={descricao:d.querySelector("#ff-desc").value,valor:parseNum(d.querySelector("#ff-valor").value)||null,data:d.querySelector("#ff-data").value};
-        ed={...ed,...keep,tipo:b.dataset.tipo,custo:b.dataset.tipo==="saida"?0:ed.custo};dlg().innerHTML=form(ed);calcForm();return}
+        ed={...ed,...keep,tipo:b.dataset.tipo,custo:b.dataset.tipo==="saida"?0:ed.custo,custo_entrega:b.dataset.tipo==="saida"?0:ed.custo_entrega};dlg().innerHTML=form(ed);calcForm();return}
       if(a==="editar"&&l){ed={...l};abrirDlg(form(ed));return}
       if(a==="status"&&l){const p=l.status!=="pago";return atualizar(l.id,{status:p?"pago":"previsto"},p?(l.tipo==="entrada"?"Marcado como recebido.":"Marcado como pago."):"Voltou para previsto.")}
       if(a==="boleto"&&l)return atualizar(l.id,{boleto_em:new Date().toISOString()},"Boleto marcado como gerado.");
@@ -342,18 +363,20 @@
       if(e.target.id==="cob-form"){
         const dados={pix:v("#cf-pix").trim(),pix_tipo:v("#cf-tipo"),pix_nome:v("#cf-nome").trim().slice(0,25),pix_cidade:v("#cf-cidade").trim().slice(0,15),
           cobranca_dias:Math.min(30,Math.max(0,parseInt(v("#cf-dias"))||0)),cobranca_msg:v("#cf-msg").trim(),cobranca_email:el.querySelector("#cf-email").checked,
-          boleto_pedido:el.querySelector("#cf-bol").checked,mp_ativo:el.querySelector("#cf-mp").checked,
+          boleto_pedido:el.querySelector("#cf-bol").checked,mp_ativo:el.querySelector("#cf-mp").checked,mp_pix:el.querySelector("#cf-mpix").checked,mp_boleto:el.querySelector("#cf-mbol").checked,
           atraso_multa:Math.min(20,Math.max(0,parseNum(v("#cf-multa")))),atraso_juros_mes:Math.min(20,Math.max(0,parseNum(v("#cf-jatr")))),atraso_carencia:Math.min(60,Math.max(0,parseInt(v("#cf-car"))||0)),
-          cartao_parcelas:+v("#cf-pmax")||12,cartao_sem_juros:Math.min(+v("#cf-psj")||1,+v("#cf-pmax")||12),cartao_juros_mes:Math.min(20,Math.max(0,parseNum(v("#cf-pj")))),cartao_parcela_min:Math.max(0,r2(parseNum(v("#cf-pmin"))))};
+          cartao_parcelas:+v("#cf-pmax")||12,cartao_sem_juros:Math.min(+v("#cf-psj")||1,+v("#cf-pmax")||12),cartao_juros_mes:Math.min(20,Math.max(0,parseNum(v("#cf-pj")))),cartao_parcela_min:Math.max(0,r2(parseNum(v("#cf-pmin")))),
+          cartao_modo:(el.querySelector('input[name="cf-modo"]:checked')||{}).value||"mp",cartao_repassar:el.querySelector("#cf-rep").checked,cartao_taxa_venda:Math.min(30,Math.max(0,parseNum(v("#cf-tv")))),
+          cartao_taxas:Object.fromEntries([2,3,4,5,6,7,8,9,10,11,12].map(n=>[String(n),Math.min(60,Math.max(0,parseNum(v("#cf-tx-"+n))))]))};
         if(dados.mp_ativo&&!(CST||{}).mp_token){toast("Salve o Access Token do Mercado Pago antes de ligar.");return}
         if(dados.pix&&window.GlaraPix&&!window.GlaraPix.brcode({chave:dados.pix,tipo:dados.pix_tipo,nome:dados.pix_nome,cidade:dados.pix_cidade,valor:1})){toast("Confira a chave Pix.");return}
         const {data,error}=await sb.from("empresa").update(dados).eq("id",1).select().single();if(error)return falha("salvar o Pix",error);
         EMP=data;fecharDlg();render();toast(dados.pix?"Pronto: os clientes já veem o Pix no portal.":"Salvo. Sem chave Pix, o portal mostra só boleto e aviso.");return}
       if(e.target.id==="fin-form"){
-        const desc=v("#ff-desc").trim(), valor=r2(parseNum(v("#ff-valor"))), entrada=ed.tipo==="entrada", custo=entrada?r2(parseNum(v("#ff-custo"))):0;
-        if(!desc){toast("Escreva uma descrição.");return}if(!valor){toast("Informe o valor.");return}if(custo>valor){toast("O custo não pode ser maior que o valor.");return}
+        const desc=v("#ff-desc").trim(), valor=r2(parseNum(v("#ff-valor"))), entrada=ed.tipo==="entrada", custo=entrada?r2(parseNum(v("#ff-custo"))):0, custo_entrega=entrada?r2(parseNum(v("#ff-centr"))):0;
+        if(!desc){toast("Escreva uma descrição.");return}if(!valor){toast("Informe o valor.");return}if(custo+custo_entrega>valor){toast("Os custos não podem passar do valor.");return}
         const cid=v("#ff-cli")||null, c=clientes().find(x=>x.id===cid);
-        const campos={tipo:ed.tipo,descricao:desc,valor,custo,data:v("#ff-data")||hojeISO(),status:v("#ff-status"),categoria:v("#ff-cat").trim(),forma:v("#ff-forma").trim(),
+        const campos={tipo:ed.tipo,descricao:desc,valor,custo,custo_entrega,data:v("#ff-data")||hojeISO(),status:v("#ff-status"),categoria:v("#ff-cat").trim(),forma:v("#ff-forma").trim(),
           cliente_id:cid,cliente_nome:c?c.nome:v("#ff-clin").trim(),notas:v("#ff-notas").trim()};
         const bx=el.querySelector("#ff-boleto");if(bx)campos.boleto_em=bx.checked?(ed.boleto_em||new Date().toISOString()):null;
         // boleto anexado (código e/ou PDF)

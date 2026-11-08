@@ -181,5 +181,44 @@
     desenhar();
   }
 
-  window.GlaraAnuncios={painelHTML,montar,somar,parseMoeda,parseInteiro,brl,csv};
+  /* ---------- verba (saldo) e situação das campanhas ---------- */
+  const ST_CAMP={ativa:["Ativa","on"],pausada:["Pausada","pause"],encerrada:["Encerrada","off"],agendada:["Agendada","sched"]};
+  const dataBR=iso=>{if(!iso)return"";const [y,m,d]=String(iso).slice(0,10).split("-");return d+"/"+m+"/"+y};
+  function verbaHTML(V,opt){
+    opt=opt||{};if(!V)return "";
+    const ap=N(V.aportado), gs=N(V.gasto), sd=N(V.saldo), md=N(V.media_dia), st=V.status||"ok";
+    const usoPct=ap>0?Math.min(1,Math.max(0,gs/ap)):0;
+    const dur=V.dias!=null&&sd>0?`${int(V.dias)} dia${N(V.dias)===1?"":"s"}`:sd>0?"–":"0 dias";
+    const avisos={
+      acabou:["A verba acabou","As campanhas param de rodar quando o saldo chega ao fim. Adicione mais verba para continuar aparecendo."],
+      baixo:["A verba está acabando",`Pelo ritmo atual (${brl(md)} por dia), o saldo dura mais uns ${dur}. Adicione mais verba para as campanhas não pararem.`],
+      sem_verba:["Nenhuma verba registrada ainda",opt.admin?"Registre a verba que o cliente colocou para acompanhar o saldo.":"Assim que a verba for adicionada, o saldo aparece aqui."]};
+    const av=avisos[st];
+    const pend=V.pendente&&opt.portal?`<div class="vb-pend"><span>Você tem um pedido de <b>${brl(V.pendente.valor)}</b> de verba aguardando pagamento.</span><a class="btn small primary" href="pagar.html?t=${esc(V.pendente.token)}">Pagar agora</a></div>`:"";
+    const pedir=opt.portal&&V.pedir?`<div class="vb-pedir" id="vb-pedir"><span class="label">Adicionar verba</span>
+        <div class="vb-chips">${[300,500,1000,2000].map(v=>`<button type="button" class="chip" data-verba="v" data-v="${v}">${brl(v).replace(",00","")}</button>`).join("")}</div>
+        <div class="vb-pedir-row"><input type="text" inputmode="decimal" id="vb-valor" placeholder="Outro valor (R$)" aria-label="Valor da verba em reais"><button type="button" class="btn primary" data-verba="pedir">Gerar pagamento</button></div>
+        <small class="note">Você paga por Pix, cartão ou boleto. Assim que o pagamento é confirmado, a verba entra no saldo.</small></div>`:"";
+    const camps=(V.campanhas||[]).filter(c=>opt.admin||c.status!=="encerrada"||N(c.gasto)>0);
+    return `<section class="vb vb-${st}">
+      <div class="vb-head"><h3>Verba dos anúncios</h3>${V.ultimo_dia?`<span class="note">Atualizado até ${dataBR(V.ultimo_dia)}</span>`:""}</div>
+      ${av?`<div class="vb-alerta vb-a-${st}" role="${st==="ok"?"status":"alert"}"><b>${esc(av[0])}</b><span>${esc(av[1])}</span></div>`:""}
+      ${pend}
+      <div class="kpis kpis-dash vb-kpis">
+        <div class="kpi"><span class="kpi-t">Verba adicionada</span><span class="kpi-v">${brl(ap)}</span><span class="kpi-s">${(V.aportes||[]).length} ${(V.aportes||[]).length===1?"aporte":"aportes"}</span></div>
+        <div class="kpi"><span class="kpi-t">Já usado</span><span class="kpi-v">${brl(gs)}</span><span class="kpi-s">${ap?pct(usoPct)+" da verba":""}</span></div>
+        <div class="kpi destaque"><span class="kpi-t">Saldo</span><span class="kpi-v ${sd<=0?"neg":""}">${brl(sd)}</span><span class="kpi-s">${md?`média de ${brl(md)} por dia`:"sem gasto recente"}</span></div>
+        <div class="kpi"><span class="kpi-t">Dura cerca de</span><span class="kpi-v">${dur}</span><span class="kpi-s">no ritmo dos últimos 7 dias</span></div>
+      </div>
+      ${ap?`<div class="vb-barra" role="img" aria-label="Usado ${pct(usoPct)} da verba"><i style="width:${(usoPct*100).toFixed(1)}%"></i></div>`:""}
+      ${pedir}
+      ${camps.length?`<h4 class="vb-sub">Campanhas</h4><div class="vb-camps">${camps.map(c=>{const s=ST_CAMP[c.status]||ST_CAMP.ativa;
+        return `<div class="vb-camp"><div class="vb-camp-t"><b>${esc(c.nome)}</b><span class="vb-st vb-st-${s[1]}">${s[0]}</span></div>
+          <div class="vb-camp-m">${c.orcamento_dia?`<span>Orçamento <b>${brl(c.orcamento_dia)}/dia</b></span>`:""}${c.inicio?`<span>Início <b>${dataBR(c.inicio)}</b></span>`:""}${c.fim?`<span>Término <b>${dataBR(c.fim)}</b></span>`:""}
+            <span>Usado <b>${brl(c.gasto)}</b></span>${N(c.gasto_7)?`<span>Últimos 7 dias <b>${brl(c.gasto_7)}</b></span>`:""}${N(c.resultados)?`<span><b>${int(c.resultados)}</b> resultados</span>`:""}</div></div>`}).join("")}</div>`:""}
+      ${(V.aportes||[]).length?`<details class="vb-aportes"><summary>Histórico da verba</summary><ul>${V.aportes.map(a=>`<li><span>${dataBR(a.data)}</span><span>${esc(a.descricao||"Verba adicionada")}</span><b class="${N(a.valor)<0?"neg":""}">${brl(a.valor)}</b>${opt.admin?`<button type="button" class="btn small danger" data-vb="apagar" data-id="${esc(a.id)}" aria-label="Apagar aporte">✕</button>`:""}</li>`).join("")}</ul></details>`:""}
+    </section>`;
+  }
+
+  window.GlaraAnuncios={painelHTML,montar,somar,parseMoeda,parseInteiro,brl,csv,verbaHTML,ST_CAMP};
 })();

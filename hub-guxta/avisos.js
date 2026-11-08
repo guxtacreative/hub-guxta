@@ -27,6 +27,8 @@
     boleto_pedido:["#E8780C",'<path d="M4 5v14M7 5v14M10 5v14M14 5v14M17 5v14M20 5v14"/>'],
     cliente_pagou:["#0F8A4A",'<rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><path d="m9 15 2 2 4-4"/>'],
     pagamento_recebido:["#0F8A4A",'<rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><path d="m9 15 2 2 4-4"/>'],
+    loja_pedido:["#0F8A4A",'<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 7H6"/>'],
+    loja_abandono:["#E8780C",'<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 7H6"/>'],
     sistema:["#6B6B6B",'<circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/>']
   };
   const icone=t=>{const [cor,p]=ICONES[t]||ICONES.sistema;
@@ -119,7 +121,7 @@
   const STATUS_ENVIO={pendente:["Na fila","pend"],enviando:["Enviando","pend"],enviado:["Enviado","ok"],erro:["Erro","erro"],cancelado:["Cancelado","off"]};
 
   function criar(el,sb,ctx){
-    let cfg=null, st=null, pend=[], envios=[], carregando=true, salvando=false;
+    let cfg=null, st=null, pend=[], envios=[], cobs=[], emp={}, lemCob={}, carregando=true, salvando=false;
 
     async function carregar(){
       const [c,s,p,e]=await Promise.all([
@@ -129,8 +131,49 @@
         sb.from("envios").select("id,tipo,cliente_id,para,assunto,status,erro,criado_em,enviado_em").order("criado_em",{ascending:false}).limit(30)]);
       carregando=false;
       if(c.error||s.error){el.innerHTML=`<section class="card"><h2>Avisos e lembretes</h2><p class="aviso-inativo">Falta instalar esta parte no banco. Rode o arquivo <b>14_avisos.sql</b> no SQL Editor do Supabase e recarregue a página.</p><p class="note">${esc((c.error||s.error).message||"")}</p></section>`;return}
-      cfg=c.data||{};st=s.data||{};pend=p.error?[]:(p.data||[]);envios=e.error?[]:(e.data||[]);render();
+      cfg=c.data||{};st=s.data||{};pend=p.error?[]:(p.data||[]);envios=e.error?[]:(e.data||[]);
+      await carregarCobrancas();render();
     }
+    // pagamentos vencendo ou atrasados, para lembrar no WhatsApp
+    async function carregarCobrancas(){
+      const [l,e]=await Promise.all([
+        sb.from("lancamentos").select("*").eq("tipo","entrada").eq("status","previsto"),
+        sb.from("empresa").select("*").eq("id",1).maybeSingle()]);
+      emp=e&&!e.error&&e.data?e.data:{};
+      const lim=Math.max(1,+emp.cobranca_dias||5), hoje=hojeISO();
+      cobs=(l&&!l.error?l.data||[]:[]).filter(x=>!x.cliente_pagou_em&&diasAte(x.data,hoje)<=lim&&diasAte(x.data,hoje)>=-90)
+        .sort((a,b)=>String(a.data).localeCompare(String(b.data)));
+      try{lemCob=JSON.parse(localStorage.getItem("guxta_wa_cobranca")||"{}")||{}}catch(_){lemCob={}}
+    }
+    const hojeISO=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)};
+    const diasAte=(iso,hoje)=>Math.round((new Date(String(iso).slice(0,10)+"T12:00")-new Date(hoje+"T12:00"))/864e5);
+    const brl=v=>(Number(v)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+    const dmS=iso=>{const [y,m,d]=String(iso).slice(0,10).split("-");return d+"/"+m};
+    function atualizado(x){const d=-diasAte(x.data,hojeISO()), v=Number(x.valor)||0;
+      if(d<=(+emp.atraso_carencia||0))return {total:v,multa:0,juros:0,dias:Math.max(0,d)};
+      const multa=Math.round(v*(+emp.atraso_multa||0))/100, juros=Math.round(v*(+emp.atraso_juros_mes||0)/100/30*d*100)/100;
+      return {total:Math.round((v+multa+juros)*100)/100,multa,juros,dias:d}}
+    function waCobranca(x){
+      const c=(ctx.clientes()||[]).find(k=>k.id===x.cliente_id)||{}, fone=foneWa(c.whatsapp), d=diasAte(x.data,hojeISO()), a=atualizado(x);
+      const nome=String(c.nome||x.cliente_nome||"").trim().split(/\s+/)[0];
+      const link=x.token?new URL("pagar.html?t="+x.token,location.href).href:"";
+      const quando=d<0?`venceu em ${dmS(x.data)}`:d===0?"vence hoje":`vence em ${dmS(x.data)}`;
+      const txt=`Oi${nome?", "+nome:""}! Tudo bem? Passando para lembrar do pagamento de ${x.descricao}: ${brl(a.total)}${a.total>Number(x.valor)?` (já com multa e juros de ${a.dias} dia${a.dias===1?"":"s"})`:""}, que ${quando}.${link?`\nDá para pagar pelo Pix (QR Code) ou no cartão por aqui: ${link}`:""}\nSe já pagou, pode desconsiderar. Obrigado!`;
+      return {url:"https://wa.me/"+(fone||"")+"?text="+encodeURIComponent(txt),fone,nome:c.nome||x.cliente_nome||"Cliente",a,d}}
+    function cobHTML(){
+      return `<section class="card">
+        <div class="head"><h3>Pagamentos para lembrar no WhatsApp</h3><span class="note">${cobs.length?plural(cobs.length,"cobrança","cobranças"):"Nada vencendo"}</span></div>
+        ${cobs.length?`<ul class="av-pend">${cobs.map(x=>{const w=waCobranca(x), ult=lemCob[x.id];
+          return `<li class="av-pend-i ${w.d<0?"atras":""}">
+            <div class="av-pend-t"><b>${esc(w.nome)}</b>
+              <span>${esc(x.descricao)} · ${brl(w.a.total)}${w.a.total>Number(x.valor)?` <small class="av-erro" style="display:inline">(com multa e juros)</small>`:""}</span>
+              <small>${w.d<0?`Venceu em ${dmS(x.data)} · há ${plural(-w.d,"dia","dias")}`:w.d===0?"Vence hoje":`Vence em ${dmS(x.data)} · faltam ${plural(w.d,"dia","dias")}`}${ult?" · lembrado no WhatsApp em "+esc(dataHora(ult)):""}${w.fone?"":" · sem WhatsApp cadastrado"}</small></div>
+            <div class="av-pend-a">
+              <a class="btn small av-wa" href="${esc(w.url)}" target="_blank" rel="noopener" data-a="wa-cob" data-l="${x.id}" data-c="${x.cliente_id||""}">${w.fone?"Lembrar no WhatsApp":"WhatsApp (escolher contato)"}</a>
+              ${x.cliente_id&&!w.fone?`<button class="btn small ghost" data-a="cadastrar-wa" data-c="${x.cliente_id}">+ WhatsApp</button>`:""}</div></li>`}).join("")}</ul>`
+          :`<p class="note">Nenhum pagamento vencendo nos próximos ${plural(Math.max(1,+emp.cobranca_dias||5),"dia","dias")} nem atrasado.</p>`}
+        <p class="note">A mensagem já vai com o valor (com multa e juros, se atrasou) e o link para pagar no Pix ou no cartão. Quem avisou que pagou sai da lista.</p>
+      </section>`}
 
     const chip=(ok,sim,nao)=>`<span class="av-chip ${ok?"ok":"nao"}">${ok?"✓ ":""}${esc(ok?sim:nao)}</span>`;
     function statusHTML(){
@@ -225,12 +268,13 @@
 
     function render(){
       if(carregando){el.innerHTML=`<section class="card"><p class="note">Carregando…</p></section>`;return}
-      el.innerHTML=statusHTML()+pendHTML()+configHTML()+emailHTML()+enviosHTML();
+      el.innerHTML=statusHTML()+cobHTML()+pendHTML()+configHTML()+emailHTML()+enviosHTML();
     }
 
     el.addEventListener("click",async e=>{
       const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a, cid=b.dataset.c;
       if(a==="wa"){sb.rpc("lembrete_whatsapp",{p_cliente:cid}).then(()=>carregar());return}
+      if(a==="wa-cob"){lemCob[b.dataset.l]=new Date().toISOString();try{localStorage.setItem("guxta_wa_cobranca",JSON.stringify(lemCob))}catch(_){}setTimeout(render,300);return}
       e.preventDefault();
       if(a==="abrir"){ctx.ir({vista:"cliente",cliente:cid,aba:"posts"});return}
       if(a==="cadastrar-wa"){ctx.ir({vista:"cliente",cliente:cid,aba:"posts",config:true});ctx.toast("Abra “Configurações do cliente” e preencha o WhatsApp.");return}

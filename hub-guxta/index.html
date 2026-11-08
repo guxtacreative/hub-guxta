@@ -60,7 +60,7 @@
       <div class="sino-pop" id="sino-pop" hidden role="dialog" aria-label="Novidades"></div>
     </div>
     <button type="button" class="tema-btn" data-tema-btn></button>
-    <div class="userbox" id="userbox" hidden><select id="cliente-sel" aria-label="Cliente" hidden></select><span id="user-email"></span><button class="btn small" id="sair">Sair</button></div></div>
+    <div class="userbox" id="userbox" hidden><select id="cliente-sel" aria-label="Cliente" hidden></select><span class="perfil-av" id="perfil-av" aria-hidden="true"></span><button class="btn small ghost" id="meu-perfil" hidden>Meu perfil</button><span id="user-email"></span><button class="btn small" id="sair">Sair</button></div></div>
   <header class="hero">
     <span class="hero-tag" id="hero-tag">Hub de Marketing</span>
     <h1 id="titulo">Carregando…</h1>
@@ -244,6 +244,7 @@
 </div>
 
 <script src="config.js"></script>
+<script src="perfil.js"></script>
 <script src="metricas.js"></script>
 <script src="anuncios.js"></script>
 <script src="anel.js"></script>
@@ -515,8 +516,8 @@
     const ord=[...L.produtos].sort((a,b)=>(a.tipo==="servico"?0:1)-(b.tipo==="servico"?0:1));
     box.innerHTML=`<section class="card lj-portal-h"><div><span class="eyebrow">Loja</span><h2>Serviços avulsos e material gráfico</h2>
         <p class="note" style="margin:4px 0 0">Precisa de algo além do seu plano? Peça e pague por aqui: pacotes de posts, captação e edição de vídeo, sites, cartões, banners e mais.</p></div>
-        <a class="btn primary" href="loja.html?origem=portal" target="_blank" rel="noopener">Abrir a loja</a></section>
-      <div class="lj-portal">${ord.map(p=>`<a class="lj-portal-p" href="loja.html?p=${encodeURIComponent(p.id)}&origem=portal" target="_blank" rel="noopener">
+        <a class="btn primary" href="https://loja.guxta.com.br/?origem=portal" target="_blank" rel="noopener">Abrir a loja</a></section>
+      <div class="lj-portal">${ord.map(p=>`<a class="lj-portal-p" href="https://loja.guxta.com.br/?p=${encodeURIComponent(p.id)}&origem=portal" target="_blank" rel="noopener">
           <span class="lj-portal-f">${p.foto?`<img src="${esc(p.foto)}" alt="" loading="lazy">`:`<i aria-hidden="true">${esc((p.nome||"?").slice(0,1).toUpperCase())}</i>`}</span>
           <span class="lj-portal-t"><small>${esc(p.categoria||"")}</small><b>${esc(p.nome)}</b><span>${p.preco_tipo==="m2"?"por m² ":"a partir de "}<strong>${brl(ap(p))}</strong></span></span></a>`).join("")}</div>`}
   /* link dos e-mails e do WhatsApp: ?aba=aprovar ou ?aba=relatorio abre direto na aba */
@@ -860,6 +861,7 @@
     const {data:{session}}=await sb.auth.getSession();if(!session){tela("login");return}
     if(session.user&&session.user.user_metadata&&session.user.user_metadata.trocar_senha){tela("trocar");return} // senha provisória: troca obrigatória
     $("#user-email").textContent=session.user.email;$("#userbox").hidden=false;
+    if(window.GlaraPerfil)GlaraPerfil.iniciar(sb,session,{botao:"#meu-perfil",av:"#perfil-av"});
     const {data:lista,error}=await sb.rpc("portal_meus_clientes");
     if(error){tela("login","Não conseguimos conferir seu acesso agora. Tente de novo.");return}
     if(!lista||!lista.length){tela("sem");$("#sem-msg").textContent=`O e-mail ${session.user.email} ainda não está ligado a nenhum cliente. Peça para a nossa equipe liberar seu acesso.`;return}

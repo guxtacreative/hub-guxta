@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Comercial · GUXTA HUB</title>
+<link rel="icon" type="image/png" href="icone.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="estilo.css">
+<link rel="stylesheet" href="tema-claro.css">
+<link rel="stylesheet" href="tema-escuro.css">
+<link rel="stylesheet" href="componentes.css">
+<link rel="stylesheet" href="leve.css">
+<style>
+  .com-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start}
+  @media (max-width:820px){.com-grid{grid-template-columns:1fr}}
+  .com-linha{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+  .com-linha:last-child{border-bottom:0}
+  .com-linha small{display:block;color:var(--muted);font-weight:500}
+  .com-linha input{width:100%;text-align:center}
+  .com-total{font:900 34px var(--font);letter-spacing:-.02em;margin:4px 0}
+  .com-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+  .com-kpis div{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface)}
+  .com-kpis b{display:block;font:800 18px var(--font)}
+  .com-kpis span{font-size:12px;color:var(--muted)}
+  .com-etapa{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .com-etapa:last-child{border-bottom:0}
+  .com-etapa input{margin-top:4px}
+  .com-etapa small{display:block;color:var(--muted)}
+  .com-etapa.feita b{text-decoration:line-through;color:var(--muted)}
+  .com-aviso{margin:12px 0 0;padding:10px 12px;border-radius:10px;background:var(--warn-bg);color:var(--warn);font-size:13px;font-weight:600}
+  .com-regras li{margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero hero-sm">
+    <span class="hero-tag">Uso interno · GUXTA HUB</span>
+    <h1>Comercial <mark>GUXTA HUB</mark></h1>
+    <p class="intro">Simule o faturamento mensal e acompanhe o fluxo de atendimento de cada cliente.</p>
+  </header>
+
+  <div class="com-grid" style="margin-top:16px">
+    <section class="card">
+      <span class="eyebrow">Simulação</span>
+      <h2>Quantos clientes de cada plano</h2>
+      <p class="note">Faturamento bruto mensal, antes de impostos, custos e despesas.</p>
+      <div id="com-linhas"></div>
+      <div class="com-kpis">
+        <div><span>Clientes</span><b id="k-clientes">0</b></div>
+        <div><span>Ticket médio</span><b id="k-ticket">R$ 0</b></div>
+        <div><span>Ano (×12)</span><b id="k-ano">R$ 0</b></div>
+      </div>
+      <p class="com-total" id="k-total">R$ 0<small style="font-size:14px;color:var(--muted);font-weight:600"> /mês</small></p>
+      <p class="com-aviso" id="k-aviso" hidden></p>
+      <div class="actions" style="margin-top:12px"><button type="button" class="btn ghost small" id="com-zerar">Zerar simulação</button></div>
+    </section>
+
+    <section class="card">
+      <span class="eyebrow">Fluxo de atendimento</span>
+      <h2>Do primeiro contato ao acompanhamento</h2>
+      <p class="note">Marque cada etapa conforme avança com o cliente. Fica salvo neste navegador.</p>
+      <div id="com-etapas" style="margin-top:8px"></div>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top:16px">
+    <span class="eyebrow">Regras comerciais</span>
+    <h2>Para proteger a operação</h2>
+    <ul class="com-regras" style="margin:10px 0 0;padding-left:18px">
+      <li>Contrato mensal com permanência inicial de 3 meses.</li>
+      <li>Pagamento mensal antecipado.</li>
+      <li>Uma rodada de ajustes por conteúdo.</li>
+      <li>Prazos definidos para envio de materiais e aprovação.</li>
+      <li>Demandas extras cobradas separadamente; reuniões adicionais e serviços fora do escopo sob orçamento.</li>
+      <li>Resultados acompanhados por indicadores, sem promessa de vendas ou resultados garantidos.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+(function(){
+  const PLANOS=[
+    {id:"presenca",nome:"HUB Presença",preco:1200,qtd:2},
+    {id:"crescimento",nome:"HUB Crescimento",preco:1900,qtd:2}
+  ];
+  const ETAPAS=[
+    ["Diagnóstico","Entender o negócio, os objetivos e as necessidades do cliente."],
+    ["Planejamento","Definir prioridades, estratégias, ações e entregas."],
+    ["Proposta comercial","Apresentar escopo, cronograma, investimento e condições."],
+    ["Onboarding","Cadastrar o cliente e organizar as informações na plataforma."],
+    ["Execução","Desenvolver as peças, conteúdos, campanhas e demais entregas contratadas."],
+    ["Aprovação","Enviar materiais para avaliação e aprovação do cliente."],
+    ["Acompanhamento","Monitorar entregas, indicadores e próximos passos."]
+  ];
+  const brl=v=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0});
+  const KEY="guxta_comercial_v1";
+  let estado={qtd:{},etapas:{}};
+  try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s)estado=Object.assign(estado,s)}catch(e){}
+  PLANOS.forEach(p=>{if(estado.qtd[p.id]===undefined)estado.qtd[p.id]=p.qtd});
+  const salvar=()=>{try{localStorage.setItem(KEY,JSON.stringify(estado))}catch(e){}};
+
+  const linhas=document.getElementById("com-linhas");
+  linhas.innerHTML=PLANOS.map(p=>`<div class="com-linha">
+      <div><b>${p.nome}</b><small>${brl(p.preco)} por mês</small></div>
+      <input type="number" min="0" step="1" inputmode="numeric" aria-label="Clientes ${p.nome}" data-id="${p.id}" value="${estado.qtd[p.id]}">
+    </div>`).join("");
+
+  function calcular(){
+    let clientes=0,total=0;
+    PLANOS.forEach(p=>{const q=Math.max(0,parseInt(estado.qtd[p.id],10)||0);clientes+=q;total+=q*p.preco});
+    document.getElementById("k-clientes").textContent=clientes;
+    document.getElementById("k-ticket").textContent=clientes?brl(total/clientes):"R$ 0";
+    document.getElementById("k-ano").textContent=brl(total*12);
+    document.getElementById("k-total").innerHTML=brl(total)+'<small style="font-size:14px;color:var(--muted);font-weight:600"> /mês</small>';
+    const aviso=document.getElementById("k-aviso");
+    if(clientes>3){aviso.hidden=false;aviso.textContent="Com mais de 3 clientes a carga de trabalho cresce rápido. Comece com 2 ou 3 e ajuste os processos."}
+    else aviso.hidden=true;
+  }
+
+  linhas.addEventListener("input",e=>{const id=e.target.dataset.id;if(!id)return;
+    estado.qtd[id]=Math.max(0,parseInt(e.target.value,10)||0);salvar();calcular()});
+  document.getElementById("com-zerar").addEventListener("click",()=>{
+    PLANOS.forEach(p=>{estado.qtd[p.id]=0});
+    linhas.querySelectorAll("input").forEach(i=>i.value=0);salvar();calcular()});
+
+  const etapasEl=document.getElementById("com-etapas");
+  etapasEl.innerHTML=ETAPAS.map((e,i)=>{const k="e"+i,ok=!!estado.etapas[k];
+    return `<label class="com-etapa${ok?" feita":""}"><input type="checkbox" data-k="${k}" ${ok?"checked":""}><span><b>${i+1}. ${e[0]}</b><small>${e[1]}</small></span></label>`}).join("");
+  etapasEl.addEventListener("change",e=>{const k=e.target.dataset.k;if(!k)return;
+    estado.etapas[k]=e.target.checked;salvar();e.target.closest(".com-etapa").classList.toggle("feita",e.target.checked)});
+
+  calcular();
+})();
+</script>
+</body>
+</html>

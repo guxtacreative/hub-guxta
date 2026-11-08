@@ -100,6 +100,7 @@
       <button class="cli cli-tarefas" id="btn-financeiro" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg></span>Financeiro<span class="badge" id="fin-badge" hidden></span></button>
       <button class="cli cli-tarefas" id="btn-notas" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.5z"/><path d="M15 3v6h6M7 13h10M7 17h6"/></svg></span>Notas</button>
       <button class="cli cli-tarefas" id="btn-avisos" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>Avisos e lembretes<span class="badge calma" id="av-badge" hidden></span></button>
+      <a class="cli cli-tarefas" href="https://mail.zoho.com/" target="_blank" rel="noopener" style="text-decoration:none" title="Abre o Zoho Mail (contato@guxta.com.br) em outra aba"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>Caixa de entrada<span class="note" style="margin-left:auto;font-size:11px">Zoho ↗</span></a>
     </aside>
 
     <main class="list" id="main">
@@ -208,6 +209,7 @@
     const {data,error}=await sb.from("clientes").select("*").order("nome");
     if(error)return falha("carregar os clientes",error);
     clientes=data;renderClientes();
+    if(window.GlaraPerfil){GlaraPerfil.fotosDosClientes(sb,clientes).then(m=>{fotosCli=m;renderClientes()}).catch(()=>{})}
     if(cliAtual)abrirCliente(cliAtual.id);
   }
   function renderClientes(){
@@ -230,13 +232,14 @@
   }
   /* ---------- Clientes: todos numa aba só ---------- */
   let cliBusca="", cliFiltro="ativos";
+  var fotosCli={};
   function gradeClientesHTML(){
     const q=cliBusca.trim().toLowerCase(), lista=clientes.filter(c=>(cliFiltro==="todos"||(cliFiltro==="ativos"?c.ativo:!c.ativo))&&(!q||c.nome.toLowerCase().includes(q)));
     if(!lista.length)return `<p class="note">${clientes.length?"Nenhum cliente encontrado.":"Nenhum cliente ainda. Adicione o primeiro acima."}</p>`;
     return lista.map(c=>{const a=(alertas.clientes||{})[c.id]||{}, n=(a.pedidos||0)+(a.ajustes||0)+(a.alteracoes||0), ini=c.nome.trim().split(/\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase();
       const info=[a.pedidos?`${a.pedidos} pedido${a.pedidos>1?"s":""} novo${a.pedidos>1?"s":""}`:"",a.ajustes?`${a.ajustes} ajuste${a.ajustes>1?"s":""} pedido${a.ajustes>1?"s":""}`:"",a.alteracoes?`${a.alteracoes} alteraç${a.alteracoes>1?"ões":"ão"}`:"",a.aprovados_24h?`${a.aprovados_24h} aprovad${a.aprovados_24h>1?"os":"o"} em 24 h`:""].filter(Boolean);
       return `<button type="button" class="clg-card${c.ativo?"":" off"}" data-cli="${c.id}">
-        <span class="clg-av" style="${c.cor_destaque&&/^#[0-9a-f]{3,8}$/i.test(c.cor_destaque)?`background:${c.cor_destaque}`:""}" aria-hidden="true">${esc(ini)}</span>
+        <span class="clg-av" style="${c.cor_destaque&&/^#[0-9a-f]{3,8}$/i.test(c.cor_destaque)?`background:${c.cor_destaque}`:""}" aria-hidden="true">${fotosCli[c.id]&&fotosCli[c.id].url?`<img src="${esc(fotosCli[c.id].url)}" alt="">`:esc(ini)}</span>
         <span class="clg-t"><b>${esc(c.nome)}</b><small>${esc(c.plano_nome||(c.ativo?"Cliente ativo":"Desativado"))}</small>${info.length?`<span class="clg-info">${esc(info.join(" · "))}</span>`:""}</span>
         ${bolha(n,info.join(" · "))}</button>`}).join("")}
   function abrirClientesLista(){vista="clientes";renderClientes();
