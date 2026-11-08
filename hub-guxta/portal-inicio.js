@@ -73,7 +73,7 @@
   function rosca(posts){
     const pub=posts.filter(p=>p.publicacao==="publicado").length, ag=posts.filter(p=>p.publicacao==="agendado").length;
     const ok=posts.filter(p=>est(p)==="ok"&&!p.publicacao).length, pend=posts.filter(p=>est(p)==="pend").length, adj=posts.filter(p=>est(p)==="adj").length;
-    const seg=[["Publicados",pub,"var(--ok,#19A33B)"],["Agendados",ag,"#F59E0B"],["Aprovados",ok,"var(--ink)"],["Aguardando você",pend,"var(--alerta,#00C875)"],["Em ajuste",adj,"var(--muted)"]];
+    const seg=[["Publicados",pub,"var(--ok,#19A33B)"],["Agendados",ag,"#F59E0B"],["Aprovados",ok,"var(--ink)"],["Aguardando você",pend,"var(--alerta,#219E3D)"],["Em ajuste",adj,"var(--muted)"]];
     const tot=posts.length, r=52, C=2*Math.PI*r;let acc=0;
     const arcos=tot?seg.filter(x=>x[1]).map(x=>{const len=x[1]/tot*C,a=`<circle cx="70" cy="70" r="${r}" fill="none" stroke="${x[2]}" stroke-width="16" stroke-dasharray="${Math.max(0,len-2)} ${C}" stroke-dashoffset="${-acc}" transform="rotate(-90 70 70)"><title>${esc(x[0])}: ${x[1]}</title></circle>`;acc+=len;return a}).join(""):`<circle cx="70" cy="70" r="${r}" fill="none" stroke="var(--line)" stroke-width="16"/>`;
     return `<section class="ini-box ini-rosca"><header><span class="ini-ico">${I.alvo}</span><h3>Conteúdo do mês</h3><span class="note">${tot} post${tot===1?"":"s"}</span></header>
