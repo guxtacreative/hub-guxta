@@ -21,18 +21,18 @@
   };
   const CATS={
     "Orçamento":{cor:"#F59E0B",etapas:["Entender o pedido (briefing)","Calcular horas e custos","Montar a proposta","Enviar ao cliente","Fazer follow-up","Resposta: aprovado ou recusado"]},
-    "Identidade visual":{cor:"#0075DE",etapas:["Briefing e questionário","Pesquisa e moodboard","Rascunhos e conceito","Apresentação ao cliente","Ajustes","Manual da marca","Entrega dos arquivos finais"]},
+    "Identidade visual":{cor:"#8B5CF6",etapas:["Briefing e questionário","Pesquisa e moodboard","Rascunhos e conceito","Apresentação ao cliente","Ajustes","Manual da marca","Entrega dos arquivos finais"]},
     "Gráfica":{cor:"#0EA5E9",etapas:["Arte final aprovada pelo cliente","Conferir medidas, sangria e CMYK","Orçar com a gráfica","Enviar o arquivo (PDF de impressão)","Aprovar a prova","Produção","Retirar e entregar"]},
-    "Conteúdo":{cor:"#0075DE",etapas:["Pauta","Texto","Design ou edição","Revisão","Agendar"]},
+    "Conteúdo":{cor:"#E30613",etapas:["Pauta","Texto","Design ou edição","Revisão","Agendar"]},
     "Site":{cor:"#2563EB",etapas:["Briefing","Estrutura das páginas","Layout","Desenvolvimento","Testes no celular","Publicação"]},
     "Tráfego":{cor:"#16A34A",etapas:["Objetivo e verba","Criativos","Público","Subir a campanha","Acompanhar e otimizar"]},
-    "Reunião":{cor:"#0075DE",etapas:["Confirmar horário","Preparar a pauta","Reunião","Enviar o resumo"]},
+    "Reunião":{cor:"#DB2777",etapas:["Confirmar horário","Preparar a pauta","Reunião","Enviar o resumo"]},
     "Financeiro":{cor:"#0D9488",etapas:["Emitir cobrança","Enviar ao cliente","Confirmar pagamento"]},
     "Outro":{cor:"#6B7280",etapas:[]}
   };
   const COLS=[["ideia","Ideias"],["a_fazer","A fazer"],["fazendo","Em produção"],["aguardando","Aprovação / retorno"],["feito","Concluído"]];
   // etiquetas: cada nome sempre ganha a mesma cor
-  const CORES_ET=[["#E7F3FD","#0075DE"],["#FFEDD5","#9A4A00"],["#FEF3C7","#8A6100"],["#DCFCE7","#166534"],["#DBEAFE","#0075DE"],["#EDE9FE","#0075DE"],["#FCE7F3","#005BAB"],["#E0F2FE","#075985"]];
+  const CORES_ET=[["#FDE2E4","#B4232C"],["#FFEDD5","#9A4A00"],["#FEF3C7","#8A6100"],["#DCFCE7","#166534"],["#DBEAFE","#1E40AF"],["#EDE9FE","#5B21B6"],["#FCE7F3","#9D174D"],["#E0F2FE","#075985"]];
   const corEt=t=>{let h=0;for(const ch of String(t).toLowerCase())h=(h*31+ch.charCodeAt(0))>>>0;return CORES_ET[h%CORES_ET.length]};
   const etHTML=t=>{const [bg,fg]=corEt(t);return `<span class="tk-et" style="--et-bg:${bg};--et-fg:${fg}">${esc(t)}</span>`};
   const iniciais=n=>String(n||"").trim().split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0].toUpperCase()).join("");
