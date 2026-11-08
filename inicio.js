@@ -102,6 +102,7 @@
           <span class="ini-data"><b>${dm(x.data).split("/")[0]}</b><small>${diaSemana(x.data)}</small></span><span class="ini-item-t"><b>${esc(x.titulo)}</b><small>${esc([x.cliente,x.tipo==="post"?x.detalhe:x.detalhe].filter(Boolean).join(" · "))}</small></span><span class="status ${st[1]}">${st[0]}</span></button></li>`});
       el.innerHTML=`<header class="ini-ola"><h1>Olá${nome?", "+esc(nome):""} <span class="ini-aceno" aria-hidden="true">👋</span></h1><p class="intro">${esc(ctx.plataforma||"Hub de Marketing")} · ${esc(dataL)}</p></header>
         ${passosHTML()}
+        <div id="ini-ent"></div>
         <div class="ini-grid">
           ${card({t:"Clientes ativos",ico:I.clientes,v:int(c.ativos),s:N(c.novos_mes)?`${c.novos_mes} ${N(c.novos_mes)>1?"novos":"novo"} em ${mesL}`:`Nenhum novo em ${mesL}`})}
           ${card({t:"Aprovações pendentes",ico:I.aprovar,v:int(a.pendentes),s:N(a.ajustes)?`${a.ajustes} ${N(a.ajustes)>1?"ajustes pedidos":"ajuste pedido"}`:`${int(a.aprovados)} aprovados no mês atual`,alerta:N(a.ajustes)>0})}
@@ -114,6 +115,7 @@
         </div>
         <div class="ini-duo">${graficoHTML()}${rosca()}</div>
         <div class="ini-duo ini-duo-2">${listaHTML("Precisa da sua atenção",I.sino,atencao,"Tudo em dia: nenhum pedido novo, ajuste, boleto ou tarefa atrasada.")}${listaHTML("Próximos 7 dias",I.agenda,agenda,"Nada marcado para os próximos 7 dias.")}</div>`;
+      if(ctx.depois)ctx.depois(el);
     }
     el.addEventListener("click",e=>{
       const s=e.target.closest("[data-ini-serie]");if(s){serie=s.dataset.iniSerie;const g=el.querySelector(".ini-graf");if(g)g.outerHTML=graficoHTML();return}
