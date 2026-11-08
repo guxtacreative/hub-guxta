@@ -24,7 +24,7 @@
   }
   function tipoPrincipal(rows){const c={};rows.forEach(r=>{const k=r.tipo_resultado||"Resultados";c[k]=(c[k]||0)+1});return Object.keys(c).sort((a,b)=>c[b]-c[a])[0]||"Resultados"}
 
-  /* variação contra o período anterior: bom = verde, ruim = verde */
+  /* variação contra o período anterior: bom = verde, ruim = vermelho */
   function delta(atual,ant,menorMelhor){
     if(atual==null||ant==null||!isFinite(atual)||!isFinite(ant)||ant===0)return "";
     const v=(atual-ant)/Math.abs(ant);if(Math.abs(v)<0.005)return `<span class="dl eq">= igual</span>`;
