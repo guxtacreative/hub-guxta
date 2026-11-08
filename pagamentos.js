@@ -123,9 +123,7 @@
       ver:()=>publico?sb.rpc("pagamento_ver",{p_token:o.token}):sb.rpc("portal_cobrancas",o.P()),
       cartao:(it,n)=>publico?sb.rpc("pagamento_cartao",{p_token:o.token,p_n:n}):sb.rpc("portal_cartao",{...o.P(),p_lanc:it.id,p_n:n}),
       avisar:(it,obs)=>publico?sb.rpc("pagamento_avisar",{p_token:o.token,p_obs:obs}):sb.rpc("portal_avisar_pago",{...o.P(),p_lanc:it.id,p_obs:obs}),
-      boleto:it=>sb.rpc("portal_pedir_boleto",{...o.P(),p_lanc:it.id}),
-      cupom:(it,c)=>publico?sb.rpc("pagamento_cupom",{p_token:o.token,p_codigo:c}):sb.rpc("portal_cupom",{...o.P(),p_lanc:it.id,p_codigo:c})};
-    let cupomAberto=null, cupomErro={};
+      boleto:it=>sb.rpc("portal_pedir_boleto",{...o.P(),p_lanc:it.id})};
     const urgentes=()=>!D?[]:D.itens.filter(it=>it.status==="previsto"&&!it.cliente_pagou_em&&dias(it.data)<=(D.config.dias??5)).sort((a,b)=>a.data.localeCompare(b.data));
     const avisados=()=>!D?[]:D.itens.filter(it=>it.status==="previsto"&&it.cliente_pagou_em&&dias(it.data)<=(D.config.dias??5));
 
@@ -151,12 +149,7 @@
     }
     function encargosHTML(it){const a=it.atualizado;if(!a||!(Number(a.total)>Number(it.valor)))return "";
       return `<p class="pg-encargos">${brl(it.valor)} + multa ${brl(a.multa)} + juros ${brl(a.juros)} <small>(${a.dias} dia${a.dias==1?"":"s"} de atraso)</small></p>`}
-    function mpBtn(it,n,txt){const k=it.id+":"+n;return `<button type="button" class="btn pg-mp-btn" data-pg="mp" data-n="${n}" data-id="${it.id}" ${pagando===k?"disabled":""}>${pagando===k?"Abrindo o Mercado Pago…":txt}</button>`}
-    function pixMpHTML(it,so){if(!D.config.mp_pix)return "";
-      return `<div class="pg-mp-op"><p class="note">Clique para gerar o Pix de <b>${brl(total(it))}</b> pelo Mercado Pago. Pague com o QR Code ou o Pix copia e cola no app do seu banco: o pagamento é confirmado na hora, sem precisar avisar.</p>${mpBtn(it,-1,`${I.pix} Gerar Pix`)}</div>`}
-    function pixHTML(it){const c=D.config;
-      if(c.mp_pix)return `<div class="pg-meio pg-pix"><h4>${I.pix} Pix <span class="pg-tag">confirmação na hora</span></h4>${pixMpHTML(it,true)}</div>`;
-      if(!c.pix)return "";
+    function pixHTML(it){const c=D.config;if(!c.pix)return "";
       const code=brcode({chave:c.pix,tipo:c.pix_tipo,nome:c.pix_nome,cidade:c.pix_cidade,valor:total(it),txid:it.id});let qr="";
       try{qr=svg(code,{titulo:"QR Code do Pix de "+brl(total(it))})}catch(e){}
       return `<div class="pg-meio pg-pix"><h4>${I.pix} Pix <span class="pg-tag">sem taxa</span></h4>
@@ -168,10 +161,10 @@
     function cartaoHTML(it){if(!it.cartao||!(it.parcelas||[]).length)return "";
       const ps=it.parcelas, n=escolha[it.id]||1, sel=ps.find(p=>p.n===n)||ps[0], semJ=ps.filter(p=>!p.juros).length;
       return `<div class="pg-meio pg-cartao"><h4>${I.cartao} Cartão de crédito</h4>
-        <p class="note">${D.config.cartao_modo==="mp"?`No cartão, o valor à vista é ${brl(ps[0].total)}${ps.length>1?"; parcelado, com os juros do Mercado Pago":""}. `:`${semJ>1?`Até ${semJ}x sem juros. `:""}${ps.length>semJ?`Em mais vezes, juros de ${pct(D.config.cartao_juros_mes)} ao mês. `:""}`}Escolha as parcelas e pague com segurança pelo Mercado Pago.</p>
+        <p class="note">${semJ>1?`Até ${semJ}x sem juros. `:""}${ps.length>semJ?`Em mais vezes, juros de ${pct(D.config.cartao_juros_mes)} ao mês. `:""}Escolha as parcelas e pague com segurança pelo Mercado Pago.</p>
         <div class="pg-parc" role="radiogroup" aria-label="Número de parcelas">${ps.map(p=>`<label class="pg-parc-op ${p.n===sel.n?"on":""}"><input type="radio" name="pg-n-${it.id}" value="${p.n}" data-pg-n="${it.id}" ${p.n===sel.n?"checked":""}>
-          <b>${p.n}x</b><span>${brl(p.parcela)}</span><small>${p.juros?"total "+brl(p.total):p.n>1?"sem juros":D.config.cartao_modo==="mp"?"à vista":"à vista"}</small></label>`).join("")}</div>
-        ${mpBtn(it,sel.n,`Pagar ${sel.n}x de ${brl(sel.parcela)} no cartão`)}
+          <b>${p.n}x</b><span>${brl(p.parcela)}</span><small>${p.juros?"total "+brl(p.total):p.n>1?"sem juros":"à vista"}</small></label>`).join("")}</div>
+        <button type="button" class="btn pg-mp-btn" data-pg="cartao" data-id="${it.id}" ${pagando===it.id?"disabled":""}>${pagando===it.id?"Abrindo o Mercado Pago…":`Pagar ${sel.n}x de ${brl(sel.parcela)} no cartão`}</button>
         <small class="note">No Mercado Pago, confirme em <b>${sel.n}x</b>.</small></div>`}
     function boletoHTML(it){const c=D.config;
       if(it.boleto_linha||it.boleto)return `<div class="pg-meio pg-bol"><h4>${I.boleto} Boleto</h4>
@@ -179,28 +172,17 @@
           <div class="pg-copia"><input id="pg-bl-${it.id}" readonly value="${esc(it.boleto_linha)}"><button type="button" class="btn small" data-pg="copiar" data-v="${esc(it.boleto_linha.replace(/\D/g,""))}" data-ok="Código do boleto copiado">${I.copiar} Copiar</button></div>`:""}
         ${it.boleto?(logado()?`<button type="button" class="btn small outline" data-pg="boleto" data-id="${it.id}">Baixar boleto em PDF</button>`
             :`<p class="note">O PDF do boleto abre no portal, para quem entra com e-mail e senha.${o.base&&!publico?` <a href="${esc(o.base())}">Entrar</a>`:""}</p>`):""}</div>`;
-      if(c.mp_boleto)return `<div class="pg-meio pg-bol"><h4>${I.boleto} Boleto</h4>
-        <p class="note">Gere o boleto agora pelo Mercado Pago, já com o valor de <b>${brl(total(it))}</b>. Você informa o CPF ou CNPJ e pode pagar em qualquer banco. A baixa aqui é automática (o boleto compensa em até 3 dias úteis).</p>
-        ${mpBtn(it,0,`${I.boleto} Gerar boleto agora`)}</div>`;
       if(publico||!c.boleto_pedido)return "";
       return `<div class="pg-meio pg-bol"><h4>${I.boleto} Boleto</h4>${it.boleto_pedido_em
         ?`<p class="pg-pedido">${I.ok} Boleto pedido em ${esc(quando(it.boleto_pedido_em))}. Assim que ficar pronto, ele aparece aqui${logado()?" e chega no seu e-mail":""}.</p>`
         :`<p class="note">Prefere boleto? Peça aqui e a gente envia.</p><button type="button" class="btn small" data-pg="pedir" data-id="${it.id}">Pedir boleto</button>`}</div>`}
-    function cupomHTML(it){
-      if(it.cupom)return `<div class="pg-cupom ok"><span>🏷 Cupom <b>${esc(it.cupom)}</b>: − ${brl(it.desconto)} <small>(de ${brl(it.valor_bruto)})</small></span><button type="button" class="pg-link" data-pg="cupom-tira" data-id="${it.id}">tirar</button></div>`;
-      if(!it.aceita_cupom)return "";
-      if(cupomAberto!==it.id)return `<div class="pg-cupom"><button type="button" class="pg-link" data-pg="cupom-abre" data-id="${it.id}">Tem um cupom de desconto?</button></div>`;
-      return `<form class="pg-cupom-f" data-cupom-f="${it.id}"><label class="label" for="pg-cp-${it.id}">Cupom de desconto</label>
-        <div class="pg-copia"><input id="pg-cp-${it.id}" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Digite o código" maxlength="40"><button type="submit" class="btn small primary">Aplicar</button></div>
-        ${cupomErro[it.id]?`<p class="pg-cupom-erro" role="alert">${esc(cupomErro[it.id])}</p>`:""}</form>`}
     function cardHTML(it){const s=situacao(it);
       return `<article class="card pg-card ${s.cls}" id="pg-${it.id}">
         <header class="pg-head"><div><span class="pg-desc">${esc(it.descricao)}</span><b class="pg-valor">${brl(total(it))}</b>${encargosHTML(it)}</div>
           <span class="pg-st ${s.cls}">${esc(s.txt)}</span></header>
-        ${cupomHTML(it)}
         ${it.cliente_pagou_em?`<p class="pg-avisou">${I.ok} Recebemos o seu aviso. Assim que o pagamento cair, damos baixa por aqui.</p>`:""}
         <div class="pg-formas">${pixHTML(it)}${cartaoHTML(it)}${boletoHTML(it)}</div>
-        ${it.cliente_pagou_em||D.config.mp_pix?"":aberto===it.id?`<div class="pg-pago-form"><label class="label" for="pg-obs-${it.id}">Quer deixar um recado? (opcional)</label>
+        ${it.cliente_pagou_em?"":aberto===it.id?`<div class="pg-pago-form"><label class="label" for="pg-obs-${it.id}">Quer deixar um recado? (opcional)</label>
             <input type="text" id="pg-obs-${it.id}" maxlength="300" placeholder="Ex.: Paguei pelo Pix hoje às 10h">
             <div class="actions"><button type="button" class="btn small primary" data-pg="pago-ok" data-id="${it.id}">Confirmar: já paguei</button><button type="button" class="btn small ghost" data-pg="pago-x">Cancelar</button></div></div>`
           :`<div class="pg-rodape"><button type="button" class="btn small ghost" data-pg="pago" data-id="${it.id}">${I.ok} Já paguei pelo Pix</button></div>`}
@@ -221,8 +203,6 @@
     async function clique(e){
       const b=e.target.closest("[data-pg]");if(!b)return;const a=b.dataset.pg, id=b.dataset.id, it=D&&D.itens.find(x=>x.id===id);
       if(a==="ir"){o.abrir&&o.abrir();return}
-      if(a==="cupom-abre"){cupomAberto=id;render();const i=document.getElementById("pg-cp-"+id);i&&i.focus();return}
-      if(a==="cupom-tira"){b.disabled=true;aplicarCupom(id,"");return}
       if(a==="copiar"){copiar(b.dataset.v,b.dataset.ok);const t=b.innerHTML;if(b.classList.contains("btn")){b.innerHTML=I.ok+" Copiado";setTimeout(()=>{b.innerHTML=t},1800)}return}
       if(a==="pago"){aberto=id;render();const inp=document.getElementById("pg-obs-"+id);inp&&inp.focus();return}
       if(a==="pago-x"){aberto=null;render();return}
@@ -236,8 +216,8 @@
       if(a==="boleto"&&it){const {data,error}=await sb.storage.from("documentos").createSignedUrl(it.boleto_caminho,600,{download:it.boleto_nome||"boleto.pdf"});
         if(error||!data){toast("Não deu para abrir o boleto. Entre de novo e tente outra vez.");return}
         const l=document.createElement("a");l.href=data.signedUrl;l.download=it.boleto_nome||"boleto.pdf";document.body.appendChild(l);l.click();l.remove();return}
-      if(a==="mp"&&it){const n=+b.dataset.n;
-        const janela=window.open("","_blank");pagando=id+":"+n;render();
+      if(a==="cartao"&&it){const n=escolha[it.id]||1;
+        const janela=window.open("","_blank");pagando=id;render();
         for(let t=0;t<10;t++){
           const {data,error}=await api.cartao(it,n);
           if(error||!data){break}
@@ -247,17 +227,8 @@
           await new Promise(r=>setTimeout(r,1500))}
         pagando=null;render();janela&&janela.close();toast("O Mercado Pago não respondeu agora. Use o Pix ou tente de novo em instantes.");return}
     }
-    const erroCupom=m=>/cupom_invalido/.test(m)?"Cupom não encontrado. Confira o código.":/cupom_vencido/.test(m)?"Este cupom venceu.":/cupom_esgotado/.test(m)?"Este cupom já foi usado o máximo de vezes.":
-      /cupom_minimo:([\d.]+)/.test(m)?"Este cupom vale para cobranças a partir de "+brl(m.match(/cupom_minimo:([\d.]+)/)[1])+".":/cupom_onde/.test(m)?"Este cupom não vale para esta cobrança.":
-      /cupom_sem_margem/.test(m)?"Este cupom não pode ser usado nesta cobrança.":/cupom_tentativas/.test(m)?"Muitas tentativas. Fale com a gente.":/cupom_pago/.test(m)?"Esta cobrança já está paga.":"Não deu para aplicar agora. Tente de novo.";
-    async function aplicarCupom(id,codigo){const it=D&&D.itens.find(x=>x.id===id);if(!it)return;
-      const {data,error}=await api.cupom(it,codigo);
-      if(error){cupomErro[id]=erroCupom(error.message||"");render();const i=document.getElementById("pg-cp-"+id);if(i){i.value=codigo;i.focus()}return}
-      cupomErro[id]="";cupomAberto=null;await carregar();toast(codigo?`Cupom aplicado: − ${brl(data.desconto)}`:"Cupom retirado.")}
     function trocar(e){const r=e.target.closest("[data-pg-n]");if(!r)return;escolha[r.dataset.pgN]=+r.value;render()}
     [banner,panel].forEach(x=>{if(x){x.addEventListener("click",clique);x.addEventListener("change",trocar)}});
-    panel&&panel.addEventListener("submit",e=>{const f=e.target.closest("[data-cupom-f]");if(!f)return;e.preventDefault();const i=f.querySelector("input"),c=(i.value||"").trim();
-      if(!c){cupomErro[f.dataset.cupomF]="Digite o código do cupom.";render();return}f.querySelector("button").disabled=true;aplicarCupom(f.dataset.cupomF,c)});
     return {carregar,render,get dados(){return D}};
   }
   window.GlaraPagamentos={criar,situacao};
