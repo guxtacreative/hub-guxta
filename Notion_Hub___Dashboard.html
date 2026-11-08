@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub & Dashboard - Notion Style</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        'notion-blue': {
+                            DEFAULT: '#2383E2',
+                            hover: '#1D70B8',
+                            light: '#EBF5FF',
+                            darkLight: 'rgba(35, 131, 226, 0.18)',
+                        },
+                        'graphite': {
+                            DEFAULT: '#202124',
+                            secondary: '#2D2E31',
+                            lightBg: '#F4F4F5',
+                            border: '#37352F',
+                        },
+                        'off-white': {
+                            DEFAULT: '#F4F4F5',
+                            secondary: '#E4E4E7',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Modern Notion-like Styling Variables */
+        :root {
+            --bg-main: #FBFBFB;
+            --bg-card: #FFFFFF;
+            --bg-sidebar: #F7F7F7;
+            --border-subtle: #E9E9E9;
+            --text-primary: #37352F;
+            --text-secondary: #6B7280;
+            --code-bg: #202124;
+            --code-text: #F4F4F5;
+            --graphite-pill-bg: #202124;
+            --graphite-pill-text: #FFFFFF;
+        }
+
+        .dark {
+            --bg-main: #191919;
+            --bg-card: #202020;
+            --bg-sidebar: #222222;
+            --border-subtle: #2F2F2F;
+            --text-primary: #F4F4F5;
+            --text-secondary: #9CA3AF;
+            --code-bg: #2A2B2E;
+            --code-text: #F4F4F5;
+            --graphite-pill-bg: #E4E4E7;
+            --graphite-pill-text: #191919;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* Custom Notion Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(150, 150, 150, 0.3);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(150, 150, 150, 0.5);
+        }
+
+        /* Code block highlight overrides */
+        .code-highlight {
+            background-color: var(--code-bg) !important;
+            color: var(--code-text) !important;
+            font-family: 'Fira Code', monospace;
+            border-radius: 0.375rem;
+            padding: 0.15rem 0.4rem;
+            font-size: 0.85em;
+            display: inline-block;
+        }
+
+        /* Graphite pill badge */
+        .badge-graphite {
+            background-color: var(--graphite-pill-bg);
+            color: var(--graphite-pill-text);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.15rem 0.5rem;
+            border-radius: 0.25rem;
+            letter-spacing: 0.025em;
+        }
+
+        /* Notion Callout Box */
+        .notion-callout {
+            border-left: 3px solid #2383E2;
+            background-color: rgba(35, 131, 226, 0.05);
+        }
+        .dark .notion-callout {
+            background-color: rgba(35, 131, 226, 0.12);
+        }
+
+        /* Buttons custom transition */
+        .btn-notion-blue {
+            background-color: #2383E2;
+            color: #FFFFFF;
+            transition: background-color 0.15s ease, transform 0.1s ease;
+        }
+        .btn-notion-blue:hover {
+            background-color: #1D70B8;
+        }
+        .btn-notion-blue:active {
+            transform: scale(0.98);
+        }
+
+        /* Modal backdrop transition */
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+        }
+
+        /* Toast animation */
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .toast-animate {
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden text-sm">
+
+    <!-- Top Navigation Bar -->
+    <header class="h-14 border-b border-[var(--border-subtle)] bg-[var(--bg-card)] flex items-center justify-between px-4 z-20 shrink-0">
+        <div class="flex items-center space-x-3">
+            <button id="sidebarToggleBtn" class="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-gray-300 transition">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center space-x-2">
+                <div class="w-7 h-7 rounded bg-notion-blue text-white flex items-center justify-center font-bold text-xs shadow-sm">
+                    HUB
+                </div>
+                <span class="font-semibold text-base tracking-tight text-[var(--text-primary)]">Notion Workspace & Dashboard</span>
+                <span class="badge-graphite ml-2 hidden sm:inline-block">v2.5</span>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <!-- Global Search -->
+            <div class="relative hidden md:block w-64">
+                <i data-lucide="search" class="w-4 h-4 absolute left-2.5 top-2.5 text-gray-400"></i>
+                <input type="text" id="globalSearchInput" placeholder="Buscar no Hub... (Ctrl+K)" class="w-full pl-8 pr-3 py-1.5 text-xs rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue text-[var(--text-primary)]">
+            </div>
+
+            <!-- Quick Action Button -->
+            <button onclick="openModal('quickActionModal')" class="btn-notion-blue px-3 py-1.5 rounded-md font-medium text-xs flex items-center space-x-1.5 shadow-sm">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">Criar Novo</span>
+            </button>
+
+            <!-- Theme Switcher Toggle -->
+            <button id="themeToggleBtn" onclick="toggleTheme()" class="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-gray-300 transition" title="Alternar Tema Claro/Escuro">
+                <i id="themeIconSun" data-lucide="sun" class="w-4 h-4 hidden"></i>
+                <i id="themeIconMoon" data-lucide="moon" class="w-4 h-4"></i>
+            </button>
+
+            <!-- Profile Avatar -->
+            <div class="w-8 h-8 rounded-full bg-notion-blue/20 text-notion-blue font-semibold flex items-center justify-center border border-notion-blue/40">
+                G
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container (Sidebar + Content) -->
+    <div class="flex flex-1 overflow-hidden relative">
+
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="w-64 bg-[var(--bg-sidebar)] border-r border-[var(--border-subtle)] flex flex-col justify-between transition-all duration-300 z-10 shrink-0">
+            <div class="p-3 space-y-4 overflow-y-auto">
+                <!-- Workspace Switcher Banner -->
+                <div class="px-2 py-2 rounded-lg bg-gray-200/50 dark:bg-zinc-800/60 flex items-center justify-between cursor-pointer hover:bg-gray-200 dark:hover:bg-zinc-800 transition">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="text-lg">🚀</span>
+                        <div class="leading-tight">
+                            <p class="font-semibold text-xs text-[var(--text-primary)]">Guxta Digital Hub</p>
+                            <p class="text-[10px] text-gray-500 dark:text-gray-400">Plano Pro • Ativo</p>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400"></i>
+                </div>
+
+                <!-- Navigation Sections -->
+                <nav class="space-y-1">
+                    <p class="px-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Navegação Principal</p>
+                    
+                    <button onclick="switchTab('overview')" id="nav-overview" class="nav-btn w-full flex items-center space-x-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium bg-gray-200/70 dark:bg-zinc-800 text-notion-blue transition">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                        <span>Visão Geral</span>
+                    </button>
+
+                    <button onclick="switchTab('crm')" id="nav-crm" class="nav-btn w-full flex items-center space-x-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200/50 dark:hover:bg-zinc-800 transition">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                        <span>CRM & Projetos</span>
+                    </button>
+
+                    <button onclick="switchTab('finance')" id="nav-finance" class="nav-btn w-full flex items-center space-x-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200/50 dark:hover:bg-zinc-800 transition">
+                        <i data-lucide="wallet" class="w-4 h-4"></i>
+                        <span>Financeiro</span>
+                    </button>
+
+                    <button onclick="switchTab('kanban')" id="nav-kanban" class="nav-btn w-full flex items-center space-x-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200/50 dark:hover:bg-zinc-800 transition">
+                        <i data-lucide="kanban" class="w-4 h-4"></i>
+                        <span>Quadro Kanban</span>
+                    </button>
+
+                    <button onclick="switchTab('metrics')" id="nav-metrics" class="nav-btn w-full flex items-center space-x-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200/50 dark:hover:bg-zinc-800 transition">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                        <span>Métricas & Relatórios</span>
+                    </button>
+                </nav>
+
+                <!-- Code Style Reference Box -->
+                <div class="p-3 rounded-md bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-medium text-gray-500 dark:text-gray-400">Estilo de Código</span>
+                        <span class="badge-graphite">Graphite / Off-White</span>
+                    </div>
+                    <p class="text-[11px] text-gray-500 dark:text-gray-400 leading-snug">
+                        Textos de código e destaques utilizam <code class="code-highlight">Preto Grafite</code> no modo claro e <code class="code-highlight">Off-White</code> no modo escuro.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Sidebar Footer -->
+            <div class="p-3 border-t border-[var(--border-subtle)] space-y-2">
+                <div class="flex items-center justify-between text-[11px] text-gray-400">
+                    <span>Servidor Sync</span>
+                    <span class="inline-flex items-center text-notion-blue font-medium">
+                        <span class="w-1.5 h-1.5 rounded-full bg-notion-blue mr-1 animate-pulse"></span> Online
+                    </span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content View Container -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-[var(--bg-main)]">
+
+            <!-- TAB 1: VISÃO GERAL (OVERVIEW) -->
+            <section id="tab-overview" class="tab-content space-y-6">
+                <!-- Banner Header -->
+                <div class="p-6 rounded-xl bg-gradient-to-r from-gray-100 via-gray-50 to-white dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-800 border border-[var(--border-subtle)] relative overflow-hidden">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="text-2xl">⚡</span>
+                                <h1 class="text-2xl font-bold tracking-tight text-[var(--text-primary)]">Bem-vindo ao Central Hub</h1>
+                            </div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 max-w-xl">
+                                Painel operacional integrado. Gerencie projetos, acompanhe métricas financeiras e organize sprints diárias no padrão Notion.
+                            </p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="openModal('projectModal')" class="btn-notion-blue px-3.5 py-2 rounded-md font-semibold text-xs flex items-center space-x-2">
+                                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                                <span>Novo Projeto</span>
+                            </button>
+                            <button onclick="openModal('transactionModal')" class="px-3.5 py-2 rounded-md font-semibold text-xs bg-gray-200/80 dark:bg-zinc-800 hover:bg-gray-300 dark:hover:bg-zinc-700 text-[var(--text-primary)] transition flex items-center space-x-2">
+                                <i data-lucide="dollar-sign" class="w-4 h-4"></i>
+                                <span>Nova Receita/Despesa</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Callout Banner Notion Style -->
+                <div class="notion-callout p-4 rounded-lg flex items-start space-x-3">
+                    <i data-lucide="info" class="w-5 h-5 text-notion-blue shrink-0 mt-0.5"></i>
+                    <div class="text-xs text-[var(--text-primary)] space-y-1">
+                        <p class="font-semibold">Padrão de Cores Aplicado:</p>
+                        <p>
+                            Todos os elementos e botões que anteriormente utilizavam verde foram atualizados para o <strong class="text-notion-blue">Azul Notion (#2383E2)</strong>. Códigos e badges foram convertidos para <code class="code-highlight">Preto Grafite (#202124)</code> no tema claro e <code class="code-highlight">Off-White (#F4F4F5)</code> no tema escuro.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- KPI Cards Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- KPI 1 -->
+                    <div class="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-2 hover:border-notion-blue/50 transition">
+                        <div class="flex items-center justify-between text-gray-400">
+                            <span class="text-xs font-semibold uppercase tracking-wider">Projetos Ativos</span>
+                            <i data-lucide="folder-kanban" class="w-4 h-4 text-notion-blue"></i>
+                        </div>
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-2xl font-bold text-[var(--text-primary)]" id="kpi-projects-count">12</span>
+                            <span class="text-xs text-notion-blue font-medium flex items-center">
+                                <i data-lucide="trending-up" class="w-3 h-3 mr-1"></i> +15%
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-gray-500">4 entregas previstas nesta semana</p>
+                    </div>
+
+                    <!-- KPI 2 -->
+                    <div class="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-2 hover:border-notion-blue/50 transition">
+                        <div class="flex items-center justify-between text-gray-400">
+                            <span class="text-xs font-semibold uppercase tracking-wider">Receita Mensal</span>
+                            <i data-lucide="dollar-sign" class="w-4 h-4 text-notion-blue"></i>
+                        </div>
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-2xl font-bold text-[var(--text-primary)]" id="kpi-income-total">R$ 48.500</span>
+                            <span class="text-xs text-notion-blue font-medium flex items-center">
+                                <i data-lucide="arrow-up-right" class="w-3 h-3 mr-1"></i> Meta 92%
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-gray-500">Saldo positivo em caixa</p>
+                    </div>
+
+                    <!-- KPI 3 -->
+                    <div class="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-2 hover:border-notion-blue/50 transition">
+                        <div class="flex items-center justify-between text-gray-400">
+                            <span class="text-xs font-semibold uppercase tracking-wider">Tarefas no Kanban</span>
+                            <i data-lucide="check-square" class="w-4 h-4 text-notion-blue"></i>
+                        </div>
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-2xl font-bold text-[var(--text-primary)]" id="kpi-tasks-count">18</span>
+                            <span class="badge-graphite">Sprints Ok</span>
+                        </div>
+                        <p class="text-[11px] text-gray-500">5 concluídas hoje</p>
+                    </div>
+
+                    <!-- KPI 4 -->
+                    <div class="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-2 hover:border-notion-blue/50 transition">
+                        <div class="flex items-center justify-between text-gray-400">
+                            <span class="text-xs font-semibold uppercase tracking-wider">Status do Sistema</span>
+                            <i data-lucide="activity" class="w-4 h-4 text-notion-blue"></i>
+                        </div>
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-2xl font-bold text-[var(--text-primary)]">100%</span>
+                            <span class="text-xs text-notion-blue font-medium">Operacional</span>
+                        </div>
+                        <p class="text-[11px] text-gray-500">GitHub Pages / Vercel Sync</p>
+                    </div>
+                </div>
+
+                <!-- Daily Checklist & Code Showcase Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Checklist Diário -->
+                    <div class="p-5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-4">
+                        <div class="flex items-center justify-between border-b border-[var(--border-subtle)] pb-3">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-notion-blue"></i>
+                                <h3 class="font-semibold text-sm text-[var(--text-primary)]">Checklist Operacional Diário</h3>
+                            </div>
+                            <span class="text-xs text-gray-400" id="checklistProgress">3/5 concluídos</span>
+                        </div>
+
+                        <div class="space-y-2.5" id="checklistContainer">
+                            <!-- Items added via JS -->
+                        </div>
+
+                        <div class="pt-2 flex items-center space-x-2">
+                            <input type="text" id="newChecklistInput" placeholder="Adicionar nova tarefa diária..." class="flex-1 text-xs px-3 py-2 rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue">
+                            <button onclick="addChecklistItem()" class="btn-notion-blue px-3 py-2 rounded-md text-xs font-medium">Adicionar</button>
+                        </div>
+                    </div>
+
+                    <!-- Embedded Code Highlight Showcase -->
+                    <div class="p-5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-4 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between border-b border-[var(--border-subtle)] pb-3 mb-3">
+                                <div class="flex items-center space-x-2">
+                                    <i data-lucide="code-2" class="w-4 h-4 text-notion-blue"></i>
+                                    <h3 class="font-semibold text-sm text-[var(--text-primary)]">Configuração de Estilo de Código</h3>
+                                </div>
+                                <span class="badge-graphite">Tailwind + Custom Theme</span>
+                            </div>
+
+                            <p class="text-xs text-gray-500 mb-3">
+                                Exemplo do bloco de código formatado respeitando a paleta Grafite/Off-White e destaques em Azul Notion:
+                            </p>
+
+                            <pre class="p-4 rounded-lg bg-[var(--code-bg)] text-[var(--code-text)] font-mono text-xs overflow-x-auto leading-relaxed border border-gray-700/30"><code><span class="text-notion-blue font-bold">// Theme Color Handler</span>
+<span class="text-gray-400">const</span> config = {
+  accentColor: <span class="text-notion-blue">"#2383E2"</span>, <span class="text-gray-400">// Notion Blue</span>
+  codeLight: <span class="text-gray-300">"#202124"</span>,   <span class="text-gray-400">// Graphite Black</span>
+  codeDark: <span class="text-gray-300">"#F4F4F5"</span>    <span class="text-gray-400">// Off-White</span>
+};
+
+<span class="text-gray-400">function</span> <span class="text-notion-blue">applyNotionTheme</span>(mode) {
+  console.log(<span class="text-notion-blue">`System status: ${mode}`</span>);
+}</code></pre>
+                        </div>
+
+                        <div class="pt-3 border-t border-[var(--border-subtle)] flex items-center justify-between text-xs text-gray-500">
+                            <span>Sincronizado automaticamente</span>
+                            <button onclick="showToast('Código copiado para a área de transferência!', 'success')" class="text-notion-blue font-medium hover:underline flex items-center space-x-1">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                <span>Copiar Snippet</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: CRM & PROJETOS -->
+            <section id="tab-crm" class="tab-content space-y-6 hidden">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold tracking-tight text-[var(--text-primary)]">CRM & Gestão de Projetos</h2>
+                        <p class="text-xs text-gray-500">Acompanhe clientes, pipeline de vendas e entregáveis em formato de banco de dados.</p>
+                    </div>
+                    <button onclick="openModal('projectModal')" class="btn-notion-blue px-4 py-2 rounded-md font-semibold text-xs flex items-center space-x-2 self-start sm:self-auto">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Novo Projeto</span>
+                    </button>
+                </div>
+
+                <!-- Filter Controls Bar -->
+                <div class="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <div class="flex flex-1 items-center space-x-2">
+                        <div class="relative flex-1 max-w-xs">
+                            <i data-lucide="search" class="w-4 h-4 absolute left-2.5 top-2.5 text-gray-400"></i>
+                            <input type="text" id="crmSearchInput" oninput="filterProjects()" placeholder="Filtrar por nome ou cliente..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue">
+                        </div>
+                        <select id="crmStatusFilter" onchange="filterProjects()" class="text-xs px-3 py-1.5 rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue">
+                            <option value="ALL">Todos os Status</option>
+                            <option value="Em Andamento">Em Andamento</option>
+                            <option value="Em Espera">Em Espera</option>
+                            <option value="Concluído">Concluído</option>
+                        </select>
+                    </div>
+                    <div class="text-xs text-gray-500 flex items-center space-x-2">
+                        <span>Exibindo:</span>
+                        <span id="projectCounterBadge" class="badge-graphite">0 projetos</span>
+                    </div>
+                </div>
+
+                <!-- Database Table Notion Style -->
+                <div class="rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] overflow-hidden shadow-sm">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100/60 dark:bg-zinc-800/50 border-b border-[var(--border-subtle)] text-gray-500 font-semibold uppercase tracking-wider">
+                                    <th class="py-3 px-4">Nome do Projeto</th>
+                                    <th class="py-3 px-4">Cliente</th>
+                                    <th class="py-3 px-4">Status</th>
+                                    <th class="py-3 px-4">Valor (R$)</th>
+                                    <th class="py-3 px-4">Prazo</th>
+                                    <th class="py-3 px-4 text-right">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projectsTableBody" class="divide-y divide-[var(--border-subtle)]">
+                                <!-- Dynamic Rows JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: FINANCEIRO -->
+            <section id="tab-finance" class="tab-content space-y-6 hidden">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold tracking-tight text-[var(--text-primary)]">Gestão Financeira</h2>
+                        <p class="text-xs text-gray-500">Fluxo de caixa, recebimentos e contas operacionais da empresa.</p>
+                    </div>
+                    <button onclick="openModal('transactionModal')" class="btn-notion-blue px-4 py-2 rounded-md font-semibold text-xs flex items-center space-x-2 self-start sm:self-auto">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Nova Transação</span>
+                    </button>
+                </div>
+
+                <!-- Financial Summary Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Entradas -->
+                    <div class="p-5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-2">
+                        <div class="flex items-center justify-between text-gray-400">
+                            <span class="text-xs font-semibold uppercase">Total Entradas</span>
+                            <div class="w-7 h-7 rounded-full bg-notion-blue/10 text-notion-blue flex items-center justify-center">
+                                <i data-lucide="arrow-down-left" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                        <p class="text-2xl font-bold text-[var(--text-primary)]" id="financeIncomeTotal">R$ 0,00</p>
+                        <p class="text-[11px] text-gray-500">Recebimentos acumulados</p>
+                    </div>
+
+                    <!-- Saídas -->
+                    <div class="p-5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-2">
+                        <div class="flex items-center justify-between text-gray-400">
+                            <span class="text-xs font-semibold uppercase">Total Saídas</span>
+                            <div class="w-7 h-7 rounded-full bg-gray-200 dark:bg-zinc-800 text-[var(--text-primary)] flex items-center justify-center">
+                                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                        <p class="text-2xl font-bold text-[var(--text-primary)]" id="financeExpenseTotal">R$ 0,00</p>
+                        <p class="text-[11px] text-gray-500">Despesas e custos operacionais</p>
+                    </div>
+
+                    <!-- Saldo Liquido -->
+                    <div class="p-5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-2 border-l-4 border-l-notion-blue">
+                        <div class="flex items-center justify-between text-gray-400">
+                            <span class="text-xs font-semibold uppercase">Saldo Líquido</span>
+                            <span class="badge-graphite">Caixa Geral</span>
+                        </div>
+                        <p class="text-2xl font-bold text-[var(--text-primary)]" id="financeBalanceTotal">R$ 0,00</p>
+                        <p class="text-[11px] text-notion-blue font-medium">Balanço do Período</p>
+                    </div>
+                </div>
+
+                <!-- Financial Table -->
+                <div class="rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] overflow-hidden">
+                    <div class="p-4 border-b border-[var(--border-subtle)] flex items-center justify-between">
+                        <h3 class="font-semibold text-sm">Histórico de Movimentações</h3>
+                        <input type="text" id="financeSearchInput" oninput="renderFinance()" placeholder="Buscar lançamentos..." class="text-xs px-3 py-1.5 rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue w-60">
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100/60 dark:bg-zinc-800/50 border-b border-[var(--border-subtle)] text-gray-500 font-semibold uppercase">
+                                    <th class="py-3 px-4">Descrição</th>
+                                    <th class="py-3 px-4">Categoria</th>
+                                    <th class="py-3 px-4">Tipo</th>
+                                    <th class="py-3 px-4">Data</th>
+                                    <th class="py-3 px-4">Valor</th>
+                                    <th class="py-3 px-4 text-right">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="financeTableBody" class="divide-y divide-[var(--border-subtle)]">
+                                <!-- Dynamic Rows JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: QUADRO KANBAN -->
+            <section id="tab-kanban" class="tab-content space-y-6 hidden">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold tracking-tight text-[var(--text-primary)]">Quadro Kanban de Sprints</h2>
+                        <p class="text-xs text-gray-500">Mova tarefas entre colunas e acompanhe o avanço dos entregáveis.</p>
+                    </div>
+                    <button onclick="openModal('taskModal')" class="btn-notion-blue px-4 py-2 rounded-md font-semibold text-xs flex items-center space-x-2 self-start sm:self-auto">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Nova Tarefa</span>
+                    </button>
+                </div>
+
+                <!-- Kanban Board Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Column: A Fazer -->
+                    <div class="flex flex-col rounded-xl bg-gray-100/60 dark:bg-zinc-900/60 border border-[var(--border-subtle)] p-3 min-h-[450px]">
+                        <div class="flex items-center justify-between mb-3 px-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-gray-400"></span>
+                                <h3 class="font-semibold text-xs text-[var(--text-primary)]">A Fazer</h3>
+                                <span id="col-todo-count" class="badge-graphite">0</span>
+                            </div>
+                        </div>
+                        <div id="kanban-todo" class="space-y-3 flex-1 overflow-y-auto pr-1">
+                            <!-- Cards inserted JS -->
+                        </div>
+                    </div>
+
+                    <!-- Column: Em Andamento -->
+                    <div class="flex flex-col rounded-xl bg-gray-100/60 dark:bg-zinc-900/60 border border-[var(--border-subtle)] p-3 min-h-[450px]">
+                        <div class="flex items-center justify-between mb-3 px-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-notion-blue"></span>
+                                <h3 class="font-semibold text-xs text-[var(--text-primary)]">Em Andamento</h3>
+                                <span id="col-progress-count" class="badge-graphite">0</span>
+                            </div>
+                        </div>
+                        <div id="kanban-progress" class="space-y-3 flex-1 overflow-y-auto pr-1">
+                            <!-- Cards inserted JS -->
+                        </div>
+                    </div>
+
+                    <!-- Column: Em Revisão -->
+                    <div class="flex flex-col rounded-xl bg-gray-100/60 dark:bg-zinc-900/60 border border-[var(--border-subtle)] p-3 min-h-[450px]">
+                        <div class="flex items-center justify-between mb-3 px-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+                                <h3 class="font-semibold text-xs text-[var(--text-primary)]">Em Revisão</h3>
+                                <span id="col-review-count" class="badge-graphite">0</span>
+                            </div>
+                        </div>
+                        <div id="kanban-review" class="space-y-3 flex-1 overflow-y-auto pr-1">
+                            <!-- Cards inserted JS -->
+                        </div>
+                    </div>
+
+                    <!-- Column: Concluído -->
+                    <div class="flex flex-col rounded-xl bg-gray-100/60 dark:bg-zinc-900/60 border border-[var(--border-subtle)] p-3 min-h-[450px]">
+                        <div class="flex items-center justify-between mb-3 px-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                                <h3 class="font-semibold text-xs text-[var(--text-primary)]">Concluído</h3>
+                                <span id="col-done-count" class="badge-graphite">0</span>
+                            </div>
+                        </div>
+                        <div id="kanban-done" class="space-y-3 flex-1 overflow-y-auto pr-1">
+                            <!-- Cards inserted JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: MÉTRICAS & RELATÓRIOS -->
+            <section id="tab-metrics" class="tab-content space-y-6 hidden">
+                <div>
+                    <h2 class="text-xl font-bold tracking-tight text-[var(--text-primary)]">Métricas e Desempenho Operacional</h2>
+                    <p class="text-xs text-gray-500">Relatórios sintéticos de velocidade de entregas, satisfação e taxas de fechamento.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Gauge / Performance Card -->
+                    <div class="p-5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-4">
+                        <h3 class="font-semibold text-sm border-b border-[var(--border-subtle)] pb-2">Taxa de Conclusão de Sprints</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span>Desenvolvimento Frontend</span>
+                                    <span class="font-semibold text-notion-blue">88%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-zinc-800 rounded-full h-2">
+                                    <div class="bg-notion-blue h-2 rounded-full" style="width: 88%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span>Design System & UX</span>
+                                    <span class="font-semibold text-notion-blue">94%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-zinc-800 rounded-full h-2">
+                                    <div class="bg-notion-blue h-2 rounded-full" style="width: 94%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span>Infraestrutura & Deploy</span>
+                                    <span class="font-semibold text-notion-blue">76%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-zinc-800 rounded-full h-2">
+                                    <div class="bg-notion-blue h-2 rounded-full" style="width: 76%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Report Summary -->
+                    <div class="p-5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-4">
+                        <h3 class="font-semibold text-sm border-b border-[var(--border-subtle)] pb-2">Resumo da Configuração</h3>
+                        <ul class="space-y-2.5 text-xs">
+                            <li class="flex items-center justify-between">
+                                <span class="text-gray-500">Cor Principal de Destaque:</span>
+                                <span class="text-notion-blue font-bold">Azul Notion (#2383E2)</span>
+                            </li>
+                            <li class="flex items-center justify-between">
+                                <span class="text-gray-500">Estilo de Elementos de Código:</span>
+                                <span class="badge-graphite">Graphite / Off-White</span>
+                            </li>
+                            <li class="flex items-center justify-between">
+                                <span class="text-gray-500">Persistência Local (LocalStorage):</span>
+                                <span class="text-notion-blue font-semibold">Ativada</span>
+                            </li>
+                            <li class="flex items-center justify-between">
+                                <span class="text-gray-500">Responsividade Mobile:</span>
+                                <span class="text-notion-blue font-semibold">Totalmente Adaptável</span>
+                            </li>
+                        </ul>
+                        <div class="pt-2">
+                            <button onclick="showToast('Relatório compilado e baixado!', 'success')" class="w-full btn-notion-blue py-2 rounded-md font-semibold text-xs flex items-center justify-center space-x-2">
+                                <i data-lucide="download" class="w-4 h-4"></i>
+                                <span>Exportar Relatório Geral</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODALS -->
+
+    <!-- MODAL 1: Novo Projeto CRM -->
+    <div id="projectModal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden p-4">
+        <div class="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-xl w-full max-w-md p-6 space-y-4 shadow-xl">
+            <div class="flex items-center justify-between border-b border-[var(--border-subtle)] pb-3">
+                <h3 class="font-bold text-base text-[var(--text-primary)]">Cadastrar Novo Projeto</h3>
+                <button onclick="closeModal('projectModal')" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form id="projectForm" onsubmit="saveProject(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Nome do Projeto</label>
+                    <input type="text" id="projName" required placeholder="Ex: App Web Notion Hub" class="w-full px-3 py-2 text-xs rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Cliente</label>
+                    <input type="text" id="projClient" required placeholder="Ex: Cliente Guxta Corp" class="w-full px-3 py-2 text-xs rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Status</label>
+                        <select id="projStatus" class="w-full px-3 py-2 text-xs rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue">
+                            <option value="Em Andamento">Em Andamento</option>
+                            <option value="Em Espera">Em Espera</option>
+                            <option value="Concluído">Concluído</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Valor (R$)</label>
+                        <input type="number" id="projValue" step="0.01" required placeholder="15000" class="w-full px-3 py-2 text-xs rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Prazo de Entrega</label>
+                    <input type="date" id="projDeadline" required class="w-full px-3 py-2 text-xs rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue">
+                </div>
+                <div class="pt-3 flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal('projectModal')" class="px-4 py-2 rounded-md text-xs font-medium bg-gray-200 dark:bg-zinc-800 hover:bg-gray-300 dark:hover:bg-zinc-700">Cancelar</button>
+                    <button type="submit" class="btn-notion-blue px-4 py-2 rounded-md text-xs font-semibold">Salvar Projeto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: Nova Transação Financeira -->
+    <div id="transactionModal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden p-4">
+        <div class="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-xl w-full max-w-md p-6 space-y-4 shadow-xl">
+            <div class="flex items-center justify-between border-b border-[var(--border-subtle)] pb-3">
+                <h3 class="font-bold text-base text-[var(--text-primary)]">Nova Movimentação Financeira</h3>
+                <button onclick="closeModal('transactionModal')" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form id="transactionForm" onsubmit="saveTransaction(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Descrição</label>
+                    <input type="text" id="transDesc" required placeholder="Ex: Pagamento Licença Software" class="w-full px-3 py-2 text-xs rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Tipo</label>
+                        <select id="transType" class="w-full px-3 py-2 text-xs rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue">
+                            <option value="Entrada">Entrada (Receita)</option>
+                            <option value="Saída">Saída (Despesa)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Valor (R$)</label>
+                        <input type="number" id="transValue" step="0.01" required placeholder="2500" class="w-full px-3 py-2 text-xs rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Categoria</label>
+                        <input type="text" id="transCategory" placeholder="Ex: Vendas, Servidores, Marketing" class="w-full px-3 py-2 text-xs rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Data</label>
+                        <input type="date" id="transDate" required class="w-full px-3 py-2 text-xs rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue">
+                    </div>
+                </div>
+                <div class="pt-3 flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal('transactionModal')" class="px-4 py-2 rounded-md text-xs font-medium bg-gray-200 dark:bg-zinc-800 hover:bg-gray-300 dark:hover:bg-zinc-700">Cancelar</button>
+                    <button type="submit" class="btn-notion-blue px-4 py-2 rounded-md text-xs font-semibold">Salvar Lançamento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: Nova Tarefa Kanban -->
+    <div id="taskModal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden p-4">
+        <div class="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-xl w-full max-w-md p-6 space-y-4 shadow-xl">
+            <div class="flex items-center justify-between border-b border-[var(--border-subtle)] pb-3">
+                <h3 class="font-bold text-base text-[var(--text-primary)]">Nova Tarefa para o Kanban</h3>
+                <button onclick="closeModal('taskModal')" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form id="taskForm" onsubmit="saveKanbanTask(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Título da Tarefa</label>
+                    <input type="text" id="taskTitle" required placeholder="Ex: Refatorar API de Clientes" class="w-full px-3 py-2 text-xs rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Tag / Categoria</label>
+                    <input type="text" id="taskTag" placeholder="Ex: Frontend, Backend, UI/UX" class="w-full px-3 py-2 text-xs rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Coluna Inicial</label>
+                        <select id="taskColumn" class="w-full px-3 py-2 text-xs rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue">
+                            <option value="todo">A Fazer</option>
+                            <option value="progress">Em Andamento</option>
+                            <option value="review">Em Revisão</option>
+                            <option value="done">Concluído</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Prioridade</label>
+                        <select id="taskPriority" class="w-full px-3 py-2 text-xs rounded-md bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)] focus:outline-none focus:border-notion-blue">
+                            <option value="Média">Média</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Baixa">Baixa</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="pt-3 flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal('taskModal')" class="px-4 py-2 rounded-md text-xs font-medium bg-gray-200 dark:bg-zinc-800 hover:bg-gray-300 dark:hover:bg-zinc-700">Cancelar</button>
+                    <button type="submit" class="btn-notion-blue px-4 py-2 rounded-md text-xs font-semibold">Adicionar Tarefa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 4: Quick Action Selector -->
+    <div id="quickActionModal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden p-4">
+        <div class="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-xl w-full max-w-sm p-5 space-y-4 shadow-xl">
+            <div class="flex items-center justify-between border-b border-[var(--border-subtle)] pb-2">
+                <h3 class="font-bold text-sm text-[var(--text-primary)]">O que você gostaria de criar?</h3>
+                <button onclick="closeModal('quickActionModal')" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+            <div class="space-y-2">
+                <button onclick="closeModal('quickActionModal'); openModal('projectModal')" class="w-full p-3 rounded-lg border border-[var(--border-subtle)] hover:border-notion-blue flex items-center space-x-3 text-left transition">
+                    <i data-lucide="folder-plus" class="w-5 h-5 text-notion-blue"></i>
+                    <div>
+                        <p class="font-semibold text-xs text-[var(--text-primary)]">Novo Projeto CRM</p>
+                        <p class="text-[11px] text-gray-500">Cadastrar contrato ou pipeline</p>
+                    </div>
+                </button>
+                <button onclick="closeModal('quickActionModal'); openModal('transactionModal')" class="w-full p-3 rounded-lg border border-[var(--border-subtle)] hover:border-notion-blue flex items-center space-x-3 text-left transition">
+                    <i data-lucide="dollar-sign" class="w-5 h-5 text-notion-blue"></i>
+                    <div>
+                        <p class="font-semibold text-xs text-[var(--text-primary)]">Nova Movimentação Financeira</p>
+                        <p class="text-[11px] text-gray-500">Registrar entrada ou despesa</p>
+                    </div>
+                </button>
+                <button onclick="closeModal('quickActionModal'); openModal('taskModal')" class="w-full p-3 rounded-lg border border-[var(--border-subtle)] hover:border-notion-blue flex items-center space-x-3 text-left transition">
+                    <i data-lucide="check-square" class="w-5 h-5 text-notion-blue"></i>
+                    <div>
+                        <p class="font-semibold text-xs text-[var(--text-primary)]">Nova Tarefa no Kanban</p>
+                        <p class="text-[11px] text-gray-500">Adicionar card em sprint</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <!-- APPLICATION LOGIC JS -->
+    <script>
+        // DATA INITIALIZATION & STATE MANAGEMENT
+        let state = {
+            theme: localStorage.getItem('notion_theme') || 'light',
+            activeTab: 'overview',
+            projects: JSON.parse(localStorage.getItem('notion_projects')) || [
+                { id: 1, name: 'Redesign Portal E-commerce', client: 'TechCorp Brasil', status: 'Em Andamento', value: 28500, deadline: '2026-12-15' },
+                { id: 2, name: 'Automação CRM & Leads', client: 'Guxta Partners', status: 'Concluído', value: 14000, deadline: '2026-11-01' },
+                { id: 3, name: 'App Mobile iOS & Android', client: 'Fintech Flow', status: 'Em Espera', value: 42000, deadline: '2027-01-20' }
+            ],
+            finance: JSON.parse(localStorage.getItem('notion_finance')) || [
+                { id: 1, desc: 'Mensalidade Projeto TechCorp', category: 'Vendas', type: 'Entrada', date: '2026-11-02', value: 14250 },
+                { id: 2, desc: 'Servidores AWS & Cloudflare', category: 'Infraestrutura', type: 'Saída', date: '2026-11-05', value: 1850 },
+                { id: 3, desc: 'Licenças Figma & OpenAI API', category: 'Software', type: 'Saída', date: '2026-11-06', value: 620 }
+            ],
+            kanban: JSON.parse(localStorage.getItem('notion_kanban')) || [
+                { id: 1, title: 'Configurar Deploy Automático CI/CD', column: 'todo', tag: 'DevOps', priority: 'Alta' },
+                { id: 2, title: 'Atualizar Paleta para Azul Notion (#2383E2)', column: 'progress', tag: 'UI/UX', priority: 'Alta' },
+                { id: 3, title: 'Validar Estilo de Código Grafite/Off-White', column: 'review', tag: 'CSS', priority: 'Média' },
+                { id: 4, title: 'Ajuste de Responsividade Mobile', column: 'done', tag: 'Layout', priority: 'Baixa' }
+            ],
+            checklist: JSON.parse(localStorage.getItem('notion_checklist')) || [
+                { id: 1, title: 'Verificar métricas do servidor principal', done: true },
+                { id: 2, title: 'Enviar relatório financeiro semanal', done: true },
+                { id: 3, title: 'Revisar PRs do repositório GitHub', done: true },
+                { id: 4, title: 'Atualizar tags de projetos no CRM', done: false },
+                { id: 5, title: 'Realizar backup diário do banco de dados', done: false }
+            ]
+        };
+
+        // ON LOAD INITIALIZATION
+        window.addEventListener('DOMContentLoaded', () => {
+            applyTheme(state.theme);
+            renderChecklist();
+            renderProjects();
+            renderFinance();
+            renderKanban();
+            updateKPIs();
+            lucide.createIcons();
+
+            // Shortcut Ctrl+K
+            window.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    document.getElementById('globalSearchInput').focus();
+                }
+            });
+        });
+
+        // SAVE STATE HELPER
+        function saveToStorage() {
+            localStorage.setItem('notion_projects', JSON.stringify(state.projects));
+            localStorage.setItem('notion_finance', JSON.stringify(state.finance));
+            localStorage.setItem('notion_kanban', JSON.stringify(state.kanban));
+            localStorage.setItem('notion_checklist', JSON.stringify(state.checklist));
+            updateKPIs();
+        }
+
+        // THEME MANAGEMENT
+        function toggleTheme() {
+            state.theme = state.theme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('notion_theme', state.theme);
+            applyTheme(state.theme);
+        }
+
+        function applyTheme(theme) {
+            const html = document.documentElement;
+            const sunIcon = document.getElementById('themeIconSun');
+            const moonIcon = document.getElementById('themeIconMoon');
+
+            if (theme === 'dark') {
+                html.classList.add('dark');
+                html.classList.remove('light');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+
+        // SIDEBAR TOGGLE
+        const sidebar = document.getElementById('sidebar');
+        document.getElementById('sidebarToggleBtn').addEventListener('click', () => {
+            sidebar.classList.toggle('-ml-64');
+        });
+
+        // TAB NAVIGATION
+        function switchTab(tabId) {
+            state.activeTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-gray-200/70', 'dark:bg-zinc-800', 'text-notion-blue');
+                btn.classList.add('text-gray-600', 'dark:text-gray-300');
+            });
+
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-gray-200/70', 'dark:bg-zinc-800', 'text-notion-blue');
+                activeBtn.classList.remove('text-gray-600', 'dark:text-gray-300');
+            }
+        }
+
+        // CHECKLIST MANAGEMENT
+        function renderChecklist() {
+            const container = document.getElementById('checklistContainer');
+            container.innerHTML = '';
+
+            let doneCount = 0;
+            state.checklist.forEach(item => {
+                if (item.done) doneCount++;
+                const itemEl = document.createElement('div');
+                itemEl.className = 'flex items-center justify-between p-2 rounded-lg bg-gray-50 dark:bg-zinc-800/60 border border-[var(--border-subtle)] text-xs';
+                itemEl.innerHTML = `
+                    <label class="flex items-center space-x-2.5 cursor-pointer flex-1">
+                        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleChecklistItem(${item.id})" class="rounded text-notion-blue focus:ring-notion-blue w-4 h-4 cursor-pointer">
+                        <span class="${item.done ? 'line-through text-gray-400' : 'text-[var(--text-primary)]'}">${item.title}</span>
+                    </label>
+                    <button onclick="deleteChecklistItem(${item.id})" class="text-gray-400 hover:text-red-500 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                `;
+                container.appendChild(itemEl);
+            });
+
+            document.getElementById('checklistProgress').innerText = `${doneCount}/${state.checklist.length} concluídos`;
+            lucide.createIcons();
+        }
+
+        function toggleChecklistItem(id) {
+            const item = state.checklist.find(i => i.id === id);
+            if (item) {
+                item.done = !item.done;
+                saveToStorage();
+                renderChecklist();
+            }
+        }
+
+        function addChecklistItem() {
+            const input = document.getElementById('newChecklistInput');
+            const val = input.value.trim();
+            if (val) {
+                state.checklist.push({ id: Date.now(), title: val, done: false });
+                input.value = '';
+                saveToStorage();
+                renderChecklist();
+                showToast('Item adicionado ao checklist!', 'info');
+            }
+        }
+
+        function deleteChecklistItem(id) {
+            state.checklist = state.checklist.filter(i => i.id !== id);
+            saveToStorage();
+            renderChecklist();
+        }
+
+        // CRM PROJECTS MANAGEMENT
+        function renderProjects() {
+            const tbody = document.getElementById('projectsTableBody');
+            const query = (document.getElementById('crmSearchInput')?.value || '').toLowerCase();
+            const statusFilter = document.getElementById('crmStatusFilter')?.value || 'ALL';
+
+            tbody.innerHTML = '';
+            const filtered = state.projects.filter(p => {
+                const matchesQuery = p.name.toLowerCase().includes(query) || p.client.toLowerCase().includes(query);
+                const matchesStatus = statusFilter === 'ALL' || p.status === statusFilter;
+                return matchesQuery && matchesStatus;
+            });
+
+            document.getElementById('projectCounterBadge').innerText = `${filtered.length} projetos`;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-gray-400">Nenhum projeto encontrado.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                let statusBadgeClass = 'bg-blue-100 text-notion-blue dark:bg-blue-900/30';
+                if (p.status === 'Concluído') statusBadgeClass = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
+                if (p.status === 'Em Espera') statusBadgeClass = 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition';
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-semibold text-[var(--text-primary)]">${p.name}</td>
+                    <td class="py-3 px-4 text-gray-500">${p.client}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold ${statusBadgeClass}">${p.status}</span>
+                    </td>
+                    <td class="py-3 px-4 font-mono font-medium">R$ ${p.value.toLocaleString('pt-BR')}</td>
+                    <td class="py-3 px-4 text-gray-500">${p.deadline}</td>
+                    <td class="py-3 px-4 text-right">
+                        <button onclick="deleteProject(${p.id})" class="text-gray-400 hover:text-red-500 p-1" title="Excluir"><i data-lucide="trash" class="w-4 h-4"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            lucide.createIcons();
+        }
+
+        function filterProjects() {
+            renderProjects();
+        }
+
+        function saveProject(e) {
+            e.preventDefault();
+            const newProj = {
+                id: Date.now(),
+                name: document.getElementById('projName').value,
+                client: document.getElementById('projClient').value,
+                status: document.getElementById('projStatus').value,
+                value: parseFloat(document.getElementById('projValue').value) || 0,
+                deadline: document.getElementById('projDeadline').value
+            };
+            state.projects.push(newProj);
+            saveToStorage();
+            renderProjects();
+            closeModal('projectModal');
+            document.getElementById('projectForm').reset();
+            showToast('Projeto cadastrado com sucesso!', 'success');
+        }
+
+        function deleteProject(id) {
+            state.projects = state.projects.filter(p => p.id !== id);
+            saveToStorage();
+            renderProjects();
+            showToast('Projeto removido.', 'info');
+        }
+
+        // FINANCE MANAGEMENT
+        function renderFinance() {
+            const tbody = document.getElementById('financeTableBody');
+            const query = (document.getElementById('financeSearchInput')?.value || '').toLowerCase();
+
+            tbody.innerHTML = '';
+            let incTotal = 0;
+            let expTotal = 0;
+
+            const filtered = state.finance.filter(f => f.desc.toLowerCase().includes(query) || f.category.toLowerCase().includes(query));
+
+            state.finance.forEach(f => {
+                if (f.type === 'Entrada') incTotal += f.value;
+                else expTotal += f.value;
+            });
+
+            document.getElementById('financeIncomeTotal').innerText = `R$ ${incTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('financeExpenseTotal').innerText = `R$ ${expTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('financeBalanceTotal').innerText = `R$ ${(incTotal - expTotal).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-gray-400">Nenhum lançamento encontrado.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(f => {
+                const isEntrada = f.type === 'Entrada';
+                const typeClass = isEntrada ? 'text-notion-blue font-semibold' : 'text-gray-500 dark:text-gray-400';
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition';
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-medium text-[var(--text-primary)]">${f.desc}</td>
+                    <td class="py-3 px-4"><span class="badge-graphite">${f.category}</span></td>
+                    <td class="py-3 px-4 ${typeClass}">${f.type}</td>
+                    <td class="py-3 px-4 text-gray-500">${f.date}</td>
+                    <td class="py-3 px-4 font-mono font-bold ${isEntrada ? 'text-notion-blue' : 'text-gray-700 dark:text-gray-300'}">
+                        ${isEntrada ? '+' : '-'} R$ ${f.value.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                    </td>
+                    <td class="py-3 px-4 text-right">
+                        <button onclick="deleteFinance(${f.id})" class="text-gray-400 hover:text-red-500 p-1"><i data-lucide="trash" class="w-4 h-4"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            lucide.createIcons();
+        }
+
+        function saveTransaction(e) {
+            e.preventDefault();
+            const newTrans = {
+                id: Date.now(),
+                desc: document.getElementById('transDesc').value,
+                type: document.getElementById('transType').value,
+                value: parseFloat(document.getElementById('transValue').value) || 0,
+                category: document.getElementById('transCategory').value || 'Geral',
+                date: document.getElementById('transDate').value
+            };
+            state.finance.push(newTrans);
+            saveToStorage();
+            renderFinance();
+            closeModal('transactionModal');
+            document.getElementById('transactionForm').reset();
+            showToast('Lançamento salvo!', 'success');
+        }
+
+        function deleteFinance(id) {
+            state.finance = state.finance.filter(f => f.id !== id);
+            saveToStorage();
+            renderFinance();
+            showToast('Lançamento excluído.', 'info');
+        }
+
+        // KANBAN MANAGEMENT
+        function renderKanban() {
+            const cols = {
+                todo: document.getElementById('kanban-todo'),
+                progress: document.getElementById('kanban-progress'),
+                review: document.getElementById('kanban-review'),
+                done: document.getElementById('kanban-done')
+            };
+
+            const counts = { todo: 0, progress: 0, review: 0, done: 0 };
+
+            Object.keys(cols).forEach(k => cols[k].innerHTML = '');
+
+            state.kanban.forEach(task => {
+                if (cols[task.column]) {
+                    counts[task.column]++;
+                    const card = document.createElement('div');
+                    card.className = 'p-3 rounded-lg bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-2.5 shadow-sm hover:border-notion-blue/60 transition';
+                    card.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <span class="badge-graphite">${task.tag || 'Geral'}</span>
+                            <span class="text-[10px] text-gray-400 font-medium">Prioridade: ${task.priority}</span>
+                        </div>
+                        <p class="font-medium text-xs text-[var(--text-primary)] leading-snug">${task.title}</p>
+                        <div class="flex items-center justify-between pt-1 border-t border-[var(--border-subtle)] text-[11px]">
+                            <div class="flex items-center space-x-1">
+                                ${task.column !== 'todo' ? `<button onclick="moveTask(${task.id}, 'prev')" class="p-1 rounded hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-400" title="Voltar Coluna"><i data-lucide="chevron-left" class="w-3.5 h-3.5"></i></button>` : ''}
+                                ${task.column !== 'done' ? `<button onclick="moveTask(${task.id}, 'next')" class="p-1 rounded hover:bg-gray-100 dark:hover:bg-zinc-800 text-notion-blue" title="Avançar Coluna"><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>` : ''}
+                            </div>
+                            <button onclick="deleteTask(${task.id})" class="text-gray-400 hover:text-red-500 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                    `;
+                    cols[task.column].appendChild(card);
+                }
+            });
+
+            document.getElementById('col-todo-count').innerText = counts.todo;
+            document.getElementById('col-progress-count').innerText = counts.progress;
+            document.getElementById('col-review-count').innerText = counts.review;
+            document.getElementById('col-done-count').innerText = counts.done;
+
+            lucide.createIcons();
+        }
+
+        function moveTask(id, dir) {
+            const task = state.kanban.find(t => t.id === id);
+            const order = ['todo', 'progress', 'review', 'done'];
+            if (task) {
+                let idx = order.indexOf(task.column);
+                if (dir === 'next' && idx < order.length - 1) idx++;
+                if (dir === 'prev' && idx > 0) idx--;
+                task.column = order[idx];
+                saveToStorage();
+                renderKanban();
+            }
+        }
+
+        function saveKanbanTask(e) {
+            e.preventDefault();
+            const newTask = {
+                id: Date.now(),
+                title: document.getElementById('taskTitle').value,
+                tag: document.getElementById('taskTag').value || 'Geral',
+                column: document.getElementById('taskColumn').value,
+                priority: document.getElementById('taskPriority').value
+            };
+            state.kanban.push(newTask);
+            saveToStorage();
+            renderKanban();
+            closeModal('taskModal');
+            document.getElementById('taskForm').reset();
+            showToast('Tarefa adicionada ao Kanban!', 'success');
+        }
+
+        function deleteTask(id) {
+            state.kanban = state.kanban.filter(t => t.id !== id);
+            saveToStorage();
+            renderKanban();
+            showToast('Tarefa removida.', 'info');
+        }
+
+        // UPDATE GENERAL KPIS
+        function updateKPIs() {
+            document.getElementById('kpi-projects-count').innerText = state.projects.length;
+            document.getElementById('kpi-tasks-count').innerText = state.kanban.length;
+
+            let totalIncome = 0;
+            state.finance.forEach(f => { if(f.type === 'Entrada') totalIncome += f.value; });
+            document.getElementById('kpi-income-total').innerText = `R$ ${totalIncome.toLocaleString('pt-BR')}`;
+        }
+
+        // MODAL HELPERS
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // TOAST NOTIFICATIONS
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast-animate pointer-events-auto px-4 py-2.5 rounded-lg shadow-lg text-xs font-semibold flex items-center space-x-2 border bg-notion-blue text-white border-notion-blue/80`;
+            toast.innerHTML = `
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'transition-opacity');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
