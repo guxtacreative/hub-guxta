@@ -1,926 +1,387 @@
-<!doctype html>
-<html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="robots" content="noindex,nofollow">
-<title>Hub de Marketing</title>
-<link rel="icon" type="image/png" href="icone.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub & Dashboard - Notion Style</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="estilo.css">
-<link rel="stylesheet" href="tema-claro.css">
-<link rel="stylesheet" href="tema-escuro.css">
-<link rel="stylesheet" href="componentes.css">
-<link rel="stylesheet" href="leve.css">
-<script src="tema.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+tailwind.config = {
+darkMode: 'class',
+theme: {
+extend: {
+fontFamily: {
+sans: ['Inter', 'sans-serif'],
+mono: ['Fira Code', 'monospace'],
+},
+colors: {
+'notion-blue': {
+DEFAULT: '#2383E2',
+hover: '#1D70B8',
+light: '#EBF5FF',
+}
+}
+}
+}
+}
+</script>
 <style>
-  .toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
-  .summary{display:flex;flex-wrap:wrap;gap:8px}
-  .auth{width:100%;max-width:620px;margin:0 auto;display:flex;flex-direction:column;gap:18px;padding-top:4px}
-  .auth form{display:flex;flex-direction:column;gap:14px}
-  .auth-logo{display:flex;justify-content:center;min-height:40px;margin-bottom:clamp(40px,10vh,110px)}
-  .auth-logo img{height:36px;width:auto;max-width:220px;object-fit:contain}
-  .auth-logo span{font:400 30px var(--display);text-transform:uppercase;color:var(--accent);letter-spacing:.02em}
-  .auth .saudacao{margin:0;font-size:15px;color:var(--ink)}
-  .auth .pergunta{font-family:var(--display);text-transform:none;font-weight:400;font-size:clamp(28px,4vw,38px);line-height:1.25;letter-spacing:0;margin:0 0 10px}
-  .auth input{border:1px solid var(--line);border-radius:16px;padding:16px 22px;font-size:17px;background:#FFFFFF}
-  .auth input::placeholder{color:#9A9A9A}
-  .auth-acoes{display:flex;justify-content:flex-end}
-  .auth-acoes .btn{min-width:150px;justify-content:center;padding:14px 28px;border-radius:999px}
-  .auth .links{display:flex;flex-wrap:wrap;gap:4px 18px;justify-content:flex-end}
-  .auth .links .btn{font-size:13px;color:var(--muted)}
-  .auth .intro{font-size:14px}
-  .auth-note{min-height:0;text-align:right}
-  .aspas{margin:22px 0 0;background:#FFFFFF;border-radius:22px;box-shadow:0 1px 2px rgba(14,17,48,.04),0 10px 30px rgba(61,75,255,.08);overflow:hidden}
-  .aspas blockquote{margin:0;padding:34px 24px 34px 70px;position:relative;font-size:clamp(16px,2vw,19px);line-height:1.45;color:#5A5A5A}
-  .aspas blockquote::before{content:"\201C";position:absolute;left:20px;top:22px;font:700 64px/1 Georgia,serif;color:var(--accent)}
-  .aspas figcaption{background:var(--grad,var(--rosa));color:#FFFFFF;padding:10px 24px;font-size:14px;font-weight:500}
-  .auth-rodape{text-align:center;color:#8A8A8A;font-size:13px;margin:clamp(40px,12vh,140px) 0 0}
-  body.modo-auth .hero,body.modo-auth .brandbar,body.modo-auth #erro{display:none}
-  body.modo-auth .wrap{max-width:660px}
-  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-  .userbox{margin-left:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
-  .userbox select{width:auto;padding:7px 10px}
-  .brandbar{width:100%}
-  .whoami{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px;color:var(--muted)}
-  .whoami input{width:auto;min-width:200px;padding:8px 10px}
-  .cycle{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .cycle select{width:auto;min-width:240px}
+:root {
+--bg-main: #FBFBFB;
+--bg-card: #FFFFFF;
+--bg-sidebar: #F7F7F7;
+--border-subtle: #E9E9E9;
+--text-primary: #37352F;
+--text-secondary: #6B7280;
+--code-bg: #202124;
+--code-text: #FFFFFF;
+--badge-bg: #202124;
+--badge-text: #FFFFFF;
+}
+.dark {
+--bg-main: #191919;
+--bg-card: #202020;
+--bg-sidebar: #222222;
+--border-subtle: #2F2F2F;
+--text-primary: #F4F4F5;
+--text-secondary: #9CA3AF;
+--code-bg: #F4F4F5;
+--code-text: #191919;
+--badge-bg: #F4F4F5;
+--badge-text: #191919;
+}
+body {
+background-color: var(--bg-main);
+color: var(--text-primary);
+font-family: 'Inter', sans-serif;
+transition: background-color 0.2s ease, color 0.2s ease;
+}
+::-webkit-scrollbar {
+width: 6px;
+height: 6px;
+}
+::-webkit-scrollbar-thumb {
+background: rgba(150, 150, 150, 0.3);
+border-radius: 4px;
+}
+.code-highlight {
+background-color: var(--code-bg) !important;
+color: var(--code-text) !important;
+font-family: 'Fira Code', monospace;
+border-radius: 0.375rem;
+padding: 0.15rem 0.4rem;
+font-size: 0.85em;
+display: inline-block;
+}
+.badge-custom {
+background-color: var(--badge-bg);
+color: var(--badge-text);
+font-size: 0.75rem;
+font-weight: 600;
+padding: 0.15rem 0.5rem;
+border-radius: 0.25rem;
+}
+.btn-notion-blue {
+background-color: #2383E2;
+color: #FFFFFF;
+transition: background-color 0.15s ease, transform 0.1s ease;
+}
+.btn-notion-blue:hover {
+background-color: #1D70B8;
+}
+.btn-notion-blue:active {
+transform: scale(0.98);
+}
+.notion-callout {
+border-left: 3px solid #2383E2;
+background-color: rgba(35, 131, 226, 0.05);
+}
+.dark .notion-callout {
+background-color: rgba(35, 131, 226, 0.12);
+}
+.modal-backdrop {
+background-color: rgba(0, 0, 0, 0.5);
+backdrop-filter: blur(2px);
+}
 </style>
 </head>
-<body>
-<div class="topo-progresso" aria-hidden="true"><i id="progresso"></i></div>
-<div class="wrap">
-  <div class="brandbar"><img class="logo" src="logo.png" alt="GUXTA HUB" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='logo.svg'}else{this.remove()}"><span class="eyebrow marca-tag" id="eyebrow">Onde estratégia, criação e gestão se encontram</span>
-    <div class="sino-box" id="sino-box" hidden>
-      <button type="button" class="sino" id="sino" aria-expanded="false" aria-controls="sino-pop" aria-label="Novidades"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge" id="sino-n" hidden></span></button>
-      <div class="sino-pop" id="sino-pop" hidden role="dialog" aria-label="Novidades"></div>
-    </div>
-    <button type="button" class="tema-btn" data-tema-btn></button>
-    <div class="userbox" id="userbox" hidden><select id="cliente-sel" aria-label="Cliente" hidden></select><span id="user-email"></span><button class="btn small" id="sair">Sair</button></div></div>
-  <header class="hero">
-    <span class="hero-tag" id="hero-tag">Hub de Marketing</span>
-    <h1 id="titulo">Carregando…</h1>
-    <p class="intro" id="intro">Seu marketing num só lugar: planejamento, aprovações, resultados, anúncios e pedidos.</p>
-    <div class="cycle" id="cycle-box" hidden>
-      <label class="label" for="cycle" style="margin:0">Mês</label>
-      <select id="cycle"></select>
-    </div>
-  </header>
-
-  <div id="erro" class="empty" hidden></div>
-
-  <section class="auth" id="auth" hidden aria-live="polite" style="position:relative">
-    <button type="button" class="tema-btn tema-flutua" data-tema-btn></button>
-    <div class="auth-logo"><img src="logo.png" alt="" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='logo.svg'}else{this.remove();document.getElementById('auth-marca').hidden=false}"><span id="auth-marca" hidden></span></div>
-    <form id="f-login" data-tela="login">
-      <p class="saudacao">É um prazer te receber aqui!</p>
-      <h2 class="pergunta">Entre no seu <span class="plat">Hub de Marketing</span></h2>
-      <label class="sr" for="l-email">E-mail</label><input type="email" id="l-email" autocomplete="username" placeholder="Seu e-mail" required>
-      <label class="sr" for="l-senha">Senha</label><input type="password" id="l-senha" autocomplete="current-password" placeholder="Sua senha" required>
-      <div class="auth-acoes"><button class="btn primary" type="submit">Entrar</button></div>
-      <div class="links"><button class="btn ghost" type="button" data-ir="primeiro">Primeiro acesso? Criar minha senha</button><button class="btn ghost" type="button" data-ir="esqueci">Esqueci minha senha</button></div>
-    </form>
-    <form id="f-primeiro" data-tela="primeiro" hidden>
-      <p class="saudacao">Primeiro acesso</p>
-      <h2 class="pergunta">Crie sua senha</h2>
-      <p class="intro">Use o e-mail que você passou para a nossa equipe. A senha precisa ter pelo menos 8 caracteres.</p>
-      <label class="sr" for="p-email">E-mail</label><input type="email" id="p-email" autocomplete="username" placeholder="Seu e-mail" required>
-      <label class="sr" for="p-senha">Crie uma senha</label><input type="password" id="p-senha" autocomplete="new-password" minlength="8" placeholder="Crie uma senha" required>
-      <label class="sr" for="p-senha2">Repita a senha</label><input type="password" id="p-senha2" autocomplete="new-password" minlength="8" placeholder="Repita a senha" required>
-      <div class="auth-acoes"><button class="btn primary" type="submit">Criar senha</button></div>
-      <div class="links"><button class="btn ghost" type="button" data-ir="login">Já tenho senha</button></div>
-    </form>
-    <form id="f-esqueci" data-tela="esqueci" hidden>
-      <p class="saudacao">Sem problema!</p>
-      <h2 class="pergunta">Qual é o seu e-mail?</h2>
-      <p class="intro">Você vai receber um link para criar uma senha nova.</p>
-      <label class="sr" for="e-email">E-mail</label><input type="email" id="e-email" autocomplete="username" placeholder="Seu e-mail" required>
-      <div class="auth-acoes"><button class="btn primary" type="submit">Enviar link</button></div>
-      <div class="links"><button class="btn ghost" type="button" data-ir="login">Voltar para entrar</button></div>
-    </form>
-    <form id="f-nova" data-tela="nova" hidden>
-      <p class="saudacao">Quase lá!</p>
-      <h2 class="pergunta">Crie sua nova senha</h2>
-      <label class="sr" for="n-senha">Nova senha</label><input type="password" id="n-senha" autocomplete="new-password" minlength="8" placeholder="Nova senha (mínimo 8 caracteres)" required>
-      <label class="sr" for="n-senha2">Repita a nova senha</label><input type="password" id="n-senha2" autocomplete="new-password" minlength="8" placeholder="Repita a nova senha" required>
-      <div class="auth-acoes"><button class="btn primary" type="submit">Salvar nova senha</button></div>
-    </form>
-    <form id="f-trocar" data-tela="trocar" hidden>
-      <p class="saudacao">Bem-vindo!</p>
-      <h2 class="pergunta">Crie a sua senha</h2>
-      <p class="intro">Você entrou com uma senha provisória. Agora escolha a sua senha pessoal, com pelo menos 8 caracteres.</p>
-      <label class="sr" for="t-senha">Sua nova senha</label><input type="password" id="t-senha" autocomplete="new-password" minlength="8" placeholder="Sua nova senha" required>
-      <label class="sr" for="t-senha2">Repita a nova senha</label><input type="password" id="t-senha2" autocomplete="new-password" minlength="8" placeholder="Repita a nova senha" required>
-      <div class="auth-acoes"><button class="btn primary" type="submit">Salvar e entrar</button></div>
-    </form>
-    <form id="f-sem" data-tela="sem" hidden>
-      <p class="saudacao">Quase lá!</p>
-      <h2 class="pergunta">Seu acesso ainda não foi liberado</h2>
-      <p class="intro" id="sem-msg"></p>
-      <div class="auth-acoes"><button class="btn" type="button" id="sair2">Entrar com outro e-mail</button></div>
-    </form>
-    <p class="note auth-note" id="auth-note"></p>
-    <figure class="aspas">
-      <blockquote>Seu marketing num só lugar: aprove os conteúdos do mês, acompanhe os resultados e faça seus pedidos.</blockquote>
-      <figcaption id="auth-assina">Hub de Marketing</figcaption>
-    </figure>
-    <p class="auth-rodape" id="auth-rodape"></p>
-  </section>
-
-  <div id="app" hidden>
-    <div class="pg-faixa" id="pg-faixa" hidden role="status" aria-live="polite"></div>
-    <nav class="tabs" role="tablist" aria-label="Seções">
-      <button class="tab" role="tab" id="tab-inicio" data-tab="inicio" aria-selected="true"><span class="tab-t">Início</span><span class="badge" hidden></span></button>
-      <button class="tab" role="tab" id="tab-aprovar" data-tab="aprovar" aria-selected="false"><span class="tab-t">Aprovar posts</span><span class="badge" hidden></span></button>
-      <button class="tab" role="tab" id="tab-plano" data-tab="plano" aria-selected="false" hidden><span class="tab-t">Meu plano</span><span class="badge" hidden></span></button>
-      <button class="tab" role="tab" id="tab-roteiros" data-tab="roteiros" aria-selected="false"><span class="tab-t">Roteiros dos Reels</span><span class="badge" hidden></span></button>
-      <button class="tab" role="tab" id="tab-stories" data-tab="stories" aria-selected="false"><span class="tab-t">Stories</span><span class="badge" hidden></span></button>
-      <button class="tab" role="tab" id="tab-pedidos" data-tab="pedidos" aria-selected="false"><span class="tab-t">Pedidos</span><span class="badge" hidden></span></button>
-      <button class="tab" role="tab" id="tab-resultados" data-tab="resultados" aria-selected="false" hidden><span class="tab-t">Resultados</span><span class="badge" hidden></span></button>
-      <button class="tab" role="tab" id="tab-anuncios" data-tab="anuncios" aria-selected="false" hidden><span class="tab-t">Investimento</span><span class="badge" hidden></span></button>
-      <button class="tab" role="tab" id="tab-relatorio" data-tab="relatorio" aria-selected="false" hidden><span class="tab-t">Relatório</span><span class="badge" hidden></span></button>
-      <button class="tab" role="tab" id="tab-pagamentos" data-tab="pagamentos" aria-selected="false" hidden><span class="tab-t">Pagamentos</span><span class="badge" hidden></span></button>
-      <button class="tab" role="tab" id="tab-contrato" data-tab="contrato" aria-selected="false" hidden><span class="tab-t">Contrato</span><span class="badge" hidden></span></button>
-      <button class="tab" role="tab" id="tab-loja" data-tab="loja" aria-selected="false" hidden><span class="tab-t">Loja</span><span class="badge" hidden></span></button>
-    </nav>
-
-    <section id="panel-inicio" class="list pi" role="tabpanel" aria-labelledby="tab-inicio" style="margin-top:22px"></section>
-    <section id="panel-aprovar" class="list" role="tabpanel" aria-labelledby="tab-aprovar" style="margin-top:22px" hidden>
-      <p class="intro">Passe as telas de cada post ou assista ao Reels, leia a legenda e decida cada parte: <b>tema</b>, <b>arte</b> e <b>legenda</b>. Se tudo estiver certo, use <b>Aprovar tudo</b>.</p>
-      <div class="toolbar">
-        <div class="summary" role="group" aria-label="Filtrar posts">
-          <button class="chip" data-f="todos" aria-pressed="true">Todos <b id="n-todos">0</b></button>
-          <button class="chip" data-f="pend" aria-pressed="false">Aguardando <b id="n-pend">0</b></button>
-          <button class="chip" data-f="ok" aria-pressed="false">Aprovados <b id="n-ok">0</b></button>
-          <button class="chip" data-f="adj" aria-pressed="false">Com ajuste <b id="n-adj">0</b></button>
-        </div>
-        <div class="vis-seg" role="group" aria-label="Como ver os posts"><button type="button" data-act="vis" data-v="lista" aria-pressed="true">Lista</button><button type="button" data-act="vis" data-v="feed" aria-pressed="false">Prévia do feed</button></div>
-        <div class="whoami"><label for="nome">Quem está aprovando?</label><input type="text" id="nome" placeholder="Seu nome" autocomplete="name"></div>
-      </div>
-      <p class="note" id="note" aria-live="polite"></p>
-      <div class="list" id="posts"></div>
-    </section>
-
-    <section id="panel-plano" class="list" role="tabpanel" aria-labelledby="tab-plano" style="margin-top:22px" hidden>
-      <div id="plano-dash" class="list"></div>
-    </section>
-
-    <section id="panel-roteiros" class="list" role="tabpanel" aria-labelledby="tab-roteiros" style="margin-top:22px" hidden>
-      <p class="intro">Use o roteiro como guia: não precisa decorar. Fale como numa conversa e grave em blocos.</p>
-      <details open id="dicas-reels-box"><summary>Antes de gravar</summary><div class="tips" id="dicas-reels" style="margin-top:12px"></div></details>
-      <div class="list" id="reels"></div>
-    </section>
-
-    <section id="panel-stories" class="list" role="tabpanel" aria-labelledby="tab-stories" style="margin-top:22px" hidden>
-      <p class="intro">Uma sequência curta por dia. As etiquetas indicam o recurso do Instagram para cada tela.</p>
-      <details open id="dicas-stories-box"><summary>Dicas para todos os Stories</summary><div class="tips" id="dicas-stories" style="margin-top:12px"></div></details>
-      <div class="list" id="stories"></div>
-    </section>
-
-    <section id="panel-pedidos" class="list" role="tabpanel" aria-labelledby="tab-pedidos" style="margin-top:22px" hidden>
-      <p class="intro">Peça novos conteúdos por aqui. Cada pedido fica registrado com data, status e resposta.</p>
-      <article class="card" id="plano-box"></article>
-      <article class="card">
-        <h2>Pasta de materiais</h2>
-        <p class="intro">Cole o link da sua pasta no Google Drive (ou outro serviço) com fotos e vídeos para usarmos e editarmos. Deixe a pasta com acesso para “qualquer pessoa com o link”.</p>
-        <div class="row-inline"><input type="url" id="mat-link" placeholder="https://drive.google.com/…" aria-label="Link da pasta de materiais"><button class="btn small primary" id="mat-salvar">Salvar link</button></div>
-        <p class="note" id="mat-note" aria-live="polite"></p>
-      </article>
-      <div class="card pd-ok" id="pd-ok" role="status" aria-live="polite" hidden></div>
-      <form class="card" id="pedido-form" novalidate>
-        <h2>Novo pedido</h2>
-        <div class="grid-form">
-          <div><label class="label" for="pd-tipo">Tipo de conteúdo</label>
-            <select id="pd-tipo"><option>Carrossel</option><option>Estático</option><option>Reels</option><option>Stories</option><option value="Outro">Outro (arte, vídeo, evento…)</option></select></div>
-          <div><label class="label" for="pd-prazo">Para quando? (opcional)</label><input type="date" id="pd-prazo"></div>
-        </div>
-        <div><label class="label" for="pd-titulo">O que você precisa?</label><input type="text" id="pd-titulo" maxlength="200" placeholder="Ex.: carrossel sobre a perícia médica do BPC"></div>
-        <div><label class="label" for="pd-desc">Detalhes (opcional)</label><textarea id="pd-desc" placeholder="Explique a ideia, o público, informações que não podem faltar, referências…"></textarea></div>
-        <div><label class="label" for="pd-link">Link das fotos e vídeos para este pedido (opcional)</label><input type="url" id="pd-link" placeholder="https://drive.google.com/…"></div>
-        <div><label class="label" for="pd-nome">Seu nome</label><input type="text" id="pd-nome" autocomplete="name"></div>
-        <div class="extrabox" id="pd-aviso" hidden></div>
-        <label class="check" id="pd-ciente-box" hidden><input type="checkbox" id="pd-ciente"> Estou ciente de que este pedido será cobrado à parte</label>
-        <div class="actions"><button class="btn primary" type="submit" id="pd-enviar">Enviar pedido</button></div>
-        <p class="note" id="pd-note" aria-live="polite"></p>
-      </form>
-      <h2>Seus pedidos</h2>
-      <div class="list" id="pedidos-lista"></div>
-    </section>
-
-    <section id="panel-anuncios" class="list" role="tabpanel" aria-labelledby="tab-anuncios" style="margin-top:22px" hidden>
-      <div class="dash-intro"><h2>Seu investimento em anúncios</h2><p class="intro">Cada real investido e o que ele trouxe, com os números lançados dia a dia direto do Gerenciador de Anúncios. Use o período e a campanha para comparar, e baixe a planilha para conferir.</p></div>
-      <article class="card" id="verba-box" hidden></article>
-      <article class="card dash" id="ads-box"></article>
-    </section>
-
-    <section id="panel-resultados" class="list" role="tabpanel" aria-labelledby="tab-resultados" style="margin-top:22px" hidden>
-      <p class="intro">Os números do seu Instagram no início de cada mês e 30 dias depois.</p>
-      <article class="card"><h2 id="res-titulo">Este mês</h2><div id="res-mes"></div></article>
-      <article class="card"><h2>Balanço mês a mês</h2><div id="res-balanco"></div></article>
-    </section>
-
-    <section id="panel-relatorio" class="list" role="tabpanel" aria-labelledby="tab-relatorio" style="margin-top:22px" hidden>
-      <div class="rel-barra">
-        <p class="intro">Acompanhe o relatório do mês. Ele se atualiza sozinho sempre que a equipe lança posts, números, anúncios e a análise.</p>
-        <a class="btn primary small" id="rel-pdf" href="#" target="_blank" rel="noopener">Baixar em PDF</a>
-      </div>
-      <div class="relatorio" id="rel-box"></div>
-    </section>
-
-    <section id="panel-pagamentos" class="list pg-painel" role="tabpanel" aria-labelledby="tab-pagamentos" style="margin-top:22px" hidden></section>
-
-    <section id="panel-loja" class="list" role="tabpanel" aria-labelledby="tab-loja" style="margin-top:22px" hidden></section>
-
-    <section id="panel-contrato" class="list" role="tabpanel" aria-labelledby="tab-contrato" style="margin-top:22px" hidden>
-      <p class="intro">Seu contrato assinado e os outros documentos do nosso trabalho ficam guardados aqui, só para quem tem acesso com e-mail e senha.</p>
-      <div class="docs" id="docs"></div>
-      <p class="note" id="docs-note" aria-live="polite"></p>
-    </section>
-  </div>
+<body class="h-screen flex flex-col overflow-hidden text-sm">
+<!-- Top Navigation Bar -->
+<header class="h-14 border-b border-[var(--border-subtle)] bg-[var(--bg-card)] flex items-center justify-between px-4 z-20 shrink-0">
+<div class="flex items-center space-x-3">
+<button id="sidebarToggleBtn" class="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-gray-300 transition">
+<i data-lucide="menu" class="w-5 h-5"></i>
+</button>
+<div class="flex items-center space-x-2">
+<div class="w-7 h-7 rounded bg-notion-blue text-white flex items-center justify-center font-bold text-xs shadow-sm">
+HUB
 </div>
-
-<script src="config.js"></script>
-<script src="metricas.js"></script>
-<script src="anuncios.js"></script>
-<script src="anel.js"></script>
-<script src="portal-inicio.js"></script>
-<script src="relatorio.js"></script>
-<script src="pagamentos.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<span class="font-semibold text-base tracking-tight text-[var(--text-primary)]">Workspace & Dashboard</span>
+<span class="badge-custom ml-2 hidden sm:inline-block">v2.5</span>
+</div>
+</div>
+<div class="flex items-center space-x-3">
+<button onclick="openModal('quickActionModal')" class="btn-notion-blue px-3 py-1.5 rounded-md font-medium text-xs flex items-center space-x-1.5 shadow-sm">
+<i data-lucide="plus" class="w-4 h-4"></i>
+<span class="hidden sm:inline">Criar Novo</span>
+</button>
+<button id="themeToggleBtn" onclick="toggleTheme()" class="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-gray-300 transition" title="Alternar Tema">
+<i id="themeIconSun" data-lucide="sun" class="w-4 h-4 hidden"></i>
+<i id="themeIconMoon" data-lucide="moon" class="w-4 h-4"></i>
+</button>
+<div class="w-8 h-8 rounded-full bg-notion-blue/20 text-notion-blue font-semibold flex items-center justify-center border border-notion-blue/40">
+G
+</div>
+</div>
+</header>
+<!-- Main Body Container -->
+<div class="flex flex-1 overflow-hidden relative">
+<!-- Sidebar -->
+<aside id="sidebar" class="w-64 bg-[var(--bg-sidebar)] border-r border-[var(--border-subtle)] flex flex-col justify-between transition-all duration-300 z-10 shrink-0">
+<div class="p-3 space-y-4 overflow-y-auto">
+<div class="px-2 py-2 rounded-lg bg-gray-200/50 dark:bg-zinc-800/60 flex items-center justify-between cursor-pointer">
+<div class="flex items-center space-x-2.5">
+<span class="text-lg">🚀</span>
+<div class="leading-tight">
+<p class="font-semibold text-xs text-[var(--text-primary)]">Guxta Digital Hub</p>
+<p class="text-[10px] text-gray-500">Plano Pro • Ativo</p>
+</div>
+</div>
+</div>
+<nav class="space-y-1">
+<p class="px-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Módulos</p>
+<button onclick="switchTab('overview')" id="nav-overview" class="nav-btn w-full flex items-center space-x-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium bg-gray-200/70 dark:bg-zinc-800 text-notion-blue transition">
+<i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+<span>Visão Geral</span>
+</button>
+<button onclick="switchTab('crm')" id="nav-crm" class="nav-btn w-full flex items-center space-x-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200/50 dark:hover:bg-zinc-800 transition">
+<i data-lucide="users" class="w-4 h-4"></i>
+<span>CRM & Projetos</span>
+</button>
+<button onclick="switchTab('finance')" id="nav-finance" class="nav-btn w-full flex items-center space-x-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200/50 dark:hover:bg-zinc-800 transition">
+<i data-lucide="wallet" class="w-4 h-4"></i>
+<span>Financeiro</span>
+</button>
+<button onclick="switchTab('kanban')" id="nav-kanban" class="nav-btn w-full flex items-center space-x-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200/50 dark:hover:bg-zinc-800 transition">
+<i data-lucide="kanban" class="w-4 h-4"></i>
+<span>Quadro Kanban</span>
+</button>
+</nav>
+<div class="p-3 rounded-md bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-1">
+<span class="text-[11px] font-medium text-gray-500">Tema de Código</span>
+<p class="text-[10px] text-gray-400 leading-snug">
+Grafite preto no modo claro e off-white no modo escuro. Botões em <span class="text-notion-blue font-semibold">Azul Notion</span>.
+</p>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-[var(--bg-main)]">
+<!-- TAB 1: VISÃO GERAL -->
+<section id="tab-overview" class="tab-content space-y-6">
+<div class="p-6 rounded-xl bg-gradient-to-r from-gray-100 via-gray-50 to-white dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-800 border border-[var(--border-subtle)]">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center space-x-2 mb-1">
+<span class="text-2xl">⚡</span>
+<h1 class="text-2xl font-bold tracking-tight">Central de Comando</h1>
+</div>
+<p class="text-xs text-gray-500 dark:text-gray-400">
+Ambiente atualizado com códigos em grafite/off-white e botões em azul Notion.
+</p>
+</div>
+<div class="flex items-center space-x-2">
+<button onclick="openModal('projectModal')" class="btn-notion-blue px-3.5 py-2 rounded-md font-semibold text-xs flex items-center space-x-2">
+<i data-lucide="plus-circle" class="w-4 h-4"></i>
+<span>Novo Projeto</span>
+</button>
+</div>
+</div>
+</div>
+<div class="notion-callout p-4 rounded-lg flex items-start space-x-3">
+<i data-lucide="info" class="w-5 h-5 text-notion-blue shrink-0 mt-0.5"></i>
+<div class="text-xs space-y-1">
+<p class="font-semibold">Atualização Aplicada com Sucesso:</p>
+<p>Os códigos destacados utilizam <code class="code-highlight">preto grafite</code> no fundo claro e <code class="code-highlight">off-white</code> no fundo escuro. Todos os botões e destaques estão em <strong class="text-notion-blue">azul Notion</strong>.</p>
+</div>
+</div>
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+<div class="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-2">
+<span class="text-xs font-semibold text-gray-400 uppercase">Projetos Ativos</span>
+<p class="text-2xl font-bold" id="kpi-projects-count">3</p>
+</div>
+<div class="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-2">
+<span class="text-xs font-semibold text-gray-400 uppercase">Receita Total</span>
+<p class="text-2xl font-bold" id="kpi-income-total">R$ 48.500</p>
+</div>
+<div class="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-2">
+<span class="text-xs font-semibold text-gray-400 uppercase">Tarefas no Kanban</span>
+<p class="text-2xl font-bold" id="kpi-tasks-count">4</p>
+</div>
+</div>
+<!-- Code Block Demo -->
+<div class="p-5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] space-y-3">
+<div class="flex items-center justify-between border-b border-[var(--border-subtle)] pb-3">
+<span class="font-semibold text-xs">Exemplo de Bloco de Código</span>
+<span class="badge-custom">Grafite / Off-White</span>
+</div>
+<pre class="p-4 rounded-lg bg-gray-900 text-gray-100 font-mono text-xs overflow-x-auto"><code><span class="text-blue-400">// Configuração de Estilo</span>
+const config = {
+themeMode: "automatic",
+accentColor: "#2383E2", // Azul Notion
+codeHighlight: "Grafite / Off-white"
+};
+console.log("Sistema pronto para deploy!");</code></pre>
+</div>
+</section>
+<!-- TAB 2: CRM -->
+<section id="tab-crm" class="tab-content space-y-6 hidden">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-bold">Gerenciamento de Projetos</h2>
+<button onclick="openModal('projectModal')" class="btn-notion-blue px-3.5 py-2 rounded-md font-semibold text-xs">Novo Projeto</button>
+</div>
+<div class="rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] overflow-hidden">
+<table class="w-full text-left text-xs">
+<thead class="bg-gray-100 dark:bg-zinc-800 border-b border-[var(--border-subtle)] text-gray-500">
+<tr>
+<th class="p-3">Projeto</th>
+<th class="p-3">Cliente</th>
+<th class="p-3">Status</th>
+<th class="p-3">Valor</th>
+</tr>
+</thead>
+<tbody id="projectsTableBody" class="divide-y divide-[var(--border-subtle)]"></tbody>
+</table>
+</div>
+</section>
+<!-- TAB 3: FINANCEIRO -->
+<section id="tab-finance" class="tab-content space-y-6 hidden">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-bold">Controle Financeiro</h2>
+<button onclick="openModal('transactionModal')" class="btn-notion-blue px-3.5 py-2 rounded-md font-semibold text-xs">Nova Transação</button>
+</div>
+<div class="rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] overflow-hidden">
+<table class="w-full text-left text-xs">
+<thead class="bg-gray-100 dark:bg-zinc-800 border-b border-[var(--border-subtle)] text-gray-500">
+<tr>
+<th class="p-3">Descrição</th>
+<th class="p-3">Tipo</th>
+<th class="p-3">Data</th>
+<th class="p-3">Valor</th>
+</tr>
+</thead>
+<tbody id="financeTableBody" class="divide-y divide-[var(--border-subtle)]"></tbody>
+</table>
+</div>
+</section>
+<!-- TAB 4: KANBAN -->
+<section id="tab-kanban" class="tab-content space-y-6 hidden">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-bold">Quadro Kanban</h2>
+<button onclick="openModal('taskModal')" class="btn-notion-blue px-3.5 py-2 rounded-md font-semibold text-xs">Nova Tarefa</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="kanbanBoard">
+<div class="p-3 rounded-xl bg-gray-100 dark:bg-zinc-900 border border-[var(--border-subtle)]">
+<h3 class="font-semibold text-xs mb-2">A Fazer</h3>
+<div id="col-todo" class="space-y-2"></div>
+</div>
+<div class="p-3 rounded-xl bg-gray-100 dark:bg-zinc-900 border border-[var(--border-subtle)]">
+<h3 class="font-semibold text-xs mb-2">Em Andamento</h3>
+<div id="col-progress" class="space-y-2"></div>
+</div>
+<div class="p-3 rounded-xl bg-gray-100 dark:bg-zinc-900 border border-[var(--border-subtle)]">
+<h3 class="font-semibold text-xs mb-2">Concluído</h3>
+<div id="col-done" class="space-y-2"></div>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- Modals -->
+<div id="projectModal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden p-4">
+<div class="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-xl w-full max-w-md p-5 space-y-3">
+<h3 class="font-bold text-sm">Novo Projeto</h3>
+<form onsubmit="saveProject(event)" class="space-y-2">
+<input type="text" id="projName" placeholder="Nome do Projeto" required class="w-full px-3 py-1.5 text-xs rounded bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)]">
+<input type="text" id="projClient" placeholder="Cliente" required class="w-full px-3 py-1.5 text-xs rounded bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)]">
+<input type="number" id="projValue" placeholder="Valor (R$)" required class="w-full px-3 py-1.5 text-xs rounded bg-gray-50 dark:bg-zinc-800 border border-[var(--border-subtle)]">
+<div class="flex justify-end space-x-2 pt-2">
+<button type="button" onclick="closeModal('projectModal')" class="px-3 py-1.5 text-xs bg-gray-200 dark:bg-zinc-800 rounded">Cancelar</button>
+<button type="submit" class="btn-notion-blue px-3 py-1.5 text-xs rounded">Salvar</button>
+</div>
+</form>
+</div>
+</div>
 <script>
-(function(){
-  const $=s=>document.querySelector(s);
-  const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  const dia2=n=>n==null?"":String(n).padStart(2,"0");
-  const fmtData=iso=>{if(!iso)return"";const [y,m,d]=iso.split("-");const ds=["dom","seg","ter","qua","qui","sex","sáb"];return ds[new Date(+y,m-1,+d).getDay()]+", "+d+"/"+m};
-  const fmtQuando=iso=>{try{const d=new Date(iso);return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})+" às "+d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}catch(e){return""}};
-  const store={get(k){try{return localStorage.getItem(k)||""}catch(e){return""}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
-
-  const _h=location.hash.replace(/^#/,""), token=new URLSearchParams(location.search).get("c")||(/^[a-f0-9]{32,}$/i.test(_h)?_h:"");
-  const urlSupabase=u=>{u=String(u||"").trim();let m=u.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);if(m)return "https://"+m[1]+".supabase.co";m=u.match(/^(?:https?:\/\/)?([a-z0-9-]+\.supabase\.(?:co|in))/i);if(m)return "https://"+m[1].toLowerCase();return u.replace(/\/+$/,"")};
-  const cfg=window.GLARA_CONFIG||{};
-  const corPropria=c=>/^#[0-9a-f]{6}$/i.test(c||"")&&!["#E10600","#EE2B37","#E50914","#C0703A","#3D4BFF","#0F8A4A","#0866FF","#1877F2"].includes(String(c).toUpperCase());
-  let sb=null, dados=null, filtro="todos", modo=token?"link":"login", clienteId=null;
-  const P=()=>({p_token:modo==="link"?token:null,p_cliente:modo==="login"?clienteId:null});
-  const slideIdx={}, editando={}, rasc={};
-
-  function erro(msg){$("#titulo").textContent="Não foi possível abrir";$("#erro").textContent=msg;$("#erro").hidden=false;$("#app").hidden=true}
-
-  const ehVideo=u=>/\.(mp4|mov|webm|m4v)(\?|#|$)/i.test(u||"");
-  const slug=t=>String(t||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
-  const extDe=u=>((String(u).split(/[?#]/)[0].match(/\.([a-z0-9]{2,5})$/i)||[])[1]||"jpg").toLowerCase();
-  const nomeArq=(p,i)=>[slug((dados&&dados.cliente&&dados.cliente.nome)||"conteudo"),"post-"+(p.dia!=null?dia2(p.dia):"x"),slug(p.titulo).slice(0,40)].filter(Boolean).join("_")+((p.slides||[]).length>1?"_"+String(i+1).padStart(2,"0"):"")+"."+extDe(p.slides[i]);
-  const urlDl=(u,nome)=>{u=String(u).split("#")[0];return /\/storage\/v1\/object\/public\//.test(u)?u+(u.includes("?")?"&":"?")+"download="+encodeURIComponent(nome):u};
-  const linkSeguro=u=>/^https?:\/\//i.test(String(u||"").trim())?String(u).trim():"";
-  function salvarBlob(blob,nome){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=nome;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000)}
-  function carregarJSZip(){return window.JSZip?Promise.resolve(window.JSZip):new Promise((ok,falhou)=>{const sc=document.createElement("script");sc.src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";sc.onload=()=>ok(window.JSZip);sc.onerror=falhou;document.head.appendChild(sc)})}
-  async function baixarTudo(id,btn){
-    const p=dados.posts.find(x=>x.id===id);if(!p)return;const txt=btn.textContent;btn.disabled=true;btn.textContent="Preparando…";
-    try{const JSZip=await carregarJSZip();const zip=new JSZip();
-      for(let i=0;i<p.slides.length;i++){btn.textContent=`Baixando ${i+1} de ${p.slides.length}…`;const r=await fetch(String(p.slides[i]).split("#")[0]);if(!r.ok)throw new Error("http "+r.status);zip.file(nomeArq(p,i),await r.blob())}
-      if(p.legenda)zip.file("legenda.txt",p.legenda);
-      salvarBlob(await zip.generateAsync({type:"blob"}),nomeArq(p,0).replace(/_\d+\.[a-z0-9]+$/,"")+".zip");
-    }catch(e){console.error(e);
-      // plano B: baixa uma por uma
-      for(let i=0;i<p.slides.length;i++){const a=document.createElement("a");a.href=urlDl(p.slides[i],nomeArq(p,i));a.download=nomeArq(p,i);a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();await new Promise(r=>setTimeout(r,700))}
-    }
-    btn.disabled=false;btn.textContent=txt;
-  }
-  async function copiar(texto,btn){const t=btn.textContent;try{await navigator.clipboard.writeText(texto)}catch(e){const ta=document.createElement("textarea");ta.value=texto;document.body.appendChild(ta);ta.select();try{document.execCommand("copy")}catch(_){}ta.remove()}btn.textContent="Legenda copiada";setTimeout(()=>btn.textContent=t,1800)}
-  const vigente=p=>p.decisao&&p.decisao.versao===p.versao?p.decisao:null;
-  const estado=p=>{const d=vigente(p);return !d?"pend":d.decisao==="aprovado"?"ok":"adj"};
-
-  /* ---------- abas ---------- */
-  document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
-    document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",String(x===t)));
-    ["inicio","aprovar","plano","roteiros","stories","pedidos","resultados","anuncios","relatorio","pagamentos","contrato","loja"].forEach(n=>$("#panel-"+n).hidden=n!==t.dataset.tab);
-    if(t.dataset.tab==="inicio"&&dados)renderInicio();
-    if(t.dataset.tab==="relatorio"&&dados)carregarRelatorio();
-    if(t.dataset.tab==="contrato"&&dados)carregarDocumentos();
-    if(t.dataset.tab==="anuncios"&&dados)atualizarInvestimento();
-    if(dados)marcarVisto(t.dataset.tab);
-  }));
-
-  /* ---------- posts ---------- */
-  /* aprovação por partes: tema, arte (ou vídeo) e legenda */
-  const PARTES=[["tema","Tema","A ideia e o assunto do post"],["arte","Arte","As telas, fotos e textos da imagem"],["legenda","Legenda","O texto que vai junto no post"]];
-  const nomeParte=(p,k)=>k==="arte"&&p.formato==="Reels"?"Vídeo":PARTES.find(x=>x[0]===k)[1];
-  const OPC=[["ok","Aprovar","✓"],["alt","Alterar","✎"],["rep","Reprovar","✕"]];
-  const vigPartes=p=>{const d=vigente(p);return d&&p.partes&&p.partes.tema?p.partes:null};
-  function partesResumoHTML(p,pt){
-    return `<ul class="pt-res">${PARTES.map(([k])=>{const x=pt[k]||{};const o=OPC.find(z=>z[0]===x.d)||OPC[0];
-      return `<li class="pt-${esc(x.d||"ok")}"><span class="pt-ico" aria-hidden="true">${o[2]}</span><b>${esc(nomeParte(p,k))}</b><span>${o[0]==="ok"?"aprovado":o[0]==="alt"?"alteração pedida":"reprovado"}</span>${x.c?`<q>${esc(x.c)}</q>`:""}</li>`}).join("")}</ul>`}
-  function partesFormHTML(p){
-    const r=rasc[p.id]||(rasc[p.id]={});
-    const pronto=PARTES.every(([k])=>r[k]&&r[k].d&&(r[k].d==="ok"||(r[k].c||"").trim()));
-    return `<div class="pt-form" role="group" aria-label="Aprovar por partes">
-      <p class="pt-dica">Decida cada parte. Se só uma precisar mudar, as outras ficam aprovadas.</p>
-      ${PARTES.map(([k,,dica])=>{const x=r[k]||{};return `<div class="pt-linha${x.d?" pt-"+x.d:""}">
-        <div class="pt-nome"><b>${esc(nomeParte(p,k))}</b><small>${k==="arte"&&p.formato==="Reels"?"A edição, as cenas e as legendas do vídeo":esc(dica)}</small></div>
-        <div class="pt-opcs" role="radiogroup" aria-label="${esc(nomeParte(p,k))}">${OPC.map(([v,t,i])=>`<button type="button" class="pt-opc pt-${v}" role="radio" aria-checked="${x.d===v}" data-act="parte" data-k="${k}" data-v="${v}" data-id="${p.id}"><span aria-hidden="true">${i}</span>${t}</button>`).join("")}</div>
-        ${x.d&&x.d!=="ok"?`<textarea class="pt-txt" id="pt-${p.id}-${k}" data-parte="${k}" data-id="${p.id}" placeholder="${x.d==="rep"?"Por que não serve? O que você prefere no lugar?":"O que você quer mudar em "+esc(nomeParte(p,k).toLowerCase())+"?"}">${esc(x.c||"")}</textarea>`:""}
-      </div>`}).join("")}
-      <div class="actions"><button class="btn primary" data-act="enviar-partes" data-id="${p.id}" ${pronto?"":"disabled"}>Enviar decisão</button>
-        <button class="btn ghost" data-act="aprovar" data-id="${p.id}">Aprovar tudo</button>
-        ${editando[p.id]?`<button class="btn ghost" data-act="cancelar" data-id="${p.id}">Cancelar</button>`:""}</div>
-    </div>`}
-  function decisaoHTML(p){
-    const d=vigente(p), antiga=p.decisao&&!d?p.decisao:null;
-    if(editando[p.id]) return partesFormHTML(p);
-    if(d){const pt=vigPartes(p);
-      return `<p class="record">${d.decisao==="aprovado"?"Aprovado":"Ajuste pedido"}${d.nome?" por "+esc(d.nome):""}${d.em?" em "+fmtQuando(d.em):""}.
-      ${!pt&&d.decisao==="ajuste"&&d.comentario?`<q>${esc(d.comentario)}</q>`:""}</p>${pt?partesResumoHTML(p,pt):""}
-      <div class="actions"><button class="btn ghost" data-act="ajustar" data-id="${p.id}">${d.decisao==="aprovado"?"Mudei de ideia: pedir ajuste":"Mudar minha decisão"}</button></div>`}
-    const aviso=antiga?`<p class="record">Nova versão com os ajustes${antiga.decisao==="ajuste"&&antiga.comentario?` que você pediu:<q>${esc(antiga.comentario)}</q>`:"."}</p>`:"";
-    return aviso+partesFormHTML(p);
-  }
-  function pubPill(p){
-    if(p.publicacao==="publicado")return p.publicado_url?`<a class="status pub-ok" href="${esc(p.publicado_url)}" target="_blank" rel="noopener">● Publicado · ver no Instagram</a>`:'<span class="status pub-ok">● Publicado</span>';
-    if(p.publicacao==="agendado"){const d=p.agendado_para?new Date(p.agendado_para):null;
-      return `<span class="status pub-ag">◷ Agendado${d?" · "+d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})+" às "+d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}):""}</span>`}
-    return ""}
-  function postHTML(p){
-    const n=(p.slides||[]).length, i=Math.min(slideIdx[p.id]||0,Math.max(0,n-1)), st=estado(p);
-    const pill=st==="ok"?'<span class="status ok">✓ Aprovado</span>':st==="adj"?'<span class="status adj">Ajuste pedido</span>':'<span class="status pend">Aguardando sua decisão</span>';
-    return `<article class="post" id="p-${p.id}" aria-labelledby="t-${p.id}">
-      <div class="viewer">
-        <div class="stage${n&&ehVideo(p.slides[i])?" vert":""}" data-id="${p.id}">
-          ${n?(ehVideo(p.slides[i])?`<video src="${esc(p.slides[i])}#t=0.5" controls playsinline preload="metadata" aria-label="${esc(p.titulo)}, vídeo"></video>`:`<img src="${esc(p.slides[i])}" alt="${esc(p.titulo)}, tela ${i+1} de ${n}" width="900" height="1125">`):`<span class="stage-vazio">${p.formato==="Reels"?"O vídeo ainda vai ser enviado":"Sem telas ainda"}</span>`}
-          ${n>1?`<span class="count">${i+1} / ${n}</span>
-          <button class="nav prev" data-act="prev" data-id="${p.id}" aria-label="Tela anterior" ${i===0?"disabled":""}>‹</button>
-          <button class="nav next" data-act="next" data-id="${p.id}" aria-label="Próxima tela" ${i===n-1?"disabled":""}>›</button>`:""}
-        </div>
-        ${n>1?`<div class="dots">${p.slides.map((_,k)=>`<button class="dot" data-act="go" data-k="${k}" data-id="${p.id}" aria-label="Tela ${k+1}" ${k===i?'aria-current="true"':""}></button>`).join("")}</div>`:""}
-      </div>
-      <div class="info">
-        <div class="meta">${p.dia!=null?`<span class="day">Post ${dia2(p.dia)}</span>`:""}<span>${fmtData(p.data)}</span><span>${esc(p.formato)}${n>1&&p.formato!=="Reels"?" · "+n+" telas":""}</span>${pill}${pubPill(p)}</div>
-        <h2 id="t-${p.id}">${esc(p.titulo)}</h2>
-        <div><span class="label">Legenda</span><p class="caption">${esc(p.legenda)}</p></div>
-        ${n?`<div class="downloads"><span class="label">Baixar</span><div class="actions">
-          <a class="btn small outline" href="${esc(urlDl(p.slides[i],nomeArq(p,i)))}" download="${esc(nomeArq(p,i))}" target="_blank" rel="noopener">${ehVideo(p.slides[i])?"Baixar vídeo":n>1?"Baixar esta tela":"Baixar arte"}</a>
-          ${n>1?`<button class="btn small outline" data-act="zip" data-id="${p.id}">Baixar tudo (.zip)</button>`:""}
-          <button class="btn small ghost" data-act="copiar" data-id="${p.id}">Copiar legenda</button></div></div>`:""}
-        <div class="decision">${decisaoHTML(p)}</div>
-      </div>
-    </article>`;
-  }
-  function contar(){const c={todos:0,pend:0,ok:0,adj:0};dados.posts.forEach(p=>{c.todos++;c[estado(p)]++});for(const k in c)$("#n-"+k).textContent=c[k];const pr=document.getElementById("progresso");if(pr)pr.style.width=(c.todos?c.ok/c.todos*100:0)+"%"}
-  /* ---------- prévia do feed (grade como no Instagram) ---------- */
-  let vis=(()=>{try{return localStorage.getItem("guxta_vis")||"lista"}catch(_){return "lista"}})();
-  function tileHTML(p){const st=estado(p), u=(p.slides||[])[0], n=(p.slides||[]).length;
-    const ico=p.formato==="Reels"?'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>':n>1?'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="7" y="7" width="13" height="13" rx="2"/><path d="M4 16V5a1 1 0 0 1 1-1h11"/></svg>':"";
-    const sel=st==="ok"?'<span class="fd-st ok" title="Aprovado">✓</span>':st==="adj"?'<span class="fd-st adj" title="Ajuste pedido">!</span>':'<span class="fd-st pend" title="Aguardando sua decisão"></span>';
-    return `<button type="button" class="fd-tile" data-act="feed-abrir" data-id="${p.id}" aria-label="${esc(p.titulo)} · ${st==="ok"?"aprovado":st==="adj"?"ajuste pedido":"aguardando sua decisão"}">
-      ${u?(ehVideo(u)?`<video src="${esc(u)}#t=0.5" muted playsinline preload="metadata"></video>`:`<img src="${esc(u)}" alt="" loading="lazy">`):`<span class="fd-sem">${esc(p.titulo)}</span>`}
-      <span class="fd-ico">${ico}</span>${sel}<span class="fd-data">${p.data?esc(fmtData(p.data)):""}</span></button>`}
-  function feedHTML(lista){const ord=lista.slice().sort((a,b)=>String(b.data||"").localeCompare(String(a.data||""))||((b.dia||0)-(a.dia||0)));
-    return `<div class="fd-wrap"><div class="fd-perfil"><span class="fd-av">${esc((dados.cliente&&dados.cliente.nome||"?").trim()[0]||"?")}</span><div><b>${esc(dados.cliente&&dados.cliente.nome||"")}</b><small>Prévia de como o feed vai ficar. Toque num post para ver, aprovar ou pedir ajuste.</small></div></div>
-      <div class="fd-grid">${ord.map(tileHTML).join("")}</div></div>`}
-  function dlg(){let d=document.getElementById("post-dlg");if(!d){d=document.createElement("dialog");d.id="post-dlg";d.className="post-dlg";d.setAttribute("aria-label","Post");
-      d.innerHTML='<button type="button" class="dlg-x" data-act="feed-fechar" aria-label="Fechar">✕</button><div class="dlg-post"></div>';document.body.appendChild(d);
-      d.addEventListener("click",e=>{if(e.target===d)d.close()})}return d}
-  function renderPosts(){
-    contar();
-    if(vis==="feed"){const lista=dados.posts.filter(p=>filtro==="todos"||estado(p)===filtro);
-      $("#posts").innerHTML=!dados.posts.length?`<div class="empty">Ainda não há posts para aprovar neste mês.</div>`:lista.length?feedHTML(lista):`<div class="empty">Nenhum post nesta lista.</div>`;return}
-    const lista=dados.posts.filter(p=>filtro==="todos"||estado(p)===filtro);
-    $("#posts").innerHTML=!dados.posts.length?`<div class="empty">Ainda não há posts para aprovar neste mês.</div>`
-      :lista.length?lista.map(postHTML).join(""):`<div class="empty">Nenhum post nesta lista.</div>`;
-  }
-  function renderUm(id){if(vis==="feed"){const p=dados.posts.find(x=>x.id===id),d=document.getElementById("post-dlg");if(p&&d&&d.open&&d.dataset.id===id)d.querySelector(".dlg-post").innerHTML=postHTML(p);renderPosts();return}
-    const p=dados.posts.find(x=>x.id===id),el=document.getElementById("p-"+id);if(!p||!el||(filtro!=="todos"&&estado(p)!==filtro&&!editando[id])){renderPosts();return}el.outerHTML=postHTML(p);contar()}
-  function passo(id,d){const p=dados.posts.find(x=>x.id===id);slideIdx[id]=Math.max(0,Math.min(p.slides.length-1,(slideIdx[id]||0)+d));renderUm(id)}
-
-  async function decidir(id,decisao,comentario){
-    const p=dados.posts.find(x=>x.id===id), antes=p.decisao;
-    const nome=$("#nome").value.trim();
-    p.decisao={decisao,comentario:comentario||"",nome,versao:p.versao,em:new Date().toISOString()};editando[id]=false;renderUm(id);
-    const {data,error}=await sb.rpc("portal_decidir",{...P(),p_post:id,p_decisao:decisao,p_comentario:comentario||"",p_nome:nome});
-    if(error){p.decisao=antes;renderUm(id);
-      $("#note").textContent=/acesso_negado/.test(error.message)?"Este post não está mais disponível. Recarregue a página.":"Não deu para salvar agora. Verifique a internet e tente de novo.";return}
-    p.decisao=data;p.partes=decisao==="aprovado"?{tema:{d:"ok"},arte:{d:"ok"},legenda:{d:"ok"}}:null;delete rasc[id];renderUm(id);novidadesRender();$("#note").textContent=decisao==="aprovado"?"Aprovação salva.":"Pedido de ajuste enviado.";
-  }
-  async function decidirPartes(id){
-    const p=dados.posts.find(x=>x.id===id), r=rasc[id]||{}, antes={d:p.decisao,pt:p.partes};
-    const partes={};for(const [k] of PARTES){const x=r[k]||{};partes[k]={d:x.d,c:(x.c||"").trim()}}
-    const nome=$("#nome").value.trim(), ok=PARTES.every(([k])=>partes[k].d==="ok");
-    p.decisao={decisao:ok?"aprovado":"ajuste",comentario:"",nome,versao:p.versao,em:new Date().toISOString()};p.partes=partes;editando[id]=false;renderUm(id);
-    const {data,error}=await sb.rpc("portal_decidir_partes",{...P(),p_post:id,p_partes:partes,p_nome:nome});
-    if(error){p.decisao=antes.d;p.partes=antes.pt;editando[id]=true;renderUm(id);
-      $("#note").textContent=/acesso_negado/.test(error.message)?"Este post não está mais disponível. Recarregue a página.":/comentario_obrigatorio/.test(error.message)?"Escreva o que quer mudar em cada parte marcada.":/portal_decidir_partes/.test(error.message)?"A aprovação por partes ainda não foi ativada. Use Aprovar tudo ou fale com a equipe.":"Não deu para salvar agora. Verifique a internet e tente de novo.";return}
-    p.decisao=data;p.partes=data.partes;delete rasc[id];renderUm(id);novidadesRender();
-    $("#note").textContent=ok?"Aprovação salva.":"Decisão enviada. A equipe vai ajustar o que você marcou.";
-  }
-
-  document.addEventListener("click",e=>{
-    const b=e.target.closest("[data-act],[data-f]");if(!b||!dados)return;
-    if(b.dataset.f){filtro=b.dataset.f;document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",String(c===b)));renderPosts();return}
-    const id=b.dataset.id,a=b.dataset.act;
-    if(a==="vis"){vis=b.dataset.v;try{localStorage.setItem("guxta_vis",vis)}catch(_){}document.querySelectorAll('[data-act="vis"]').forEach(x=>x.setAttribute("aria-pressed",String(x===b)));renderPosts();return}
-    if(a==="feed-abrir"){const p=dados.posts.find(x=>x.id===id);if(!p)return;const d=dlg();d.dataset.id=id;d.querySelector(".dlg-post").innerHTML=postHTML(p);if(!d.open)d.showModal();return}
-    if(a==="feed-fechar"){const d=document.getElementById("post-dlg");d&&d.close();return}
-    if(a==="zip"){baixarTudo(id,b);return}
-    if(a==="copiar"){const p=dados.posts.find(x=>x.id===id);if(p)copiar(p.legenda||"",b);return}
-    if(a==="prev")passo(id,-1);else if(a==="next")passo(id,1);
-    else if(a==="go"){slideIdx[id]=+b.dataset.k;renderUm(id)}
-    else if(a==="aprovar")decidir(id,"aprovado","");
-    else if(a==="ajustar"){const p=dados.posts.find(x=>x.id===id),pt=p&&vigPartes(p);rasc[id]=pt?JSON.parse(JSON.stringify(pt)):{};editando[id]=true;renderUm(id)}
-    else if(a==="parte"){const r=rasc[id]||(rasc[id]={}),k=b.dataset.k,v=b.dataset.v;r[k]={d:v,c:(r[k]&&r[k].c)||""};renderUm(id);
-      if(v!=="ok"){const t=document.getElementById("pt-"+id+"-"+k);t&&t.focus()}}
-    else if(a==="enviar-partes"){decidirPartes(id)}
-    else if(a==="cancelar"){editando[id]=false;delete rasc[id];renderUm(id)}
-    else if(a==="enviar"){const t=document.getElementById("c-"+id),v=(t&&t.value||"").trim();if(!v){t.placeholder="Escreva o que você quer mudar para enviar o pedido.";t.focus();return}decidir(id,"ajuste",v)}
-  });
-  let sx=null,sid=null;
-  document.addEventListener("touchstart",e=>{const s=e.target.closest(".stage");if(!s||e.target.closest("video"))return;sx=e.touches[0].clientX;sid=s.dataset.id},{passive:true});
-  document.addEventListener("touchend",e=>{if(sx===null)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40)passo(sid,dx<0?1:-1);sx=null},{passive:true});
-  $("#nome").addEventListener("change",e=>store.set("glara_nome",e.target.value.trim()));
-  document.addEventListener("input",e=>{const t=e.target;if(!t.dataset||!t.dataset.parte)return;const id=t.dataset.id,r=rasc[id]||(rasc[id]={});r[t.dataset.parte]={...(r[t.dataset.parte]||{}),c:t.value};
-    const p=dados&&dados.posts.find(x=>x.id===id),btn=document.querySelector(`[data-act="enviar-partes"][data-id="${id}"]`);
-    if(btn)btn.disabled=!PARTES.every(([k])=>r[k]&&r[k].d&&(r[k].d==="ok"||(r[k].c||"").trim()))});
-
-  /* ---------- roteiros e stories ---------- */
-  function renderGuias(){
-    const c=dados.ciclo||{};
-    const dr=c.dicas_reels||[], ds=c.dicas_stories||[];
-    $("#dicas-reels-box").hidden=!dr.length; $("#dicas-reels").innerHTML=dr.map(t=>`<div class="tip">${esc(t)}</div>`).join("");
-    $("#dicas-stories-box").hidden=!ds.length; $("#dicas-stories").innerHTML=ds.map(t=>`<div class="tip">${esc(t)}</div>`).join("");
-    $("#reels").innerHTML=dados.roteiros.length?dados.roteiros.map(r=>`<article class="card">
-      <div class="meta">${r.dia!=null?`<span class="day">Dia ${dia2(r.dia)}</span>`:""}<span>${fmtData(r.data)}</span><span>Reels${r.duracao?" · "+esc(r.duracao):""}</span>${r.pilar?`<span>${esc(r.pilar)}</span>`:""}</div>
-      <h2>${esc(r.titulo)}</h2>
-      ${r.gancho?`<p class="hook">“${esc(r.gancho)}”</p>`:""}
-      ${r.objetivo?`<p class="meta" style="margin:0"><span><b>Objetivo:</b> ${esc(r.objetivo)}</span></p>`:""}
-      <div class="script">${(r.blocos||[]).map(b=>`<div class="beat"><span class="t">${esc(b.tempo)}</span><p class="fala">${esc(b.fala)}</p>${b.tela?`<span class="tela">Na tela: ${esc(b.tela)}</span>`:""}</div>`).join("")}</div>
-      ${r.cta?`<p style="margin:0"><b>Chamada final:</b> ${esc(r.cta)}</p>`:""}
-      ${r.legenda?`<details><summary>Legenda sugerida</summary><p class="caption" style="margin-top:10px">${esc(r.legenda)}</p></details>`:""}
-      ${r.validar?`<div class="warnbox"><b>Antes de gravar:</b> ${esc(r.validar)}</div>`:""}
-    </article>`).join(""):`<div class="empty">Nenhum roteiro de Reels neste mês.</div>`;
-    $("#stories").innerHTML=dados.stories.length?dados.stories.map(s=>`<article class="card">
-      <div class="meta">${s.dia!=null?`<span class="day">Dia ${dia2(s.dia)}</span>`:""}<span>${fmtData(s.data)}</span><span>Stories · ${(s.telas||[]).length} telas</span></div>
-      <h2>${esc(s.titulo)}</h2>
-      ${s.objetivo?`<p class="meta" style="margin:0"><span><b>Objetivo:</b> ${esc(s.objetivo)}</span></p>`:""}
-      <ol class="frames">${(s.telas||[]).map(t=>`<li>${esc(t.texto)}${t.recurso?`<span class="sticker">${esc(t.recurso)}</span>`:""}</li>`).join("")}</ol>
-      ${s.aviso?`<div class="warnbox"><b>Atenção:</b> ${esc(s.aviso)}</div>`:""}
-    </article>`).join(""):`<div class="empty">Nenhum roteiro de Stories neste mês.</div>`;
-  }
-
-  /* ---------- carregar ---------- */
-  async function carregar(ciclo){
-    const {data,error}=await sb.rpc("portal_dados",{...P(),p_ciclo:ciclo||null});
-    if(error){erro("Não conseguimos carregar agora. Verifique a internet e recarregue a página.");return}
-    if(!data){
-      if(modo==="link"){avisoLogin="Este link não está mais ativo. Entre com seu e-mail e senha.";modo="login";history.replaceState(null,"",location.pathname);iniciarLogin();return}
-      erro("Seu acesso a este cliente está pausado. Fale com a nossa equipe.");$("#userbox").hidden=false;return}
-    $("#auth").hidden=true;document.body.classList.remove("modo-auth");
-    dados=data;dados.posts=dados.posts||[];dados.roteiros=dados.roteiros||[];dados.stories=dados.stories||[];
-    try{const pb=await sb.rpc("portal_publicacoes",P());if(!pb.error&&pb.data)dados.posts.forEach(p=>Object.assign(p,pb.data[p.id]||{}))}catch(_){}
-    try{const pp=await sb.rpc("portal_partes",P());if(!pp.error&&pp.data)dados.posts.forEach(p=>{p.partes=pp.data[p.id]||null})}catch(_){}
-    const cli=dados.cliente||{};
-    if(corPropria(cli.cor_destaque))document.documentElement.style.setProperty("--accent",cli.cor_destaque);
-    document.title=(cfg.plataforma||"Hub de Marketing")+" · "+(cli.nome||"");
-    
-    $("#titulo").innerHTML="Olá, <mark>"+esc((cli.nome||"").split(" ")[0])+"</mark>";
-    $("#hero-tag").textContent=cli.plano_nome||cfg.plataforma||"Hub de Marketing";
-    if(!dados.ciclo){$("#erro").textContent="Ainda não há conteúdo publicado para você. Você recebe um aviso quando o próximo mês estiver pronto.";$("#erro").hidden=false;$("#app").hidden=true;return}
-    $("#erro").hidden=true;$("#app").hidden=false;
-    const logado=modo==="login";document.querySelector(".whoami").hidden=logado;$("#pd-nome").closest("div").hidden=logado;
-    const sel=$("#cycle");sel.innerHTML=dados.ciclos.map(c=>`<option value="${c.id}" ${c.id===dados.ciclo.id?"selected":""}>${esc(c.titulo)}</option>`).join("");
-    $("#cycle-box").hidden=dados.ciclos.length<2;
-    $("#intro").textContent=dados.ciclo.titulo+". Aprove os conteúdos do mês, acompanhe os resultados e fale com a gente pelos pedidos.";
-    lerVisto();
-    renderPosts();renderGuias();renderResultados();renderPedidosTudo();renderAnuncios();renderPlanoDash();
-    if(window.GlaraPagamentos&&!pagMod)pagMod=window.GlaraPagamentos.criar({sb,P,modo:()=>modo,base,banner:$("#pg-faixa"),tab:$("#tab-pagamentos"),panel:$("#panel-pagamentos"),
-      toast:m=>toastPed(m,true),abrir:()=>{const t=$("#tab-pagamentos");t.click();t.scrollIntoView({block:"nearest"})},sair:()=>$("#tab-aprovar").click()});
-    Promise.all([carregarVerba().then(carregarRelatorio),carregarDocumentos(),pagMod?pagMod.carregar():null,carregarLoja()]).then(()=>{novidadesRender();irAbaInicial()});novidadesRender();renderInicio();
-    atualizarInvestimento();
-  }
-  let pagMod=null;
-  /* aba Loja: serviços avulsos e material gráfico da loja online */
-  let lojaCarregada=false;
-  async function carregarLoja(){if(lojaCarregada)return;const tab=$("#tab-loja"), box=$("#panel-loja");
-    let r;try{r=await sb.rpc("loja_ver")}catch(e){r={error:e}}
-    const L=r&&!r.error&&r.data;if(!L||!L.ativa){tab.hidden=true;return}
-    lojaCarregada=true;tab.hidden=false;
-    if(!(L.produtos||[]).length){const f=String(L.telefone||"").replace(/\D/g,""),fone=f?(f.length<=11?"55"+f:f):"";
-      const wa=fone?`https://wa.me/${fone}?text=${encodeURIComponent("Olá! Quero saber dos serviços avulsos e do material gráfico.")}`:"";
-      box.innerHTML=`<section class="card lj-portal-h"><div><span class="eyebrow">Loja</span><h2>Serviços avulsos e material gráfico</h2>
-        <p class="note" style="margin:4px 0 0">Pacotes de posts, captação e edição de vídeo, sites, cartões, banners e mais. A loja está sendo montada; enquanto isso, peça pelo WhatsApp.</p></div>
-        <div class="lj-portal-acoes">${L.tem_planos?`<a class="btn" href="planos.html" target="_blank" rel="noopener">Ver os planos</a>`:""}${wa?`<a class="btn primary" href="${wa}" target="_blank" rel="noopener">Falar no WhatsApp</a>`:""}</div></section>`;return}
-    const brl=v=>(Number(v)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-    const ap=p=>p.preco_tipo==="m2"?Number(p.preco_m2)||0:Math.min(...(p.faixas||[]).map(f=>Number(f.preco)||0));
-    const ord=[...L.produtos].sort((a,b)=>(a.tipo==="servico"?0:1)-(b.tipo==="servico"?0:1));
-    box.innerHTML=`<section class="card lj-portal-h"><div><span class="eyebrow">Loja</span><h2>Serviços avulsos e material gráfico</h2>
-        <p class="note" style="margin:4px 0 0">Precisa de algo além do seu plano? Peça e pague por aqui: pacotes de posts, captação e edição de vídeo, sites, cartões, banners e mais.</p></div>
-        <a class="btn primary" href="loja.html?origem=portal" target="_blank" rel="noopener">Abrir a loja</a></section>
-      <div class="lj-portal">${ord.map(p=>`<a class="lj-portal-p" href="loja.html?p=${encodeURIComponent(p.id)}&origem=portal" target="_blank" rel="noopener">
-          <span class="lj-portal-f">${p.foto?`<img src="${esc(p.foto)}" alt="" loading="lazy">`:`<i aria-hidden="true">${esc((p.nome||"?").slice(0,1).toUpperCase())}</i>`}</span>
-          <span class="lj-portal-t"><small>${esc(p.categoria||"")}</small><b>${esc(p.nome)}</b><span>${p.preco_tipo==="m2"?"por m² ":"a partir de "}<strong>${brl(ap(p))}</strong></span></span></a>`).join("")}</div>`}
-  /* link dos e-mails e do WhatsApp: ?aba=aprovar ou ?aba=relatorio abre direto na aba */
-  let abaInicial=(new URLSearchParams(location.search).get("aba")||"").replace(/[^a-z]/g,"");
-  function irAbaInicial(){if(!abaInicial)return;const t=document.getElementById("tab-"+abaInicial);abaInicial="";
-    if(t&&!t.hidden){t.click();t.scrollIntoView({block:"nearest"})}
-    try{const u=new URL(location.href);u.searchParams.delete("aba");history.replaceState(null,"",u.pathname+u.search+u.hash)}catch(_){}}
-
-  /* ---------- início: painel do cliente ---------- */
-  let piSerie=null;
-  function renderInicio(){if(!dados||!window.GlaraPortalInicio)return;const el=$("#panel-inicio");if(!el)return;el.innerHTML=window.GlaraPortalInicio.html(dados,{serie:piSerie})}
-  document.addEventListener("click",e=>{
-    const s=e.target.closest("[data-pi-serie]");if(s){piSerie=s.dataset.piSerie;renderInicio();return}
-    const p=e.target.closest("[data-pi-post]");if(p){const id=p.dataset.piPost;$("#tab-aprovar").click();
-      let el=document.getElementById("p-"+id);if(!el){const t=document.querySelector('[data-f="todos"]');t&&t.click();el=document.getElementById("p-"+id)}
-      if(el){setTimeout(()=>{el.scrollIntoView({block:"start",behavior:"smooth"});el.classList.remove("piscar");void el.offsetWidth;el.classList.add("piscar")},60)}}
-  });
-
-  /* ---------- novidades: balões vermelhos e sino ---------- */
-  let visto={};
-  const chaveVisto=()=>"guxta_visto:"+(((dados||{}).cliente||{}).id||token||"x");
-  function lerVisto(){try{visto=JSON.parse(localStorage.getItem(chaveVisto())||"{}")||{}}catch(e){visto={}}
-    if(!visto._init){const agora=new Date().toISOString();visto={_init:agora};["roteiros","stories","pedidos","resultados","anuncios","relatorio","contrato"].forEach(k=>visto[k]=agora);salvarVisto()}}
-  function salvarVisto(){try{localStorage.setItem(chaveVisto(),JSON.stringify(visto))}catch(e){}}
-  const depois=(iso,ref)=>!!iso&&(!ref||new Date(iso)>new Date(ref));
-  function calcularNovidades(){
-    if(!dados)return {};
-    const N={}, add=(tab,n,txt)=>{if(n>0)N[tab]={n,txt}};
-    const pend=dados.posts.filter(p=>estado(p)==="pend");
-    add("aprovar",pend.filter(p=>depois(p.versao,visto.aprovar)).length,n=>`${n} ${n>1?"posts novos ou atualizados":"post novo ou atualizado"} para aprovar`);
-    add("roteiros",dados.roteiros.filter(r=>depois(r.atualizado_em,visto.roteiros)).length,n=>`${n} ${n>1?"roteiros de Reels novos ou atualizados":"roteiro de Reels novo ou atualizado"}`);
-    add("stories",dados.stories.filter(r=>depois(r.atualizado_em,visto.stories)).length,n=>`${n} ${n>1?"sequências de Stories novas":"sequência de Stories nova"}`);
-    const peds=(dados.pedidos||[]).filter(x=>(depois(x.atualizado_em,visto.pedidos)&&new Date(x.atualizado_em)-new Date(x.criado_em)>5000)||(x.origem&&x.origem!=="portal"&&depois(x.criado_em,visto.pedidos)));
-    add("pedidos",peds.length,n=>n===1?`Atualização no pedido “${peds[0].titulo}”`:`${n} pedidos com atualização`);
-    if(!$("#tab-resultados").hidden&&depois((dados.ciclo||{}).metricas_em,visto.resultados))add("resultados",1,()=>"Números do Instagram atualizados");
-    const ads=(dados.anuncios||[]).filter(a=>depois(a.atualizado_em||a.criado_em,visto.anuncios));
-    if(!$("#tab-anuncios").hidden)add("anuncios",ads.length,n=>`${n} ${n>1?"lançamentos novos":"lançamento novo"} no investimento`);
-    if(!$("#tab-relatorio").hidden&&depois((dados.ciclo||{}).relatorio_em,visto.relatorio))add("relatorio",1,()=>"Análise do mês atualizada no relatório");
-    add("contrato",docs.filter(d=>depois(d.criado_em,visto.contrato)).length,n=>`${n} ${n>1?"documentos novos":"documento novo"} no Contrato`);
-    return N;
-  }
-  function novidadesRender(){
-    if(!dados)return;
-    const N=calcularNovidades(), pend=dados.posts.filter(p=>estado(p)==="pend").length;
-    document.querySelectorAll("#app .tab").forEach(t=>{const k=t.dataset.tab, b=t.querySelector(".badge");if(!b||k==="pagamentos"||k==="loja")return;
-      const n=k==="aprovar"?pend:(N[k]?N[k].n:0);b.hidden=!n;b.textContent=n>99?"99+":n;
-      b.setAttribute("aria-label",k==="aprovar"?`${n} aguardando sua decisão`:`${n} novidade(s)`);
-      b.classList.toggle("calma",k==="aprovar"&&!(N.aprovar&&N.aprovar.n));});
-    const itens=Object.entries(N), total=itens.reduce((s,[,v])=>s+v.n,0);
-    $("#sino-box").hidden=false;const sn=$("#sino-n");sn.hidden=!total;sn.textContent=total>99?"99+":total;
-    $("#sino").setAttribute("aria-label",total?`Novidades: ${total}`:"Novidades: nenhuma");
-    $("#sino-pop").innerHTML=`<div class="sino-head"><b>Novidades</b>${total?`<button type="button" class="btn small ghost" data-sino="tudo">Marcar tudo como visto</button>`:""}</div>`+
-      (itens.length?`<ul>${itens.map(([k,v])=>`<li><button type="button" data-sino-ir="${k}"><i class="sino-dot" aria-hidden="true"></i><span>${esc(v.txt(v.n))}</span><b>Ver</b></button></li>`).join("")}</ul>`:`<p class="note">Tudo em dia por aqui. Quando a equipe publicar posts, números, respostas ou anúncios, eles aparecem aqui.</p>`);
-    const base0=(cfg.plataforma||"Hub de Marketing")+" · "+((dados.cliente||{}).nome||"");document.title=(total?`(${total}) `:"")+base0;
-  }
-  function marcarVisto(k){visto[k]=new Date().toISOString();salvarVisto();novidadesRender()}
-  function fecharSino(){$("#sino-pop").hidden=true;$("#sino").setAttribute("aria-expanded","false")}
-  $("#sino").addEventListener("click",e=>{e.stopPropagation();const p=$("#sino-pop"),abrir=p.hidden;p.hidden=!abrir;$("#sino").setAttribute("aria-expanded",String(abrir))});
-  $("#sino-pop").addEventListener("click",e=>{e.stopPropagation();
-    const ir=e.target.closest("[data-sino-ir]");if(ir){fecharSino();const t=$("#tab-"+ir.dataset.sinoIr);if(t){t.click();t.scrollIntoView({block:"nearest"});$("#app").scrollIntoView({block:"start",behavior:"smooth"})}return}
-    if(e.target.closest('[data-sino="tudo"]')){const agora=new Date().toISOString();["aprovar","roteiros","stories","pedidos","resultados","anuncios","relatorio","contrato"].forEach(k=>visto[k]=agora);salvarVisto();novidadesRender()}});
-  document.addEventListener("click",e=>{if(!e.target.closest("#sino-box"))fecharSino()});
-  document.addEventListener("keydown",e=>{if(e.key==="Escape")fecharSino()});
-
-  /* ---------- painel do plano ---------- */
-  function anel(u,l){if(window.GlaraAnel)return window.GlaraAnel.progresso({pct:l>0?u/l:1,cor:u>l?"#FF3B30":u>=l?"#FF9500":"var",w:16});const r=42,C=2*Math.PI*r,pc=l>0?Math.min(1,u/l):1,cls=u>l?"over":u>=l?"full":"";
-    return `<svg class="anel ${cls}" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="${r}" class="anel-bg"/><circle cx="50" cy="50" r="${r}" class="anel-fg" stroke-dasharray="${(C*pc).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 50 50)"/></svg>`}
-  function renderPlanoDash(){
-    const c=dados.cliente||{}, lim=c.limites||{}, tipos=Object.keys(TIPOS).filter(t=>typeof lim[t]==="number"), tab=$("#tab-plano");
-    tab.hidden=!tipos.length;if(!tipos.length){if(tab.getAttribute("aria-selected")==="true")$("#tab-aprovar").click();return}
-    const cur=(dados.ciclos||[])[0]||{}, ped=(dados.pedidos||[]).filter(x=>x.ciclo_id===cur.id), aberto=x=>x.status==="recebido"||x.status==="producao";
-    let tl=0,tu=0;
-    const cards=tipos.map(t=>{const l=lim[t],u=usoDe(t),a=ped.filter(x=>x.tipo===t&&aberto(x)).length,pl=Math.max(0,u-a),disp=l-u;tl+=l;tu+=Math.min(u,l);
-      return `<article class="plano-card${u>l?" over":u>=l?" full":""}">
-        <div class="anel-box">${anel(u,l)}<div class="anel-txt"><b>${u}</b><small>de ${l}</small></div></div>
-        <div class="plano-info"><h3>${TIPOS[t]}</h3>
-          <p class="plano-st">${u>l?`<span class="st-over">${u-l} além do plano</span>`:disp===0?`<span class="st-full">Limite do mês atingido</span>`:`<span class="st-ok">${disp} ${disp>1?"disponíveis":"disponível"}</span>`}</p>
-          <p class="note">${pl} no calendário${a?` · ${a} ${a>1?"pedidos":"pedido"} em aberto`:""}</p></div></article>`}).join("");
-    const extras=ped.filter(x=>x.extra).length, feitos=ped.filter(x=>x.status==="concluido").length, prod=ped.filter(x=>x.status==="producao").length, rec=ped.filter(x=>x.status==="recebido").length;
-    const pc=tl?Math.round(tu/tl*100):0;
-    $("#plano-dash").innerHTML=`<section class="plano-hero">
-        <div><span class="eyebrow">Seu plano</span><h2>${esc(c.plano_nome||"Plano mensal")}</h2>
-          <p class="intro">${cur.titulo?esc(cur.titulo):"Mês atual"}${cur.inicio?` · ${dataBR(cur.inicio)} a ${dataBR(cur.fim)}`:""}</p></div>
-        <div class="plano-total"><div class="bar"><i style="width:${pc}%"></i></div><p><b>${tu}</b> de <b>${tl}</b> conteúdos do pacote usados · <b>${Math.max(0,tl-tu)}</b> ainda disponíveis</p></div>
-      </section>
-      <div class="plano-grid">${cards}</div>
-      <div class="kpis kpis-mini plano-ped">
-        <div class="kpi"><span class="kpi-t">Pedidos recebidos</span><span class="kpi-v">${rec}</span><span class="kpi-s">aguardando a equipe</span></div>
-        <div class="kpi"><span class="kpi-t">Em produção</span><span class="kpi-v">${prod}</span><span class="kpi-s">sendo feitos agora</span></div>
-        <div class="kpi"><span class="kpi-t">Concluídos</span><span class="kpi-v">${feitos}</span><span class="kpi-s">neste mês</span></div>
-        <div class="kpi${extras?" alerta":""}"><span class="kpi-t">Extras</span><span class="kpi-v">${extras}</span><span class="kpi-s">${extras?"cobrados à parte":"nada além do plano"}</span></div>
-      </div>
-      <p class="note">Conta o que já está no calendário do mês e os pedidos em aberto (recebidos e em produção). ${c.regra_extra?"Pedidos além do plano: "+esc(c.regra_extra)+".":"Pedidos além do plano são cobrados à parte."} <button type="button" class="btn small ghost" data-ir-tab="pedidos">Fazer um pedido</button></p>`;
-  }
-  document.addEventListener("click",e=>{const b=e.target.closest("[data-ir-tab]");if(b){const t=$("#tab-"+b.dataset.irTab);t&&t.click()}});
-
-  /* ---------- investimento: dashboard ao vivo ---------- */
-  let invTimer=null, invMeses=null;
-  async function atualizarInvestimento(){
-    if(!dados||!dados.ciclo||!sb)return;
-    const pedido=dados.ciclo.id;
-    const {data,error}=await sb.rpc("portal_investimento",{...P(),p_ciclo:pedido});
-    if(error||!data||!dados||!dados.ciclo||dados.ciclo.id!==pedido)return;
-    if(data.ciclo===pedido){dados.anuncios=data.rows||[]}
-    invMeses=data.meses||[];await carregarVerba(true);renderAnuncios();novidadesRender();renderInicio();
-  }
-  function cicloInvestimento(){clearInterval(invTimer);invTimer=setInterval(()=>{if(!document.hidden&&$("#tab-anuncios").getAttribute("aria-selected")==="true")atualizarInvestimento()},60000)}
-  cicloInvestimento();
-  document.addEventListener("visibilitychange",()=>{if(!document.hidden&&dados&&$("#tab-anuncios").getAttribute("aria-selected")==="true")atualizarInvestimento()});
-
-  /* ---------- relatório do mês (ao vivo) ---------- */
-  async function carregarRelatorio(){
-    if(!dados||!dados.ciclo)return;
-    const pedido=dados.ciclo.id;
-    const {data,error}=await sb.rpc("portal_relatorio",{...P(),p_ciclo:pedido});
-    if(!dados||!dados.ciclo||dados.ciclo.id!==pedido)return; // trocou de mês no meio
-    const tab=$("#tab-relatorio");
-    if(error||!data){tab.hidden=true;if(tab.getAttribute("aria-selected")==="true")$("#tab-aprovar").click();return}
-    tab.hidden=false;
-    const D=window.GlaraRelatorio.doPortal(data);D.verba=verba;$("#rel-box").innerHTML=window.GlaraRelatorio.html(D,{marca:cfg.marca,plataforma:cfg.plataforma,portal:true});
-    $("#rel-pdf").href="relatorio.html?ciclo="+encodeURIComponent(pedido)+(modo==="link"?"&c="+encodeURIComponent(token):"&cliente="+encodeURIComponent(clienteId));
-  }
-
-  /* ---------- contrato e documentos ---------- */
-  let docs=[];
-  const tamanho=b=>!b?"":b<1048576?Math.max(1,Math.round(b/1024))+" KB":(b/1048576).toLocaleString("pt-BR",{maximumFractionDigits:1})+" MB";
-  const dataBR=iso=>{if(!iso)return"";const [y,m,d]=String(iso).slice(0,10).split("-");return d+"/"+m+"/"+y};
-  async function carregarDocumentos(){
-    const [{data,error},pr]=await Promise.all([sb.rpc("portal_documentos",P()),Promise.resolve().then(()=>sb.rpc("portal_propostas",P())).catch(()=>({data:null}))]);
-    const tab=$("#tab-contrato"), props=pr&&!pr.error&&Array.isArray(pr.data)?pr.data:[];
-    docs=error||!data?[]:data;tab.hidden=!docs.length&&!props.length;
-    if(!docs.length&&!props.length){if(tab.getAttribute("aria-selected")==="true")$("#tab-aprovar").click();return}
-    const logado=modo==="login";
-    const propHTML=props.map(x=>`<div class="doc"><span class="doc-ico" aria-hidden="true">${x.status==="aprovado"?"✓":"R$"}</span>
-        <span class="doc-info"><b>Proposta Nº ${String(x.numero||0).padStart(4,"0")}${x.titulo?" · "+esc(x.titulo):""}</b><small>${x.status==="aprovado"&&x.assinado_em?"Assinada online em "+new Date(x.assinado_em).toLocaleDateString("pt-BR"):"Aguardando sua assinatura"} · ${Number(x.total||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}</small></span>
-        <span class="actions"><a class="btn small ${x.status==="aprovado"?"outline":"primary"}" href="proposta.html?t=${esc(x.token)}" target="_blank" rel="noopener">${x.status==="aprovado"?"Ver comprovante":"Ver e assinar"}</a></span></div>`).join("");
-    $("#docs").innerHTML=propHTML+docs.map(d=>{const ext=((d.nome_arquivo||"").split(".").pop()||"").slice(0,4).toUpperCase()||"DOC";
-      return `<div class="doc"><span class="doc-ico" aria-hidden="true">${esc(ext)}</span>
-        <span class="doc-info"><b>${esc(d.titulo)}</b><small>${d.assinado_em?"Assinado em "+dataBR(d.assinado_em)+" · ":""}${esc(d.nome_arquivo)}${d.tamanho?" · "+tamanho(d.tamanho):""}</small></span>
-        ${logado?`<span class="actions"><button class="btn small outline" data-doc="abrir" data-id="${d.id}">Abrir</button><button class="btn small primary" data-doc="baixar" data-id="${d.id}">Baixar</button></span>`:""}</div>`}).join("");
-    $("#docs-note").innerHTML=logado||!docs.length?"":`Por segurança, os documentos só abrem para quem entra com e-mail e senha. <a href="${esc(base())}">Entrar com e-mail e senha</a>.`;
-  }
-  document.addEventListener("click",async e=>{
-    const b=e.target.closest("[data-doc]");if(!b)return;
-    const d=docs.find(x=>x.id===b.dataset.id);if(!d)return;
-    const baixar=b.dataset.doc==="baixar", janela=baixar?null:window.open("","_blank");
-    $("#docs-note").textContent="Abrindo…";
-    const {data,error}=await sb.storage.from("documentos").createSignedUrl(d.caminho,600,baixar?{download:d.nome_arquivo||true}:undefined);
-    if(error||!data){janela&&janela.close();$("#docs-note").textContent="Não deu para abrir agora. Entre de novo e tente outra vez.";return}
-    $("#docs-note").textContent="";
-    if(janela)janela.location.href=data.signedUrl;else{const a=document.createElement("a");a.href=data.signedUrl;a.download=d.nome_arquivo||"";document.body.appendChild(a);a.click();a.remove()}
-  });
-  /* ---------- verba dos anúncios (saldo, campanhas, adicionar verba) ---------- */
-  let verba=null, verbaValor=null;
-  async function carregarVerba(sem){
-    if(!sb)return;let r;try{r=await sb.rpc("portal_verba",P())}catch(e){r={error:e}}
-    verba=r&&!r.error&&r.data&&r.data.ativa?r.data:null;
-    if(!sem&&dados)renderAnuncios();
-  }
-  function renderVerba(){const box=$("#verba-box");if(!box)return;
-    box.hidden=!verba;if(!verba){box.innerHTML="";return}
-    box.innerHTML=window.GlaraAnuncios.verbaHTML(verba,{portal:true});
-    if(verbaValor){const b=box.querySelector(`[data-verba="v"][data-v="${verbaValor}"]`);b&&b.setAttribute("aria-pressed","true")}}
-  document.addEventListener("click",async e=>{const b=e.target.closest("[data-verba]");if(!b)return;
-    const inp=$("#vb-valor");
-    if(b.dataset.verba==="v"){verbaValor=+b.dataset.v;if(inp)inp.value="";document.querySelectorAll('[data-verba="v"]').forEach(x=>x.setAttribute("aria-pressed",String(x===b)));return}
-    if(b.dataset.verba==="pedir"){
-      const v=inp&&inp.value.trim()?window.GlaraAnuncios.parseMoeda(inp.value):verbaValor;
-      if(!v||v<20){toastPed("Escolha ou digite um valor de pelo menos R$ 20.");return}
-      b.disabled=true;b.textContent="Gerando…";
-      const {data,error}=await sb.rpc("portal_verba_pedir",{...P(),p_valor:v});
-      if(error||!data||!data.token){b.disabled=false;b.textContent="Gerar pagamento";toastPed("Não deu para gerar agora. Tente de novo em instantes.");return}
-      location.href="pagar.html?t="+encodeURIComponent(data.token)}});
-  function renderAnuncios(){
-    const rows=dados.anuncios||[], tab=$("#tab-anuncios");tab.hidden=!rows.length&&!verba;
-    renderVerba();
-    if(!rows.length&&!verba){if(tab.getAttribute("aria-selected")==="true")$("#tab-aprovar").click();return}
-    window.GlaraAnuncios.montar($("#ads-box"),rows,{admin:false,ao_vivo:true,meses:invMeses,arquivo:"investimento_"+slug((dados.cliente||{}).nome||"cliente")});
-  }
-  /* ---------- pedidos ---------- */
-  const TIPOS={"Carrossel":"Carrosséis","Estático":"Estáticos","Reels":"Reels","Stories":"Sequências de Stories"};
-  const ST={recebido:["Recebido","pend"],producao:["Em produção","prod"],aprovacao:["Aguardando sua aprovação","pend"],alteracao:["Em alteração","prod"],concluido:["Concluído","ok"],recusado:["Não aceito","adj"]};
-  const limiteDe=t=>{const l=(dados.cliente||{}).limites||{};return typeof l[t]==="number"?l[t]:null};
-  const usoDe=t=>((dados.uso||{})[t])||0;
-  function renderPlano(){
-    const c=dados.cliente||{}, tipos=Object.keys(TIPOS).filter(t=>limiteDe(t)!=null);
-    $("#plano-box").innerHTML=`<div class="head-row"><h2>${esc(c.plano_nome||"Seu plano")}</h2><span class="note">Uso neste mês</span></div>`+
-      (tipos.length?`<div class="usage">${tipos.map(t=>{const u=usoDe(t),l=limiteDe(t),pc=l>0?Math.min(100,u/l*100):100,cheio=u>=l;
-        return `<div class="use"><div class="use-top"><span>${TIPOS[t]}</span><b>${u} de ${l}</b></div><div class="bar"><i style="width:${pc}%" class="${cheio?"full":""}"></i></div>${u>l?`<span class="use-msg">${u-l} além do plano</span>`:cheio?`<span class="use-msg">Limite do mês atingido</span>`:""}</div>`}).join("")}</div>
-        <p class="note">Conta o que já está planejado no mês e os pedidos em aberto. Pedidos além do plano${c.regra_extra?": "+esc(c.regra_extra):" são cobrados à parte"}.</p>`
-      :`<p class="note">Os limites do seu plano ainda não foram cadastrados.</p>`);
-  }
-  function avisoPedido(){
-    const t=$("#pd-tipo").value, c=dados.cliente||{}, l=limiteDe(t), u=usoDe(t);
-    let msg="";
-    if(t==="Outro")msg="Pedidos fora dos formatos do plano são orçados e cobrados à parte.";
-    else if(l!=null&&u+1>l)msg=`Você já usou ${u} de ${l} ${TIPOS[t].toLowerCase()} do seu plano neste mês. Este pedido passa do pacote e será cobrado à parte.`;
-    if(msg&&c.regra_extra)msg+=" "+c.regra_extra+".";
-    $("#pd-aviso").textContent=msg;$("#pd-aviso").hidden=!msg;$("#pd-ciente-box").hidden=!msg;if(!msg)$("#pd-ciente").checked=false;
-    $("#pd-enviar").textContent=msg?"Enviar pedido extra":"Enviar pedido";
-    return !!msg;
-  }
-  // progresso do pedido: etapas do checklist quando houver; senão, pela situação
-  function progressoPed(x){const l=x.checklist||[],f=l.filter(i=>i.ok).length;
-    if(x.status==="concluido")return 100;if(x.status==="recusado")return 0;if(x.status==="aprovacao")return 90;
-    if(x.status==="alteracao")return l.length?Math.max(60,Math.min(85,Math.round(f/l.length*100))):70;
-    if(l.length)return Math.max(x.status==="producao"?20:5,Math.min(85,Math.round(f/l.length*100)));
-    return x.status==="producao"?50:10}
-  function andamentoHTML(x){const l=x.checklist||[],f=l.filter(i=>i.ok).length,pc=progressoPed(x),rec=x.status==="recusado";
-    const s=x.status, ordem={recebido:0,producao:1,alteracao:1,aprovacao:2,concluido:3}[s]??0;
-    const passos=[["Enviado",ordem>=0,ordem===0],["Em produção",ordem>=1,ordem===1],["Sua aprovação",ordem>=2,ordem===2],["Concluído",ordem>=3,ordem===3]];
-    const msg=rec?"Este pedido não foi aceito. Veja a resposta da equipe.":s==="concluido"?"Pronto! Seu pedido foi concluído."+(x.aprovado_cliente_em?" Obrigado por aprovar.":"")
-      :s==="aprovacao"?"Está pronto para você ver! Confira e aprove ou peça alteração aqui embaixo."
-      :s==="alteracao"?"Recebemos seu pedido de alteração. Estamos ajustando e logo mandamos de novo para você aprovar."
-      :s==="producao"?(l.length?`Estamos produzindo: ${f} de ${l.length} etapas feitas.`:"Estamos produzindo o seu pedido."):"Recebemos seu pedido. Em breve ele entra em produção.";
-    return `<div class="ped-prog${rec?" rec":""}" data-etapa="${s}" role="group" aria-label="Progresso do pedido">
-      <div class="ped-prog-top"><span class="label" style="margin:0">Progresso</span><b class="ped-pc">${rec?"–":pc+"%"}</b></div>
-      <div class="bar ped-bar${window.GlaraAnel&&!rec?" bar-apple":""}" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pc}"><i style="width:${pc}%;${window.GlaraAnel?window.GlaraAnel.barraCores(pc/100):""}" class="${pc===100?"full-ok":""}"></i></div>
-      ${rec?"":`<ol class="ped-passos">${passos.map(([t,feito,atual])=>`<li class="${feito?"ok":""}${atual?" atual":""}">${t}</li>`).join("")}</ol>`}
-      <p class="ped-msg">${msg}</p>
-      ${s==="alteracao"&&x.alteracao_pedida?`<p class="ped-alt-cli">Você pediu: <q>${esc(x.alteracao_pedida)}</q></p>`:""}
-      ${s==="aprovacao"?respostaPedHTML(x):""}
-      ${l.length?`<details class="ped-etapas"${x.status==="producao"?" open":""}><summary>Etapas (${f} de ${l.length})</summary><ol class="ck-steps">${l.map(i=>`<li class="${i.ok?"ok":""}">${esc(i.t)}</li>`).join("")}</ol></details>`:""}
-    </div>`}
-  const pedResp={};
-  function respostaPedHTML(x){const r=pedResp[x.id]||{};
-    if(r.alterando)return `<form class="ped-resp" data-ped-resp="${x.id}">
-        <label class="label" for="pr-${x.id}">O que você quer mudar?</label>
-        <textarea id="pr-${x.id}" rows="3" maxlength="4000" placeholder="Ex.: Trocar a música e deixar o texto final maior.">${esc(r.texto||"")}</textarea>
-        <div class="actions"><button type="submit" class="btn primary small">Enviar alteração</button><button type="button" class="btn ghost small" data-ped-acao="cancelar" data-id="${x.id}">Voltar</button></div></form>`;
-    return `<div class="ped-resp"><div class="actions"><button type="button" class="btn primary" data-ped-acao="aprovar" data-id="${x.id}" ${r.enviando?"disabled":""}>${r.enviando?"Enviando…":"Aprovar entrega"}</button><button type="button" class="btn outline" data-ped-acao="alterar" data-id="${x.id}">Pedir alteração</button></div></div>`}
-  async function responderPed(id,decisao,comentario){
-    pedResp[id]={...(pedResp[id]||{}),enviando:true};renderPedidos();
-    const {data,error}=await sb.rpc("portal_pedido_responder",{...P(),p_pedido:id,p_decisao:decisao,p_comentario:comentario||"",p_nome:store.get("glara_nome")||""});
-    delete pedResp[id];
-    if(error){const m=error.message||"";toastPed(/fora_de_aprovacao/.test(m)?"Este pedido já foi respondido. Recarregue a página.":"Não deu para enviar agora. Tente de novo.",false);renderPedidos();return}
-    const i=(dados.pedidos||[]).findIndex(p=>p.id===id);if(i>=0)dados.pedidos[i]={...dados.pedidos[i],...data};
-    renderPedidosTudo();renderInicio();
-    toastPed(decisao==="aprovar"?"Pedido aprovado! Obrigado.":"Alteração enviada para a equipe.",true);
-  }
-  function toastPed(msg,ok){let t=document.getElementById("ped-toast");if(!t){document.body.insertAdjacentHTML("beforeend",'<div id="ped-toast" class="ped-toast" role="status" aria-live="polite"></div>');t=document.getElementById("ped-toast")}
-    t.className="ped-toast"+(ok?" ok":"");t.innerHTML=`${ok?'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>':""}<span>${esc(msg)}</span>`;
-    t.classList.add("on");clearTimeout(toastPed.t);toastPed.t=setTimeout(()=>t.classList.remove("on"),4200)}
-  document.addEventListener("click",e=>{const b=e.target.closest("[data-ped-acao]");if(!b)return;const id=b.dataset.id,a=b.dataset.pedAcao;
-    if(a==="aprovar"){responderPed(id,"aprovar");return}
-    if(a==="alterar"){pedResp[id]={alterando:true};renderPedidos();setTimeout(()=>{const t=document.getElementById("pr-"+id);t&&t.focus()},30);return}
-    if(a==="cancelar"){delete pedResp[id];renderPedidos();return}});
-  document.addEventListener("submit",e=>{const f=e.target.closest("[data-ped-resp]");if(!f)return;e.preventDefault();const id=f.dataset.pedResp,t=f.querySelector("textarea").value.trim();
-    if(!t){f.querySelector("textarea").focus();toastPed("Escreva o que você quer mudar.",false);return}responderPed(id,"alterar",t)});
-  let pedNovo=null;
-  function renderPedidos(){
-    const ps=dados.pedidos||[];
-    $("#pedidos-lista").innerHTML=ps.length?ps.map(x=>{const st=ST[x.status]||ST.recebido, lk=linkSeguro(x.link);
-      return `<article class="card pedido${x.id===pedNovo?" ped-novo":""}" id="ped-${x.id}">${x.id===pedNovo?'<span class="ped-novo-tag">Acabou de chegar</span>':""}
-        <div class="meta"><span class="day">${esc(x.tipo)}</span><span>Pedido em ${fmtQuando(x.criado_em)}</span>${x.prazo?`<span>Para ${fmtData(x.prazo)}</span>`:""}<span class="status ${st[1]}">${st[0]}</span>${x.extra?`<span class="sticker">Cobrado à parte</span>`:""}</div>
-        <h3>${esc(x.titulo)}</h3>
-        ${x.origem&&x.origem!=="portal"?`<p class="note" style="margin:0">Registrado pela equipe a partir de ${esc(x.origem==="Reunião"||x.origem==="Ligação"?"uma "+x.origem.toLowerCase():x.origem==="Pessoalmente"?"uma conversa pessoalmente":"uma conversa por "+x.origem)}${x.nome?" com "+esc(x.nome):""}.</p>`:""}
-        ${x.descricao?`<p class="caption" style="margin:0">${esc(x.descricao)}</p>`:""}
-        ${andamentoHTML(x)}
-        ${lk?`<p style="margin:0"><a href="${esc(lk)}" target="_blank" rel="noopener noreferrer">Abrir fotos e vídeos enviados ↗</a></p>`:""}
-        ${x.resposta?`<div class="tip"><b>Resposta:</b> ${esc(x.resposta)}</div>`:""}
-      </article>`}).join(""):`<div class="empty">Você ainda não fez pedidos.</div>`;
-
-  }
-  function renderPedidosTudo(){
-    renderPlano();renderPedidos();avisoPedido();
-    $("#mat-link").value=(dados.cliente||{}).materiais_link||"";
-    if(!$("#pd-nome").value)$("#pd-nome").value=store.get("glara_nome");
-    const hoje=new Date();$("#pd-prazo").min=hoje.toISOString().slice(0,10);
-  }
-  $("#pd-tipo").addEventListener("change",avisoPedido);
-  document.addEventListener("click",e=>{
-    if(e.target.closest("#pd-outro")){$("#pd-ok").hidden=true;$("#pedido-form").hidden=false;$("#pd-titulo").focus();return}
-    if(e.target.closest("#pd-ver")){const c=document.getElementById("ped-"+pedNovo);if(c){c.scrollIntoView({block:"center",behavior:"smooth"});c.classList.remove("piscar");void c.offsetWidth;c.classList.add("piscar")}}
-  });
-  $("#mat-salvar").addEventListener("click",async()=>{
-    const v=$("#mat-link").value.trim();
-    if(v&&!linkSeguro(v)){$("#mat-note").textContent="Cole um link completo, começando com https://";return}
-    $("#mat-note").textContent="Salvando…";
-    const {data,error}=await sb.rpc("portal_materiais",{...P(),p_link:v});
-    if(error){$("#mat-note").textContent="Não deu para salvar agora. Tente de novo.";return}
-    dados.cliente.materiais_link=data;$("#mat-note").textContent=v?"Link salvo. Obrigado!":"Link removido.";
-  });
-  $("#pedido-form").addEventListener("submit",async e=>{
-    e.preventDefault();
-    const t=$("#pd-tipo").value, titulo=$("#pd-titulo").value.trim(), link=$("#pd-link").value.trim(), extra=avisoPedido();
-    if(!titulo){$("#pd-note").textContent="Escreva o que você precisa.";$("#pd-titulo").focus();return}
-    if(link&&!linkSeguro(link)){$("#pd-note").textContent="O link precisa começar com https://";$("#pd-link").focus();return}
-    if(extra&&!$("#pd-ciente").checked){$("#pd-note").textContent="Marque que está ciente da cobrança extra para enviar.";$("#pd-ciente").focus();return}
-    const nome=$("#pd-nome").value.trim();if(nome)store.set("glara_nome",nome);
-    $("#pd-enviar").disabled=true;$("#pd-note").textContent="Enviando…";
-    const {data,error}=await sb.rpc("portal_pedir",{...P(),p_tipo:t,p_titulo:titulo,p_descricao:$("#pd-desc").value.trim(),p_prazo:$("#pd-prazo").value||null,p_link:link,p_nome:nome,p_ciente:$("#pd-ciente").checked});
-    $("#pd-enviar").disabled=false;
-    if(error){const m=error.message||"";
-      $("#pd-note").textContent=/excede_plano/.test(m)?"Este pedido passa do seu plano. Marque que está ciente da cobrança extra e envie de novo."
-        :/limite_diario/.test(m)?"Muitos pedidos hoje. Fale com a gente pelo WhatsApp."
-        :/acesso_negado/.test(m)?"Este link não está mais ativo.":"Não deu para enviar agora. Verifique a internet e tente de novo.";
-      if(/excede_plano/.test(m)){$("#pd-aviso").hidden=false;$("#pd-ciente-box").hidden=false;if(!$("#pd-aviso").textContent)$("#pd-aviso").textContent="Este pedido passa do seu plano e será cobrado à parte."}
-      return}
-    dados.pedidos=[data,...(dados.pedidos||[])];
-    if(t!=="Outro"){dados.uso=dados.uso||{};dados.uso[t]=(dados.uso[t]||0)+1}
-    e.target.reset();$("#pd-nome").value=nome;
-    pedNovo=data.id;renderPedidosTudo();renderPlanoDash();renderInicio();
-    $("#pd-note").textContent="";
-    const ok=$("#pd-ok");ok.innerHTML=`<div class="pd-ok-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
-      <div class="pd-ok-txt"><h2 tabindex="-1" id="pd-ok-t">Pedido enviado!</h2>
-        <p>Recebemos <b>“${esc(data.titulo)}”</b>${data.extra?" como pedido extra (cobrado à parte)":""}. A equipe já foi avisada.</p>
-        <ol class="ped-passos"><li class="ok atual">Enviado</li><li>Em produção</li><li>Sua aprovação</li><li>Concluído</li></ol>
-        <p class="note" style="margin:0">Situação agora: <b>Recebido</b>. A cada etapa a barra de progresso do pedido avança, aqui mesmo.</p>
-        <div class="actions"><button type="button" class="btn primary small" id="pd-ver">Ver meu pedido</button><button type="button" class="btn outline small" id="pd-outro">Fazer outro pedido</button></div></div>`;
-    toastPed("Pedido enviado! Situação: Recebido.",true);
-    ok.hidden=false;e.target.hidden=true;ok.scrollIntoView({block:"center",behavior:"smooth"});setTimeout(()=>{const h=$("#pd-ok-t");h&&h.focus({preventScroll:true})},350);
-  });
-
-  function renderResultados(){
-    const GM=window.GlaraMetricas, rs=(dados.resultados||[]).filter(GM.temNumeros), tab=$("#tab-resultados");
-    tab.hidden=!rs.length;
-    if(!rs.length){if(tab.getAttribute("aria-selected")==="true")$("#tab-aprovar").click();return}
-    const atual=rs.find(r=>r.id===dados.ciclo.id)||rs[rs.length-1];
-    $("#res-titulo").textContent=atual.titulo;
-    $("#res-mes").innerHTML=GM.cicloHTML(atual);
-    $("#res-balanco").innerHTML=GM.balancoHTML(rs);
-  }
-  $("#cycle").addEventListener("change",e=>{Object.keys(slideIdx).forEach(k=>delete slideIdx[k]);carregar(e.target.value)});
-
-  /* ---------- acesso: link secreto ou e-mail e senha ---------- */
-  const base=()=>location.origin+location.pathname;
-  let avisoLogin="";
-  const nota=m=>{$("#auth-note").textContent=m||""};
-  function tela(t,msg){
-    $("#app").hidden=true;$("#erro").hidden=modo!=="login"||$("#erro").hidden;$("#auth").hidden=false;$("#cycle-box").hidden=true;
-    document.body.classList.add("modo-auth");window.scrollTo(0,0);
-    document.querySelectorAll("#auth form").forEach(f=>f.hidden=f.dataset.tela!==t);
-    $("#titulo").innerHTML=t==="nova"||t==="trocar"?"Nova <mark>senha</mark>":"Bem-vindo ao <mark>Hub</mark>";
-    $("#intro").textContent="Entre para ver seus conteúdos, resultados e pedidos.";
-    nota(msg||avisoLogin);avisoLogin="";const f=document.querySelector(`#auth form[data-tela="${t}"] input`);if(f)setTimeout(()=>f.focus(),30);
-  }
-  document.querySelectorAll("[data-ir]").forEach(b=>b.addEventListener("click",()=>{$("#erro").hidden=true;tela(b.dataset.ir);
-    const e=$("#l-email").value||$("#p-email").value||$("#e-email").value;["#l-email","#p-email","#e-email"].forEach(x=>{if(!$(x).value)$(x).value=e})}));
-  async function entrar(){
-    const {data:{session}}=await sb.auth.getSession();if(!session){tela("login");return}
-    if(session.user&&session.user.user_metadata&&session.user.user_metadata.trocar_senha){tela("trocar");return} // senha provisória: troca obrigatória
-    $("#user-email").textContent=session.user.email;$("#userbox").hidden=false;
-    const {data:lista,error}=await sb.rpc("portal_meus_clientes");
-    if(error){tela("login","Não conseguimos conferir seu acesso agora. Tente de novo.");return}
-    if(!lista||!lista.length){tela("sem");$("#sem-msg").textContent=`O e-mail ${session.user.email} ainda não está ligado a nenhum cliente. Peça para a nossa equipe liberar seu acesso.`;return}
-    const salvo=store.get("guxta_cliente");clienteId=(lista.find(c=>c.id===salvo)||lista[0]).id;
-    const sel=$("#cliente-sel");sel.innerHTML=lista.map(c=>`<option value="${c.id}" ${c.id===clienteId?"selected":""}>${esc(c.nome)}</option>`).join("");sel.hidden=lista.length<2;
-    carregar(null);
-  }
-  function iniciarLogin(){
-    sb.auth.onAuthStateChange(ev=>{if(ev==="PASSWORD_RECOVERY")tela("nova")});
-    if(/type=recovery/.test(location.hash)){tela("nova");return}
-    entrar();
-  }
-  $("#cliente-sel").addEventListener("change",e=>{clienteId=e.target.value;store.set("guxta_cliente",clienteId);Object.keys(slideIdx).forEach(k=>delete slideIdx[k]);carregar(null)});
-  const sair=async()=>{await sb.auth.signOut();store.set("guxta_cliente","");location.href=base()};
-  $("#sair").addEventListener("click",sair);$("#sair2").addEventListener("click",sair);
-  $("#f-login").addEventListener("submit",async e=>{e.preventDefault();nota("Entrando…");
-    const {error}=await sb.auth.signInWithPassword({email:$("#l-email").value.trim(),password:$("#l-senha").value});
-    if(error){const m=String(error.message||"");nota(/not confirmed/i.test(m)?"Seu e-mail ainda não foi confirmado. Abra o e-mail de confirmação que enviamos e clique no link.":/invalid login/i.test(m)?"E-mail ou senha incorretos.":"Não deu para entrar: "+m);return}
-    nota("");entrar()});
-  $("#f-primeiro").addEventListener("submit",async e=>{e.preventDefault();
-    const email=$("#p-email").value.trim().toLowerCase(),s1=$("#p-senha").value,s2=$("#p-senha2").value;
-    if(s1.length<8){nota("A senha precisa ter pelo menos 8 caracteres.");return}
-    if(s1!==s2){nota("As duas senhas não estão iguais.");return}
-    nota("Conferindo seu e-mail…");
-    const lib=await sb.rpc("portal_email_liberado",{p_email:email});
-    if(lib.error){nota("Não deu para conferir agora. Tente de novo.");return}
-    if(!lib.data){nota("Este e-mail ainda não foi liberado. Peça para a nossa equipe cadastrar seu acesso e tente de novo.");return}
-    const {data,error}=await sb.auth.signUp({email,password:s1,options:{emailRedirectTo:base()}});
-    if(error){const m=String(error.message||"");nota(/already/i.test(m)?"Você já tem uma senha. Use “Já tenho senha” ou “Esqueci minha senha”.":"Não deu para criar a senha: "+m);return}
-    if(data&&data.session){entrar();return}
-    tela("login",`Pronto! Enviamos um e-mail de confirmação para ${email}. Clique no link do e-mail e depois entre com sua senha.`);$("#l-email").value=email});
-  $("#f-esqueci").addEventListener("submit",async e=>{e.preventDefault();nota("Enviando…");
-    const {error}=await sb.auth.resetPasswordForEmail($("#e-email").value.trim(),{redirectTo:base()});
-    nota(error&&/rate|limit/i.test(error.message||"")?"Muitos pedidos seguidos. Espere alguns minutos e tente de novo.":"Se este e-mail tiver acesso, você vai receber um link para criar a senha nova. Confira também a caixa de spam.")});
-  $("#f-trocar").addEventListener("submit",async e=>{e.preventDefault();
-    const s1=$("#t-senha").value,s2=$("#t-senha2").value;
-    if(s1.length<8){nota("A senha precisa ter pelo menos 8 caracteres.");return}
-    if(s1!==s2){nota("As duas senhas não estão iguais.");return}
-    if($("#l-senha").value&&s1===$("#l-senha").value){nota("Escolha uma senha diferente da provisória.");return}
-    nota("Salvando…");
-    const {error}=await sb.auth.updateUser({password:s1,data:{trocar_senha:false}});
-    if(error){nota("Não deu para salvar: "+(error.message||"tente de novo."));return}
-    try{await sb.rpc("portal_senha_definida")}catch(_){}
-    await sb.auth.refreshSession().catch(()=>{});
-    $("#l-senha").value="";nota("Senha criada! Use ela nos próximos acessos.");entrar()});
-  $("#f-nova").addEventListener("submit",async e=>{e.preventDefault();
-    const s1=$("#n-senha").value,s2=$("#n-senha2").value;
-    if(s1.length<8){nota("A senha precisa ter pelo menos 8 caracteres.");return}
-    if(s1!==s2){nota("As duas senhas não estão iguais.");return}
-    const {error}=await sb.auth.updateUser({password:s1,data:{trocar_senha:false}});
-    if(error){nota("Não deu para salvar: "+(error.message||"")+". Peça um link novo em “Esqueci minha senha”.");return}
-    try{await sb.rpc("portal_senha_definida")}catch(_){}
-    history.replaceState(null,"",base());nota("Senha nova salva!");entrar()});
-
-  {const M=cfg.marca||"GUXTA",PL=cfg.plataforma||"Hub de Marketing";$("#auth-marca").textContent=M;document.querySelector(".auth .plat").textContent=PL;
-   $("#auth-assina").textContent=M+" · "+PL;$("#auth-rodape").textContent="© "+new Date().getFullYear()+" "+M+" · "+PL;}
-  if(!window.supabase||!cfg.supabaseUrl||/SEU-PROJETO/.test(cfg.supabaseUrl)){erro("O site ainda não foi configurado.");return}
-  sb=window.supabase.createClient(urlSupabase(cfg.supabaseUrl),String(cfg.supabaseAnonKey||"").trim(),
-    {auth:{persistSession:modo==="login",storageKey:"guxta-cliente",detectSessionInUrl:modo==="login",autoRefreshToken:modo==="login"}});
-  $("#nome").value=store.get("glara_nome");
-  if(modo==="link")carregar(null);else iniciarLogin();
-})();
+let state = {
+theme: localStorage.getItem('theme') || 'light',
+projects: [{name: 'Redesign E-commerce', client: 'TechCorp', status: 'Em Andamento', value: 28500}],
+finance: [{desc: 'Mensalidade Projeto', type: 'Entrada', date: '2026-11-02', value: 14250}],
+kanban: [{title: 'Configurar Deploy GitHub', column: 'todo'}]
+};
+window.addEventListener('DOMContentLoaded', () => {
+applyTheme(state.theme);
+renderProjects();
+renderFinance();
+renderKanban();
+lucide.createIcons();
+});
+function toggleTheme() {
+state.theme = state.theme === 'light' ? 'dark' : 'light';
+localStorage.setItem('theme', state.theme);
+applyTheme(state.theme);
+}
+function applyTheme(theme) {
+const html = document.documentElement;
+if (theme === 'dark') {
+html.classList.add('dark');
+document.getElementById('themeIconSun').classList.remove('hidden');
+document.getElementById('themeIconMoon').classList.add('hidden');
+} else {
+html.classList.remove('dark');
+document.getElementById('themeIconSun').classList.add('hidden');
+document.getElementById('themeIconMoon').classList.remove('hidden');
+}
+}
+function switchTab(tabId) {
+document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+document.getElementById(⁠tab-${tabId}⁠).classList.remove('hidden');
+}
+function renderProjects() {
+const tbody = document.getElementById('projectsTableBody');
+tbody.innerHTML = state.projects.map(p => ⁠<tr class="hover:bg-gray-50 dark:hover:bg-zinc-800/50"> <td class="p-3 font-semibold">${p.name}</td> <td class="p-3 text-gray-500">${p.client}</td> <td class="p-3"><span class="badge-custom">${p.status}</span></td> <td class="p-3 font-mono">R$ ${p.value.toLocaleString('pt-BR')}</td> </tr>⁠).join('');
+}
+function renderFinance() {
+const tbody = document.getElementById('financeTableBody');
+tbody.innerHTML = state.finance.map(f => ⁠<tr class="hover:bg-gray-50 dark:hover:bg-zinc-800/50"> <td class="p-3">${f.desc}</td> <td class="p-3 text-notion-blue font-semibold">${f.type}</td> <td class="p-3 text-gray-500">${f.date}</td> <td class="p-3 font-mono">R$ ${f.value.toLocaleString('pt-BR')}</td> </tr>⁠).join('');
+}
+function renderKanban() {
+['todo', 'progress', 'done'].forEach(col => {
+const container = document.getElementById(⁠col-${col}⁠);
+container.innerHTML = state.kanban.filter(t => t.column === col).map(t => ⁠<div class="p-2.5 rounded bg-[var(--bg-card)] border border-[var(--border-subtle)] text-xs font-medium"> ${t.title} </div>⁠).join('');
+});
+}
+function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+function saveProject(e) {
+e.preventDefault();
+state.projects.push({
+name: document.getElementById('projName').value,
+client: document.getElementById('projClient').value,
+status: 'Em Andamento',
+value: parseFloat(document.getElementById('projValue').value) || 0
+});
+renderProjects();
+closeModal('projectModal');
+}
 </script>
 </body>
 </html>
