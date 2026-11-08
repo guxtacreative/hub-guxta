@@ -353,20 +353,20 @@ document.getElementById('themeIconMoon').classList.remove('hidden');
 }
 function switchTab(tabId) {
 document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-document.getElementById(⁠tab-${tabId}⁠).classList.remove('hidden');
+document.getElementById(`tab-${tabId}`).classList.remove('hidden');
 }
 function renderProjects() {
 const tbody = document.getElementById('projectsTableBody');
-tbody.innerHTML = state.projects.map(p => ⁠<tr class="hover:bg-gray-50 dark:hover:bg-zinc-800/50"> <td class="p-3 font-semibold">${p.name}</td> <td class="p-3 text-gray-500">${p.client}</td> <td class="p-3"><span class="badge-custom">${p.status}</span></td> <td class="p-3 font-mono">R$ ${p.value.toLocaleString('pt-BR')}</td> </tr>⁠).join('');
+tbody.innerHTML = state.projects.map(p => `<tr class="hover:bg-gray-50 dark:hover:bg-zinc-800/50"> <td class="p-3 font-semibold">${p.name}</td> <td class="p-3 text-gray-500">${p.client}</td> <td class="p-3"><span class="badge-custom">${p.status}</span></td> <td class="p-3 font-mono">R$ ${p.value.toLocaleString('pt-BR')}</td> </tr>`).join('');
 }
 function renderFinance() {
 const tbody = document.getElementById('financeTableBody');
-tbody.innerHTML = state.finance.map(f => ⁠<tr class="hover:bg-gray-50 dark:hover:bg-zinc-800/50"> <td class="p-3">${f.desc}</td> <td class="p-3 text-notion-blue font-semibold">${f.type}</td> <td class="p-3 text-gray-500">${f.date}</td> <td class="p-3 font-mono">R$ ${f.value.toLocaleString('pt-BR')}</td> </tr>⁠).join('');
+tbody.innerHTML = state.finance.map(f => `<tr class="hover:bg-gray-50 dark:hover:bg-zinc-800/50"> <td class="p-3">${f.desc}</td> <td class="p-3 text-notion-blue font-semibold">${f.type}</td> <td class="p-3 text-gray-500">${f.date}</td> <td class="p-3 font-mono">R$ ${f.value.toLocaleString('pt-BR')}</td> </tr>`).join('');
 }
 function renderKanban() {
 ['todo', 'progress', 'done'].forEach(col => {
-const container = document.getElementById(⁠col-${col}⁠);
-container.innerHTML = state.kanban.filter(t => t.column === col).map(t => ⁠<div class="p-2.5 rounded bg-[var(--bg-card)] border border-[var(--border-subtle)] text-xs font-medium"> ${t.title} </div>⁠).join('');
+const container = document.getElementById(`col-${col}`);
+container.innerHTML = state.kanban.filter(t => t.column === col).map(t => `<div class="p-2.5 rounded bg-[var(--bg-card)] border border-[var(--border-subtle)] text-xs font-medium"> ${t.title} </div>`).join('');
 });
 }
 function openModal(id) { document.getElementById(id).classList.remove('hidden'); }

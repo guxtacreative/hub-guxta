@@ -110,7 +110,7 @@
   }
 
   function montar(D){
-    if(/^#[0-9a-f]{6}$/i.test(D.cliente.cor_destaque||"")&&!["#E10600","#EE2B37","#E50914","#C0703A","#3D4BFF","#0F8A4A","#0866FF","#1877F2"].includes(String(D.cliente.cor_destaque).toUpperCase()))document.documentElement.style.setProperty("--accent",D.cliente.cor_destaque);
+    if(/^#[0-9a-f]{6}$/i.test(D.cliente.cor_destaque||"")&&!["#2383E2","#2383E2","#2383E2","#C0703A","#3D4BFF","#0F8A4A","#0866FF","#1877F2"].includes(String(D.cliente.cor_destaque).toUpperCase()))document.documentElement.style.setProperty("--accent",D.cliente.cor_destaque);
     document.title=`Relatório ${D.cliente.nome} · ${D.ciclo.titulo}`;
     $("#rel").innerHTML=window.GlaraRelatorio.html(D,{marca:MARCA,plataforma:cfg.plataforma});
     $("#rel").hidden=false;$("#pdf").disabled=false;
