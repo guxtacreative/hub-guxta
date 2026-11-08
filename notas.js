@@ -1,7 +1,7 @@
 /* Hub de Marketing · Notas por cliente e modelos de checklist (só o administrador vê). */
 (function(){
   const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  const CORES={amarelo:"#FFF4B8",rosa:"#FFD9E2",azul:"#D6E9FF",verde:"#D8F5D0",lilas:"#E9DDFF",cinza:"#EEEEEE"};
+  const CORES={amarelo:"#FFF4B8",rosa:"#E9F3FC",azul:"#D6E9FF",verde:"#D8F5D0",lilas:"#E9DDFF",cinza:"#EEEEEE"};
   const quando=iso=>{if(!iso)return"";const d=new Date(iso),h=new Date();const ms=h-d;if(ms<36e5)return "agora há pouco";if(d.toDateString()===h.toDateString())return "hoje";const o=new Date(h);o.setDate(o.getDate()-1);if(d.toDateString()===o.toDateString())return "ontem";return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})};
   const linkar=t=>esc(t).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>');
 

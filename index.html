@@ -582,7 +582,7 @@
   document.addEventListener("keydown",e=>{if(e.key==="Escape")fecharSino()});
 
   /* ---------- painel do plano ---------- */
-  function anel(u,l){if(window.GlaraAnel)return window.GlaraAnel.progresso({pct:l>0?u/l:1,cor:u>l?"#FF3B30":u>=l?"#FF9500":"var",w:16});const r=42,C=2*Math.PI*r,pc=l>0?Math.min(1,u/l):1,cls=u>l?"over":u>=l?"full":"";
+  function anel(u,l){if(window.GlaraAnel)return window.GlaraAnel.progresso({pct:l>0?u/l:1,cor:u>l?"#0075DE":u>=l?"#FF9500":"var",w:16});const r=42,C=2*Math.PI*r,pc=l>0?Math.min(1,u/l):1,cls=u>l?"over":u>=l?"full":"";
     return `<svg class="anel ${cls}" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="${r}" class="anel-bg"/><circle cx="50" cy="50" r="${r}" class="anel-fg" stroke-dasharray="${(C*pc).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 50 50)"/></svg>`}
   function renderPlanoDash(){
     const c=dados.cliente||{}, lim=c.limites||{}, tipos=Object.keys(TIPOS).filter(t=>typeof lim[t]==="number"), tab=$("#tab-plano");
