@@ -1,0 +1,60 @@
+/* =====================================================================
+   Hub de Marketing · visual Notion
+   Off-white (claro, padrão) e preto grafite (escuro), com botões azuis.
+   Carregue por último, depois de tema-claro/tema-escuro/componentes/leve.
+   Os alertas (--alerta) continuam vermelhos de propósito.
+   ===================================================================== */
+
+/* ---------- tema claro (off-white) ---------- */
+:root{
+  --bg:#F7F6F3; --surface:#FFFFFF; --soft:#F1F1EF; --line:#E9E9E7; --ch-bar:#D3D1CB;
+  --ink:#37352F; --muted:#787774;
+  --navy:#191919; --navy-2:#2F3437; --chumbo:#191919; --brand:#191919; --on-brand:#FFFFFF;
+  --accent:#2383E2; --accent-dark:#1B6EC2; --accent-2:#4A9BEA;
+  --accent-soft:#E7F3FD; --accent-soft2:#BFDDF7; --rosa:#E7F3FD; --warn-bg:#FFF3E6;
+  --verde-cta:#2383E2; --verde-cta-2:#1B6EC2;
+  --grad:linear-gradient(135deg,#2383E2 0%,#1B6EC2 100%);
+  --grad-hero:linear-gradient(135deg,#2F3437 0%,#191919 100%);
+  --sombra:0 1px 2px rgba(0,0,0,.05),0 8px 24px -18px rgba(0,0,0,.25);
+}
+body{background:var(--bg);color:var(--ink)}
+body.modo-auth{background:var(--bg)}
+
+/* ---------- tema escuro (grafite) ---------- */
+html[data-tema="escuro"]{
+  --bg:#191919; --surface:#202020; --surface-2:#2A2A2A; --soft:#252525; --line:#333333; --ch-bar:#3A3A3A;
+  --ink:#EBEBEA; --muted:#9B9A97;
+  --navy:#EBEBEA; --navy-2:#2F3437; --chumbo:#EBEBEA; --brand:#EBEBEA; --on-brand:#191919;
+  --accent:#5AA8F0; --accent-dark:#3B8ED8; --accent-2:#7DBBF5;
+  --accent-soft:rgba(90,168,240,.16); --accent-soft2:rgba(90,168,240,.3); --rosa:rgba(90,168,240,.14);
+  --verde-cta:#2383E2; --verde-cta-2:#1B6EC2;
+  --grad:linear-gradient(135deg,#2383E2 0%,#1B6EC2 100%);
+  --grad-hero:linear-gradient(135deg,#2B2B2B 0%,#121212 100%);
+  --sombra:none;
+}
+html[data-tema="escuro"] body{background:var(--bg);color:var(--ink)}
+html[data-tema="escuro"] body.modo-auth{background:var(--bg)}
+
+/* ---------- herói: graphite, sem brilho vermelho ---------- */
+.hero{background:var(--grad-hero)!important;box-shadow:0 30px 60px -36px rgba(0,0,0,.45)!important}
+.hero::before,.hero::after{background:radial-gradient(circle at 34% 34%,rgba(255,255,255,.12) 0%,rgba(255,255,255,0) 62%)!important;box-shadow:none!important;filter:none!important}
+
+/* ---------- botões azuis ---------- */
+.btn.primary,
+html[data-tema="escuro"] .btn.primary{background:#2383E2!important;border-color:#2383E2!important;color:#FFFFFF!important;box-shadow:none!important}
+.btn.primary:hover,
+html[data-tema="escuro"] .btn.primary:hover{background:#1B6EC2!important;border-color:#1B6EC2!important;box-shadow:none!important}
+.btn.outline:hover,.btn.ghost,.btn.ghost:hover{color:#2383E2}
+.btn.outline:hover{border-color:#2383E2}
+html[data-tema="escuro"] .btn.ghost{color:#5AA8F0}
+
+/* ---------- foco, progresso, destaques ---------- */
+input:focus,select:focus,textarea:focus{border-color:#2383E2!important;box-shadow:0 0 0 3px rgba(35,131,226,.22)!important}
+.eyebrow::before{background:#2383E2!important;box-shadow:0 0 0 4px rgba(35,131,226,.16)!important}
+.topo-progresso i{background:#2383E2!important}
+.kpi.destaque{border-color:rgba(35,131,226,.55)!important;box-shadow:inset 0 0 0 1px rgba(35,131,226,.25)!important}
+.aspas figcaption{background:var(--grad-hero)!important}
+.pl-selo,.lj-portal-f i,.tk-cli-av,.op-av,.side-av,.md-n,.clg-av{background:#2383E2!important}
+
+/* ---------- escuro: fundo de páginas que tinham vermelho ---------- */
+html[data-tema="escuro"] #app{background:#161616!important;border-color:#262626!important}
