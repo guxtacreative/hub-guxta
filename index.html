@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="tema-escuro.css">
 <link rel="stylesheet" href="componentes.css">
 <link rel="stylesheet" href="leve.css">
-<link rel="stylesheet" href="notion.css">
+<link rel="stylesheet" href="ajustes.css">
 <script src="tema.js"></script>
 <style>
   .toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
@@ -34,7 +34,7 @@
   .auth .links .btn{font-size:13px;color:var(--muted)}
   .auth .intro{font-size:14px}
   .auth-note{min-height:0;text-align:right}
-  .aspas{margin:22px 0 0;background:#FFFFFF;border-radius:22px;box-shadow:0 1px 2px rgba(14,17,48,.04),0 10px 30px rgba(0,117,222,.08);overflow:hidden}
+  .aspas{margin:22px 0 0;background:#FFFFFF;border-radius:22px;box-shadow:0 1px 2px rgba(14,17,48,.04),0 10px 30px rgba(61,75,255,.08);overflow:hidden}
   .aspas blockquote{margin:0;padding:34px 24px 34px 70px;position:relative;font-size:clamp(16px,2vw,19px);line-height:1.45;color:#5A5A5A}
   .aspas blockquote::before{content:"\201C";position:absolute;left:20px;top:22px;font:700 64px/1 Georgia,serif;color:var(--accent)}
   .aspas figcaption{background:var(--grad,var(--rosa));color:#FFFFFF;padding:10px 24px;font-size:14px;font-weight:500}
@@ -263,7 +263,7 @@
   const _h=location.hash.replace(/^#/,""), token=new URLSearchParams(location.search).get("c")||(/^[a-f0-9]{32,}$/i.test(_h)?_h:"");
   const urlSupabase=u=>{u=String(u||"").trim();let m=u.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);if(m)return "https://"+m[1]+".supabase.co";m=u.match(/^(?:https?:\/\/)?([a-z0-9-]+\.supabase\.(?:co|in))/i);if(m)return "https://"+m[1].toLowerCase();return u.replace(/\/+$/,"")};
   const cfg=window.GLARA_CONFIG||{};
-  const corPropria=c=>/^#[0-9a-f]{6}$/i.test(c||"")&&!["#219E3D","#219E3D","#219E3D","#C0703A","#0075DE","#0F8A4A","#0866FF","#1877F2","#0075DE"].includes(String(c).toUpperCase());
+  const corPropria=c=>/^#[0-9a-f]{6}$/i.test(c||"")&&!["#219E3D","#219E3D","#219E3D","#C0703A","#3D4BFF","#0F8A4A","#0866FF","#1877F2"].includes(String(c).toUpperCase());
   let sb=null, dados=null, filtro="todos", modo=token?"link":"login", clienteId=null;
   const P=()=>({p_token:modo==="link"?token:null,p_cliente:modo==="login"?clienteId:null});
   const slideIdx={}, editando={}, rasc={};
