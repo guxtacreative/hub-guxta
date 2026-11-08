@@ -68,7 +68,7 @@
 <div class="wrap">
   <div class="top">
     <div class="brandbar"><img class="logo" src="logo.png" alt="GUXTA HUB" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='logo.svg'}else{this.remove()}"><span class="eyebrow marca-tag" id="marca">Onde estratégia, criação e gestão se encontram</span></div>
-    <div class="actions"><div class="sino-box av-box" id="av-box" hidden></div><button type="button" class="tema-btn" data-tema-btn></button><div class="actions" id="userbox" hidden><span class="note" id="useremail"></span><button class="btn small" id="sair">Sair</button></div></div>
+    <div class="actions"><div class="sino-box av-box" id="av-box" hidden></div><button type="button" class="tema-btn" data-tema-btn></button><div class="actions" id="userbox" hidden><span class="perfil-av" id="perfil-av" aria-hidden="true"></span><button class="btn small ghost" id="meu-perfil" hidden>Meu perfil</button><span class="note" id="useremail"></span><button class="btn small" id="sair">Sair</button></div></div>
   </div>
   <header class="hero hero-sm"><span class="hero-tag">Uso interno · GUXTA</span><h1>Painel de <mark>gestão</mark></h1><p class="intro" id="hero-sub">Hub de Marketing · clientes, planejamento, aprovações, resultados, anúncios e pedidos num lugar só.</p></header>
 
@@ -110,6 +110,7 @@
 <div class="toast" id="toast" hidden role="status"></div>
 
 <script src="config.js"></script>
+<script src="perfil.js"></script>
 <script src="metricas.js"></script>
 <script src="anuncios.js"></script>
 <script src="importar-ads.js"></script>
@@ -173,6 +174,7 @@
     {const nm=(cfg.nomeAdmin||session.user.email.split("@")[0]||"").trim(), h=new Date().getHours();
      $("#side-nome").textContent=nm.split(" ")[0]||"Olá";$("#side-sauda").textContent=(h<12?"Bom dia":h<18?"Boa tarde":"Boa noite")+",";$("#side-av").textContent=(nm[0]||"G").toUpperCase()}
     $("#login").hidden=true;$("#painel").hidden=false;$("#userbox").hidden=false;$("#useremail").textContent=session.user.email;
+    if(window.GlaraPerfil)GlaraPerfil.iniciar(sb,session,{botao:"#meu-perfil",av:"#perfil-av",nome:"#side-nome",sidebar:"#side-av"});
     await carregarClientes();
     await sb.rpc("gerar_recorrencias"); // cria as mensalidades do mês dos planos recorrentes
     if(vista==="inicio")abrirInicio();

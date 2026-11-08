@@ -60,7 +60,7 @@
       <div class="sino-pop" id="sino-pop" hidden role="dialog" aria-label="Novidades"></div>
     </div>
     <button type="button" class="tema-btn" data-tema-btn></button>
-    <div class="userbox" id="userbox" hidden><select id="cliente-sel" aria-label="Cliente" hidden></select><span id="user-email"></span><button class="btn small" id="sair">Sair</button></div></div>
+    <div class="userbox" id="userbox" hidden><select id="cliente-sel" aria-label="Cliente" hidden></select><span class="perfil-av" id="perfil-av" aria-hidden="true"></span><button class="btn small ghost" id="meu-perfil" hidden>Meu perfil</button><span id="user-email"></span><button class="btn small" id="sair">Sair</button></div></div>
   <header class="hero">
     <span class="hero-tag" id="hero-tag">Hub de Marketing</span>
     <h1 id="titulo">Carregando…</h1>
@@ -244,6 +244,7 @@
 </div>
 
 <script src="config.js"></script>
+<script src="perfil.js"></script>
 <script src="metricas.js"></script>
 <script src="anuncios.js"></script>
 <script src="anel.js"></script>
@@ -860,6 +861,7 @@
     const {data:{session}}=await sb.auth.getSession();if(!session){tela("login");return}
     if(session.user&&session.user.user_metadata&&session.user.user_metadata.trocar_senha){tela("trocar");return} // senha provisória: troca obrigatória
     $("#user-email").textContent=session.user.email;$("#userbox").hidden=false;
+    if(window.GlaraPerfil)GlaraPerfil.iniciar(sb,session,{botao:"#meu-perfil",av:"#perfil-av"});
     const {data:lista,error}=await sb.rpc("portal_meus_clientes");
     if(error){tela("login","Não conseguimos conferir seu acesso agora. Tente de novo.");return}
     if(!lista||!lista.length){tela("sem");$("#sem-msg").textContent=`O e-mail ${session.user.email} ainda não está ligado a nenhum cliente. Peça para a nossa equipe liberar seu acesso.`;return}

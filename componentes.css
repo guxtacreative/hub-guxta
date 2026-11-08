@@ -1391,3 +1391,9 @@ html:not([data-tema="escuro"]) .tk-col[data-col="feito"]{background:#EFF8F1;bord
   html .side .cli.cli-tarefas .cli-ico{width:28px;height:28px}
 }
 .tk-tools{align-items:center}
+
+/* ---------- Meu perfil ---------- */
+.perfil-av{width:30px;height:30px;border-radius:50%;background:var(--accent,#E30613);color:#FFFFFF;display:inline-grid;place-items:center;font:800 12px var(--font);overflow:hidden;flex:0 0 auto}
+.perfil-av img{width:100%;height:100%;object-fit:cover;display:block}
+.perfil-foto{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.perfil-foto .perfil-av{width:76px;height:76px;font-size:22px}
