@@ -7,7 +7,7 @@
 /* ---------- balão vermelho ---------- */
 .badge{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--alerta,#E30613);color:#FFFFFF;font:700 11px/1 var(--font);font-variant-numeric:tabular-nums;letter-spacing:0;text-transform:none;box-shadow:0 0 0 2px var(--surface,#FFFFFF);margin-left:8px;flex:0 0 auto;animation:badge-in .25s ease-out}
 .badge[hidden]{display:none}
-.badge.calma{background:var(--ink);opacity:.85}
+.badge.calma{background:var(--alerta,#E30613);opacity:1}
 @keyframes badge-in{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
 @media (prefers-reduced-motion:reduce){.badge{animation:none}}
 .tab{display:inline-flex;align-items:center}

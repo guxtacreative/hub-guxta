@@ -7,7 +7,7 @@
 .pt-txt{grid-column:auto}
 
 /* Cabeçalho em cinza bem clarinho (modo claro) */
-html:not([data-tema="escuro"]) .hero{background:#F2F2F2!important;color:#1A1A1A!important;box-shadow:0 18px 36px -28px rgba(0,0,0,.25)!important}
+html:not([data-tema="escuro"]) .hero{background:#FDF0F0!important;color:#1A1A1A!important;box-shadow:0 18px 36px -28px rgba(0,0,0,.25)!important}
 html:not([data-tema="escuro"]) .hero::before,html:not([data-tema="escuro"]) .hero::after{background:none!important;box-shadow:none!important}
 html:not([data-tema="escuro"]) .hero h1,html:not([data-tema="escuro"]) .hero h2,html:not([data-tema="escuro"]) .hero h3,html:not([data-tema="escuro"]) .hero b,html:not([data-tema="escuro"]) .hero strong{color:#1A1A1A!important}
 html:not([data-tema="escuro"]) .hero mark{color:#E30613!important;background:none!important}
