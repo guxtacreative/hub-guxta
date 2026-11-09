@@ -82,3 +82,32 @@ input,select,textarea{border-radius:10px!important;border-color:var(--line)!impo
 input:focus,select:focus,textarea:focus{border-color:var(--ink)!important;box-shadow:0 0 0 3px rgba(128,128,128,.25)!important}
 table th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
 table td{border-top:1px solid var(--line)}
+
+/* ---------- ícones coloridos (padrão da terceira imagem, nos dois modos) ---------- */
+/* indicadores: o ícone fica dentro de um círculo colorido, com o desenho em branco */
+.kpi:nth-child(1) :has(> svg){background:#3B82F6!important;color:#FFFFFF!important}
+.kpi:nth-child(2) :has(> svg){background:#EF4444!important;color:#FFFFFF!important}
+.kpi:nth-child(3) :has(> svg){background:#FACC15!important;color:#111111!important}
+.kpi:nth-child(4) :has(> svg){background:#22C55E!important;color:#FFFFFF!important}
+.kpi:nth-child(5) :has(> svg){background:#A855F7!important;color:#FFFFFF!important}
+.kpi:nth-child(6) :has(> svg){background:#3B82F6!important;color:#FFFFFF!important}
+.kpi:nth-child(7) :has(> svg){background:#F97316!important;color:#FFFFFF!important}
+.kpi:nth-child(8) :has(> svg){background:#EAB308!important;color:#FFFFFF!important}
+.kpi :has(> svg){width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center}
+.kpi :has(> svg) svg{color:inherit!important}
+
+/* menu lateral: cada item com um bloco colorido à esquerda do ícone */
+button.cli .cli-ico,a.cli .cli-ico{background:#3B82F6!important;color:#FFFFFF!important;border-radius:8px!important;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+button.cli:nth-of-type(2) .cli-ico,a.cli:nth-of-type(2) .cli-ico{background:#F97316!important}
+button.cli:nth-of-type(3) .cli-ico,a.cli:nth-of-type(3) .cli-ico{background:#FACC15!important;color:#111111!important}
+button.cli:nth-of-type(4) .cli-ico,a.cli:nth-of-type(4) .cli-ico{background:#22C55E!important}
+button.cli:nth-of-type(5) .cli-ico,a.cli:nth-of-type(5) .cli-ico{background:#A855F7!important}
+button.cli:nth-of-type(6) .cli-ico,a.cli:nth-of-type(6) .cli-ico{background:#EF4444!important}
+button.cli:nth-of-type(7) .cli-ico,a.cli:nth-of-type(7) .cli-ico{background:#3B82F6!important}
+button.cli:nth-of-type(8) .cli-ico,a.cli:nth-of-type(8) .cli-ico{background:#F97316!important}
+button.cli:nth-of-type(9) .cli-ico,a.cli:nth-of-type(9) .cli-ico{background:#FACC15!important;color:#111111!important}
+button.cli:nth-of-type(10) .cli-ico,a.cli:nth-of-type(10) .cli-ico{background:#22C55E!important}
+button.cli:nth-of-type(11) .cli-ico,a.cli:nth-of-type(11) .cli-ico{background:#A855F7!important}
+button.cli:nth-of-type(12) .cli-ico,a.cli:nth-of-type(12) .cli-ico{background:#EF4444!important}
+/* item selecionado mantém o ícone colorido */
+button.cli[aria-current="true"] .cli-ico{box-shadow:0 0 0 2px var(--surface)}
