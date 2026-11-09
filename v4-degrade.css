@@ -1,0 +1,67 @@
+/* =====================================================================
+   Padrão V4: degradê preto→vermelho escuro nos cabeçalhos, detalhes em
+   vermelho V4 (nada azul), botão principal vermelho. Alertas vermelhos.
+   Carregar por último.
+   ===================================================================== */
+:root{--accent:#E10600;--accent-dark:#B00000;--accent-2:#FF4D3D;--alerta:#E10600}
+.hero,.hero-banner,.cta-banner{background:linear-gradient(120deg,#0A0A0A 0%,#3A0004 55%,#6B0008 100%)!important;color:#FFFFFF!important;border:0!important}
+.hero::before,.hero::after{display:none!important}
+.hero h1,.hero h2,.hero h3,.hero b,.hero strong{color:#FFFFFF!important}
+.hero mark{color:#FFFFFF!important;background:none!important;text-decoration:underline;text-decoration-color:#E10600;text-decoration-thickness:3px;text-underline-offset:6px}
+.hero p,.hero .intro,.hero .label{color:rgba(255,255,255,.82)!important}
+.hero-tag,.hero .eyebrow{background:#E10600!important;color:#FFFFFF!important;border-radius:4px!important;font-weight:700}
+.eyebrow,.eyebrow::before{color:#E10600}
+.eyebrow::before{background:#E10600!important;box-shadow:none!important}
+.btn.primary,.btn.yel,.btn.amarelo{background:#E10600!important;border-color:#E10600!important;color:#FFFFFF!important;box-shadow:none!important}
+.btn.primary:hover{background:#B00000!important;border-color:#B00000!important}
+.cli[aria-current="true"]{background:rgba(225,6,0,.12)!important;box-shadow:inset 3px 0 0 #E10600!important;color:inherit!important}
+.cli[aria-current="true"] .cli-ico{color:#E10600!important}
+#side-av,.side-av{background:#E10600!important;color:#FFFFFF!important}
+.topo-progresso i,.progresso>i,.bar>i,.barra>i,.ped-bar i{background:#E10600!important}
+
+/* ---------- ajustes V4 (rodada 2) ---------- */
+/* botões principais em verde V4 */
+.btn.primary,.btn.yel,.btn.amarelo,html[data-tema="escuro"] .btn.primary{background:#1E9E2A!important;border-color:#1E9E2A!important;color:#FFFFFF!important;box-shadow:0 8px 18px -12px rgba(30,158,42,.7)!important}
+.btn.primary:hover,html[data-tema="escuro"] .btn.primary:hover{background:#157A1F!important;border-color:#157A1F!important}
+
+/* cabeçalho centralizado (estilo V4) */
+.hero{text-align:center!important}
+.hero>*,.hero .hero-tag,.hero .eyebrow{margin-left:auto!important;margin-right:auto!important}
+.hero p,.hero .intro{max-width:62ch;margin-left:auto!important;margin-right:auto!important}
+.hero .hero-tag{display:inline-block}
+.hero .btn,.hero .acoes,.hero .actions{justify-content:center}
+
+/* seleção em vermelho com texto branco (segmentos, abas, chips) */
+.vis-seg button[aria-pressed="true"],.seg button[aria-pressed="true"],.chip[aria-pressed="true"],.chip.on,
+.tab[aria-selected="true"],.tab.active{background:#E10600!important;color:#FFFFFF!important;box-shadow:none!important;border-color:#E10600!important}
+.vis-seg button:not([aria-pressed="true"]),.seg button:not([aria-pressed="true"]){color:#111111!important;opacity:1!important}
+html[data-tema="escuro"] .vis-seg button:not([aria-pressed="true"]),html[data-tema="escuro"] .seg button:not([aria-pressed="true"]){color:#F5F5F5!important}
+
+/* chips não selecionados: texto legível */
+.chip:not([aria-pressed="true"]):not(.on){color:#111111!important;background:#FFFFFF!important;border:1px solid #DDDAD3!important}
+html[data-tema="escuro"] .chip:not([aria-pressed="true"]):not(.on){color:#F5F5F5!important;background:#1F1F1F!important;border-color:#333!important}
+
+/* números dos indicadores em preto (claro) */
+html:not([data-tema="escuro"]) .kpi .v,html:not([data-tema="escuro"]) .kpi .num,html:not([data-tema="escuro"]) .kpi .valor,
+html:not([data-tema="escuro"]) .box .v,html:not([data-tema="escuro"]) .box .num{color:#111111!important}
+
+/* off-white V4 no modo claro */
+html:not([data-tema="escuro"]) body,html:not([data-tema="escuro"]) html{background:#F5F3EF!important}
+html:not([data-tema="escuro"]) .card,html:not([data-tema="escuro"]) .box,html:not([data-tema="escuro"]) .kpi,
+html:not([data-tema="escuro"]) .post,html:not([data-tema="escuro"]) .doc,html:not([data-tema="escuro"]) .acesso,
+html:not([data-tema="escuro"]) .plano-card,html:not([data-tema="escuro"]) .tk-card,html:not([data-tema="escuro"]) .pl-card,
+html:not([data-tema="escuro"]) .caption,html:not([data-tema="escuro"]) .seg,html:not([data-tema="escuro"]) .ini-box,
+html:not([data-tema="escuro"]) .ini-card,html:not([data-tema="escuro"]) .arte-item{background:#FBFAF7!important}
+
+/* ---------- relatório: rótulos pretos, só o número em vermelho, cartão em vermelho bem claro ---------- */
+.relatorio .kpi,.relatorio .kpis>*{background:#FDECEC!important;border:1px solid #F5C9C6!important;border-radius:12px!important;box-shadow:none!important}
+.relatorio .kpi *:not(.v):not(.num):not(.valor){color:#111111!important}
+.relatorio .kpi .k,.relatorio .kpi .label,.relatorio .kpi small,.relatorio .kpi h3,.relatorio .kpi .d,.relatorio .kpi .sub{color:#111111!important;opacity:1!important}
+.relatorio .kpi .v,.relatorio .kpi .num,.relatorio .kpi .valor{color:#E10600!important}
+
+/* ---------- padrão V4 no modo escuro: preto com brilho vermelho, cartões escuros, destaques vermelhos ---------- */
+html[data-tema="escuro"] body{background:radial-gradient(circle at 8% 0%,rgba(225,6,0,.22) 0%,rgba(225,6,0,0) 38%),radial-gradient(circle at 100% 100%,rgba(225,6,0,.14) 0%,rgba(225,6,0,0) 34%),#050505!important;color:#F5F5F5}
+html[data-tema="escuro"] .card,html[data-tema="escuro"] .box,html[data-tema="escuro"] .kpi,html[data-tema="escuro"] .post,html[data-tema="escuro"] .doc,html[data-tema="escuro"] .acesso,html[data-tema="escuro"] .plano-card,html[data-tema="escuro"] .tk-card,html[data-tema="escuro"] .caption,html[data-tema="escuro"] .seg,html[data-tema="escuro"] .arte-item{background:#111111!important;border:1px solid #1E1E1E!important;border-radius:16px!important}
+html[data-tema="escuro"] h1 mark,html[data-tema="escuro"] h2 mark,html[data-tema="escuro"] h3 mark,html[data-tema="escuro"] .destaque-v4{color:#E10600!important;background:none!important;font-style:normal}
+html[data-tema="escuro"] .eyebrow{color:#E10600!important}
+html[data-tema="escuro"] .eyebrow::before{background:#E10600!important}
