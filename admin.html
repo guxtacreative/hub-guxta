@@ -14,14 +14,15 @@
 <link rel="stylesheet" href="tema-escuro.css">
 <link rel="stylesheet" href="componentes.css">
 <link rel="stylesheet" href="leve.css">
+<link rel="stylesheet" href="estilo-verde.css">
 <script src="tema.js"></script>
 <style>
   .cli-acoes{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .status.ativo{background:#E7F6EC;color:#14783B}
+  .status.ativo{background:#E7F6EC;color:#00A142}
   .status.ativo::before{content:"";width:7px;height:7px;border-radius:50%;background:#1FA750}
   .status.inativo{background:#F1F1F3;color:#6E6E73}
   .icone-lixo{appearance:none;border:1px solid var(--line);background:#FFFFFF;color:#8A8A90;width:36px;height:36px;border-radius:8px;display:grid;place-items:center;cursor:pointer}
-  .icone-lixo:hover{color:#C62A35;border-color:#F3C9CC;background:#FDEEEF}
+  .icone-lixo:hover{color:#00C853;border-color:#E6F9EE;background:#E6F9EE}
   .aviso-inativo{margin:0;padding:10px 14px;border-radius:8px;background:#F4F4F6;color:#4A4A4F;font-size:14px}
   .cli small{color:#8A8A90;font-weight:500}
   .wrap{max-width:1240px}
@@ -136,7 +137,7 @@
   const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const urlSupabase=u=>{u=String(u||"").trim();let m=u.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);if(m)return "https://"+m[1]+".supabase.co";m=u.match(/^(?:https?:\/\/)?([a-z0-9-]+\.supabase\.(?:co|in))/i);if(m)return "https://"+m[1].toLowerCase();return u.replace(/\/+$/,"")};
   const cfg=window.GLARA_CONFIG||{};
-  const PADRAO_COR=["","#E10600","#EE2B37","#E50914","#C0703A","#3D4BFF","#0F8A4A","#0866FF","#1877F2"];
+  const PADRAO_COR=["","#00C853","#00C853","#00C853","#C0703A","#3D4BFF","#00A142","#0866FF","#1877F2"];
   $("#hero-sub").textContent=(cfg.plataforma||"Hub de Marketing")+" · clientes, planejamento, aprovações, resultados, anúncios e pedidos num lugar só.";
   let toastT=null;
   const toast=m=>{const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)};

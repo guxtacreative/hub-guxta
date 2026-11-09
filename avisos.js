@@ -11,23 +11,23 @@
   const foneWa=t=>{let d=String(t||"").replace(/\D/g,"");if(!d)return "";if(d.startsWith("00"))d=d.slice(2);if(d.length===10||d.length===11)d="55"+d;return d.length>=12?d:""};
   const plural=(n,a,b)=>n+" "+(n===1?a:b);
   const ICONES={
-    aprovado:["#0F8A4A",'<path d="M20 6 9 17l-5-5"/>'],
-    pedido_aprovado:["#0F8A4A",'<path d="M20 6 9 17l-5-5"/>'],
+    aprovado:["#00A142",'<path d="M20 6 9 17l-5-5"/>'],
+    pedido_aprovado:["#00A142",'<path d="M20 6 9 17l-5-5"/>'],
     ajuste:["#E8780C",'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>'],
     alteracao:["#E8780C",'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>'],
     pedido:["#2F6BFF",'<path d="M12 5v14M5 12h14"/>'],
     proposta_vista:["#7A5AF8",'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>'],
-    proposta_assinada:["#0F8A4A",'<path d="M3 17c3 0 4-3 6-3s2 3 4 3 3-6 5-6 2 2 3 2"/><path d="M3 21h18"/>'],
-    proposta_recusada:["#E30613",'<path d="M18 6 6 18M6 6l12 12"/>'],
-    pagamento_atrasado:["#E30613",'<rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/>'],
+    proposta_assinada:["#00A142",'<path d="M3 17c3 0 4-3 6-3s2 3 4 3 3-6 5-6 2 2 3 2"/><path d="M3 21h18"/>'],
+    proposta_recusada:["#00C853",'<path d="M18 6 6 18M6 6l12 12"/>'],
+    pagamento_atrasado:["#00C853",'<rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/>'],
     vence_hoje:["#E8780C",'<rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/>'],
     lembrete:["#2F6BFF",'<path d="M4 4h16v16H4z"/><path d="m4 6 8 7 8-7"/>'],
     lembrete_whatsapp:["#E8780C",'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'],
     relatorio:["#7A5AF8",'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'],
     boleto_pedido:["#E8780C",'<path d="M4 5v14M7 5v14M10 5v14M14 5v14M17 5v14M20 5v14"/>'],
-    cliente_pagou:["#0F8A4A",'<rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><path d="m9 15 2 2 4-4"/>'],
-    pagamento_recebido:["#0F8A4A",'<rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><path d="m9 15 2 2 4-4"/>'],
-    loja_pedido:["#0F8A4A",'<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 7H6"/>'],
+    cliente_pagou:["#00A142",'<rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><path d="m9 15 2 2 4-4"/>'],
+    pagamento_recebido:["#00A142",'<rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><path d="m9 15 2 2 4-4"/>'],
+    loja_pedido:["#00A142",'<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 7H6"/>'],
     loja_abandono:["#E8780C",'<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 7H6"/>'],
     sistema:["#6B6B6B",'<circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/>']
   };
