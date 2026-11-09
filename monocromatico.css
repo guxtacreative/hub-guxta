@@ -1,0 +1,84 @@
+/* =====================================================================
+   Visual monocromático: preto, branco e cinzas.
+   Detalhes e ícones coloridos (azul, vermelho, amarelo, verde, roxo, laranja).
+   Alertas continuam vermelhos. Carregar por último.
+   ===================================================================== */
+:root,html[data-tema="escuro"]{
+  --bg:#0C0C0C; --surface:#151515; --soft:#1B1B1B; --line:#262626; --ch-bar:#3A3A3A;
+  --ink:#F2F2F2; --muted:#9A9A9A;
+  --brand:#F2F2F2; --on-brand:#0C0C0C; --navy:#F2F2F2; --navy-2:#1B1B1B; --chumbo:#F2F2F2;
+  --accent:#F2F2F2; --accent-dark:#D9D9D9; --accent-2:#BDBDBD;
+  --accent-soft:#1F1F1F; --accent-soft2:#2E2E2E; --rosa:#1F1F1F;
+  --verde-cta:#F2F2F2; --verde-cta-2:#D9D9D9;
+  --grad:linear-gradient(90deg,#F2F2F2,#8A8A8A);
+  --grad-hero:#0C0C0C;
+  --alerta:#F43F5E;
+  --sombra:none;
+}
+html:not([data-tema="escuro"]){
+  --bg:#F4F4F3; --surface:#FFFFFF; --soft:#F0F0EF; --line:#E6E6E4; --ch-bar:#CFCFCC;
+  --ink:#111111; --muted:#6B6B6B;
+  --brand:#111111; --on-brand:#FFFFFF; --navy:#111111; --navy-2:#F0F0EF; --chumbo:#111111;
+  --accent:#111111; --accent-dark:#000000; --accent-2:#444444;
+  --accent-soft:#EDEDEC; --accent-soft2:#DCDCDA; --rosa:#EDEDEC;
+  --verde-cta:#111111; --verde-cta-2:#000000;
+  --grad:linear-gradient(90deg,#111111,#8A8A8A);
+  --grad-hero:#111111;
+  --alerta:#E11D48;
+  --sombra:0 1px 2px rgba(0,0,0,.04);
+}
+html,body{background:var(--bg)!important;color:var(--ink)}
+
+/* cartões */
+.card,.box,.kpi,.post,.doc,.cli,.acesso,.plano-card,.tk-card,.pl-card,.tk-col,.caption,.seg,.ini-box,.ini-card,.arte-item{
+  background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:14px!important;box-shadow:var(--sombra)!important}
+
+/* botões: pílula preta (claro) ou branca (escuro) */
+.btn{border-radius:999px!important;font-weight:600;padding:9px 18px}
+.btn.primary,.btn.yel,.btn.amarelo{background:var(--brand)!important;border-color:var(--brand)!important;color:var(--on-brand)!important;box-shadow:none!important}
+.btn.primary:hover{opacity:.88}
+.btn.outline{background:transparent!important;border:1px solid var(--line)!important;color:var(--ink)!important}
+.btn.ghost{color:var(--ink)!important}
+
+/* menu e seleção: pílula sólida */
+.cli{border-radius:12px!important}
+.cli[aria-current="true"],.side-item.on,.nav-item.on{background:var(--brand)!important;color:var(--on-brand)!important;border-color:var(--brand)!important}
+.cli[aria-current="true"] small{color:var(--muted)}
+.tab[aria-selected="true"],.tab.active,.seg button[aria-pressed="true"],.vis-seg button[aria-pressed="true"],.chip[aria-pressed="true"],.chip.on{background:var(--brand)!important;color:var(--on-brand)!important;box-shadow:none!important}
+
+/* cabeçalho escuro com detalhe amarelo */
+.hero{background:var(--grad-hero)!important;color:#F5F5F5!important;border-radius:18px!important;border:0!important;box-shadow:none!important}
+.hero::before,.hero::after{display:none!important}
+.hero h1,.hero h2,.hero h3,.hero b,.hero strong{color:#FFFFFF!important}
+.hero mark{color:#FFFFFF!important;background:none!important;font-style:italic}
+.hero p,.hero .intro,.hero .label{color:rgba(255,255,255,.72)!important}
+.hero-tag{background:#FACC15!important;color:#111111!important;border-radius:6px!important;font-weight:800}
+
+/* indicadores */
+.kpi .k,.box .k,.kpi .label,.kpi small{font-size:12px;font-weight:600;color:var(--muted);text-transform:none;letter-spacing:0}
+.kpi .v,.box .v,.kpi .valor,.kpi .num,.box .num{font-size:28px;font-weight:700;color:var(--ink);letter-spacing:-.02em}
+.kpi .d,.box .d,.kpi .sub{font-size:12px;color:var(--muted)}
+/* ícones coloridos dos indicadores (um cor por cartão) */
+.kpi:nth-child(1) svg,.kpi:nth-child(1) .ico svg{color:#3B82F6}
+.kpi:nth-child(2) svg,.kpi:nth-child(2) .ico svg{color:#EF4444}
+.kpi:nth-child(3) svg,.kpi:nth-child(3) .ico svg{color:#F59E0B}
+.kpi:nth-child(4) svg,.kpi:nth-child(4) .ico svg{color:#22C55E}
+.kpi:nth-child(5) svg,.kpi:nth-child(5) .ico svg{color:#A855F7}
+.kpi:nth-child(6) svg,.kpi:nth-child(6) .ico svg{color:#3B82F6}
+.kpi:nth-child(7) svg,.kpi:nth-child(7) .ico svg{color:#F97316}
+.kpi:nth-child(8) svg,.kpi:nth-child(8) .ico svg{color:#F59E0B}
+
+/* barras em tom neutro */
+.topo-progresso i,.progresso>i,.bar>i,.barra>i,.ped-bar i{background:var(--ink)!important}
+.progresso,.bar,.barra,.ped-bar{background:var(--soft);border-radius:999px}
+
+/* alertas: vermelho */
+.badge,.badge.calma{background:var(--alerta)!important;color:#FFFFFF!important}
+
+/* detalhes */
+.eyebrow{font-size:11px;font-weight:600;color:var(--muted);text-transform:none;letter-spacing:0}
+.eyebrow::before{background:#3B82F6!important;box-shadow:0 0 0 4px rgba(59,130,246,.18)!important}
+input,select,textarea{border-radius:10px!important;border-color:var(--line)!important;background:var(--surface);color:var(--ink)}
+input:focus,select:focus,textarea:focus{border-color:var(--ink)!important;box-shadow:0 0 0 3px rgba(128,128,128,.25)!important}
+table th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+table td{border-top:1px solid var(--line)}

@@ -74,43 +74,55 @@
     var artes=(r&&r.data)||[];
     var mapa={};clientes.forEach(function(c){mapa[c.id]=c});
     var recentes=artes.filter(function(a){return a.status!=="enviado"});
-    var opcoes=clientes.map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.nome)+'</option>'}).join("");
+    var opcoes='<option value="">Cliente avulso (só orçamento)</option>'+clientes.map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.nome)+'</option>'}).join("");
     el.innerHTML='<section class="card arte-admin"><h2>Enviar arte para aprovação</h2>'+
       '<p class="note">O cliente vê no portal, confere o arquivo e aprova com os dois aceites.</p>'+
       '<form class="arte-form" id="arte-form"><div class="grid2">'+
       '<div><label class="label" for="af-cli">Cliente</label><select id="af-cli" required>'+opcoes+'</select></div>'+
       '<div><label class="label" for="af-num">Nº do orçamento</label><input id="af-num" maxlength="30" placeholder="Ex.: 2026-014"></div></div>'+
+      '<div id="af-avulso" class="grid2" hidden><div><label class="label" for="af-nome">Nome do cliente</label><input id="af-nome" maxlength="80"></div><div><label class="label" for="af-wa">WhatsApp</label><input id="af-wa" type="tel" maxlength="30" placeholder="(00) 00000-0000"></div></div>'+
       '<div><label class="label" for="af-tit">Título da arte</label><input id="af-tit" required maxlength="120" placeholder="Ex.: Banner lona 90x120"></div>'+
       '<div><label class="label" for="af-file">Arquivo (PDF, PNG, JPG)</label><input id="af-file" type="file" accept=".pdf,image/png,image/jpeg,image/webp" required></div>'+
       '<p class="note" id="af-msg" role="status"></p>'+
       '<div class="actions"><button type="submit" class="btn primary" id="af-enviar">Enviar arte ao cliente</button></div></form>'+
       (recentes.length?'<h3 style="margin-top:18px">Respostas dos clientes</h3>'+recentes.map(function(a){return linhaAviso(a,mapa[a.cliente_id],opts)}).join(""):'')+
       '</section>';
+    el.querySelector("#af-cli").addEventListener("change",function(){el.querySelector("#af-avulso").hidden=this.value!==""});
     el.querySelector("#arte-form").addEventListener("submit",async function(e){
       e.preventDefault();
       var msg=el.querySelector("#af-msg"), btn=el.querySelector("#af-enviar");
-      var file=el.querySelector("#af-file").files[0], cli=clientes.find(function(c){return String(c.id)===el.querySelector("#af-cli").value});
-      if(!file||!cli){msg.textContent="Escolha o cliente e o arquivo.";return}
+      var file=el.querySelector("#af-file").files[0];
+      var selId=el.querySelector("#af-cli").value, avulso=selId==="";
+      var cli=avulso?null:clientes.find(function(c){return String(c.id)===selId});
+      var nomeAv=(el.querySelector("#af-nome").value||"").trim(), waAv=(el.querySelector("#af-wa").value||"").trim();
+      var titulo=el.querySelector("#af-tit").value.trim(), num=el.querySelector("#af-num").value.trim();
+      if(!file||(!cli&&!avulso)||(avulso&&!nomeAv)){msg.textContent="Escolha o cliente (ou preencha o nome) e o arquivo.";return}
       btn.disabled=true;msg.textContent="Enviando…";
       try{
-        var caminho=String(cli.id)+"/"+Date.now()+"-"+nomeSeguro(file.name);
+        var token=(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(16).slice(2));
+        var pasta=avulso?token:String(cli.id);
+        var caminho=pasta+"/"+Date.now()+"-"+nomeSeguro(file.name);
         var up=await sb.storage.from(BUCKET).upload(caminho,file,{contentType:file.type||"application/octet-stream",upsert:false});
         if(up.error)throw up.error;
-        var ins=await sb.from("artes_orcamento").insert({cliente_id:String(cli.id),titulo:el.querySelector("#af-tit").value.trim(),orcamento_numero:el.querySelector("#af-num").value.trim()||null,arquivo_path:caminho,status:"enviado"});
+        var ins=await sb.from("artes_orcamento").insert({
+          cliente_id:avulso?null:String(cli.id),
+          nome_cliente:avulso?nomeAv:(cli.nome||null),
+          whatsapp:avulso?(waAv||null):(cli.whatsapp||null),
+          token:token,titulo:titulo,orcamento_numero:num||null,arquivo_path:caminho,status:"enviado"});
         if(ins.error)throw ins.error;
-        var link=opts.portalURL?opts.portalURL(cli.token):"";
-        var nome=String(cli.nome||"").trim().split(/\s+/)[0];
-        var txt="Oi"+(nome?", "+nome:"")+"! A arte \""+el.querySelector("#af-tit").value.trim()+"\" já está no portal para você conferir e aprovar"+(link?": "+link:".");
-        var fone=foneWa(cli.whatsapp);
-        msg.innerHTML=fone?'<a class="btn small primary" target="_blank" rel="noopener" href="https://wa.me/'+fone+'?text='+encodeURIComponent(txt)+'">Avisar o cliente no WhatsApp</a>':'Arte enviada. Cadastre o WhatsApp do cliente para avisar pelo botão.';
-        cofirma({titulo:"Arte enviada ao portal!",texto:"O cliente já pode ver e aprovar “"+el.querySelector("#af-tit").value.trim()+"”.",passos:["Enviado","Aprovação","Produção"],atual:0});
-        el.querySelector("#arte-form").reset();
+        var link=new URL("aprovar.html?t="+token,location.href).href;
+        var prim=String(avulso?nomeAv:cli.nome).trim().split(/\s+/)[0];
+        var txt="Oi"+(prim?", "+prim:"")+"! A arte \""+titulo+"\" já está pronta para você conferir e aprovar: "+link;
+        var fone=foneWa(avulso?waAv:cli.whatsapp);
+        msg.innerHTML=fone?'<a class="btn small primary" target="_blank" rel="noopener" href="https://wa.me/'+fone+'?text='+encodeURIComponent(txt)+'">Avisar o cliente no WhatsApp</a>':'Arte enviada. Preencha o WhatsApp para usar o botão de aviso. Link: '+esc(link);
+        cofirma({titulo:"Arte enviada para aprovação!",texto:"O cliente já pode ver e aprovar “"+titulo+"”.",passos:["Enviado","Aprovação","Produção"],atual:0});
+        el.querySelector("#arte-form").reset();el.querySelector("#af-avulso").hidden=true;
       }catch(err){msg.textContent="Não deu para enviar: "+(err.message||"erro")}
       btn.disabled=false;
     });
   }
   function linhaAviso(a,c,opts){
-    var nome=c?c.nome:"Cliente";var fone=c?foneWa(c.whatsapp):"";
+    var nome=a.nome_cliente||(c?c.nome:"Cliente");var fone=foneWa(a.whatsapp||(c?c.whatsapp:""));
     var prim=String(nome).trim().split(/\s+/)[0];
     var txt;
     if(a.status==="producao"){

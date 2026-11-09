@@ -26,13 +26,13 @@
     "Conteúdo":{cor:"#E30613",etapas:["Pauta","Texto","Design ou edição","Revisão","Agendar"]},
     "Site":{cor:"#2563EB",etapas:["Briefing","Estrutura das páginas","Layout","Desenvolvimento","Testes no celular","Publicação"]},
     "Tráfego":{cor:"#16A34A",etapas:["Objetivo e verba","Criativos","Público","Subir a campanha","Acompanhar e otimizar"]},
-    "Reunião":{cor:"#DB2777",etapas:["Confirmar horário","Preparar a pauta","Reunião","Enviar o resumo"]},
+    "Reunião":{cor:"#0075DE",etapas:["Confirmar horário","Preparar a pauta","Reunião","Enviar o resumo"]},
     "Financeiro":{cor:"#0D9488",etapas:["Emitir cobrança","Enviar ao cliente","Confirmar pagamento"]},
     "Outro":{cor:"#6B7280",etapas:[]}
   };
   const COLS=[["ideia","Ideias"],["a_fazer","A fazer"],["fazendo","Em produção"],["aguardando","Aprovação / retorno"],["feito","Concluído"]];
   // etiquetas: cada nome sempre ganha a mesma cor
-  const CORES_ET=[["#FDE2E4","#B4232C"],["#FFEDD5","#9A4A00"],["#FEF3C7","#8A6100"],["#DCFCE7","#166534"],["#DBEAFE","#1E40AF"],["#EDE9FE","#5B21B6"],["#FCE7F3","#9D174D"],["#E0F2FE","#075985"]];
+  const CORES_ET=[["#EAF3FD","#0075DE"],["#FFEDD5","#9A4A00"],["#FEF3C7","#8A6100"],["#DCFCE7","#166534"],["#DBEAFE","#1E40AF"],["#EDE9FE","#5B21B6"],["#FCE7F3","#005BAB"],["#E0F2FE","#075985"]];
   const corEt=t=>{let h=0;for(const ch of String(t).toLowerCase())h=(h*31+ch.charCodeAt(0))>>>0;return CORES_ET[h%CORES_ET.length]};
   const etHTML=t=>{const [bg,fg]=corEt(t);return `<span class="tk-et" style="--et-bg:${bg};--et-fg:${fg}">${esc(t)}</span>`};
   const iniciais=n=>String(n||"").trim().split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0].toUpperCase()).join("");

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Aprovar arte · GUXTA</title>
+<link rel="stylesheet" href="estilo.css">
+<link rel="stylesheet" href="tema-claro.css">
+<link rel="stylesheet" href="componentes.css">
+<style>body{max-width:720px;margin:24px auto;padding:0 16px}.arte-page h1{font-size:24px;margin:6px 0}</style>
+</head>
+<body>
+<main class="arte-page">
+  <p class="eyebrow">GUXTA · Aprovação de arte</p>
+  <div id="conteudo" class="card"><p class="note">Carregando…</p></div>
+</main>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+  var cfg=window.GLARA_CONFIG||{};
+  var el=document.getElementById("conteudo");
+  var t=new URLSearchParams(location.search).get("t");
+  function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]})}
+  if(!t){el.innerHTML="<p>Link inválido.</p>";return}
+  var sb=window.supabase.createClient(String(cfg.supabaseUrl||"").trim(),String(cfg.supabaseAnonKey||"").trim(),{auth:{persistSession:false}});
+  function urlArquivo(path){return String(cfg.supabaseUrl).trim()+"/storage/v1/object/public/artes/"+path.split("/").map(encodeURIComponent).join("/")}
+  function sucesso(titulo,texto,passos,atual){
+    el.innerHTML='<div class="pd-ok confirma-card"><div class="pd-ok-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div><div class="pd-ok-txt"><h2>'+esc(titulo)+'</h2><p>'+esc(texto)+'</p><ol class="ped-passos">'+passos.map(function(p,i){return '<li class="'+(i<=atual?"ok":"")+(i===atual?" atual":"")+'">'+esc(p)+'</li>'}).join("")+'</ol></div></div>';
+  }
+  function mostrarForm(a){
+    var url=urlArquivo(a.arquivo_path);
+    if(a.status!=="enviado"){
+      var msg=a.status==="producao"?"Esta arte já foi aprovada e está em produção.":"Você já pediu ajuste nesta arte. A equipe vai enviar uma nova versão.";
+      el.innerHTML='<h1>'+esc(a.titulo)+'</h1>'+(a.orcamento_numero?'<p class="note">Orçamento '+esc(a.orcamento_numero)+'</p>':'')+'<p>'+msg+'</p><a class="btn small outline" href="'+esc(url)+'" target="_blank" rel="noopener">Abrir arquivo</a>';
+      return;
+    }
+    el.innerHTML='<h1>'+esc(a.titulo)+'</h1>'+(a.orcamento_numero?'<p class="note">Orçamento '+esc(a.orcamento_numero)+'</p>':'')+
+      '<p><a class="btn small outline" href="'+esc(url)+'" target="_blank" rel="noopener">Abrir arquivo</a></p>'+
+      '<div class="arte-aceites">'+
+      '<label class="check"><input type="checkbox" id="ck-arq"> <span>Li e conferi o arquivo e estou de acordo com ele.</span></label>'+
+      '<label class="check"><input type="checkbox" id="ck-cor"> <span>Entendo que a cor pode variar cerca de 30% para mais clara ou mais escura na impressão, por causa da calibragem de cada tela, e aceito essa variação.</span></label>'+
+      '<textarea id="motivo" rows="2" placeholder="O que precisa mudar? (preencha só se for pedir ajuste)"></textarea>'+
+      '<div class="actions"><button type="button" class="btn primary" id="btn-ok" disabled>Aprovar e enviar para produção</button>'+
+      '<button type="button" class="btn outline" id="btn-ajuste">Pedir ajuste</button></div><p class="note" id="msg" role="status"></p></div>';
+    var ca=document.getElementById("ck-arq"),cc=document.getElementById("ck-cor"),bo=document.getElementById("btn-ok"),msg=document.getElementById("msg");
+    function ver(){bo.disabled=!(ca.checked&&cc.checked)}
+    ca.addEventListener("change",ver);cc.addEventListener("change",ver);
+    bo.addEventListener("click",async function(){
+      bo.disabled=true;msg.textContent="Enviando…";
+      var r=await sb.rpc("arte_confirmar_publica",{p_token:t,p_arquivo:true,p_cor:true});
+      if(r.error){msg.textContent="Não deu para aprovar agora. Tente de novo.";bo.disabled=false;return}
+      sucesso("Arte aprovada!","“"+a.titulo+"” foi aprovada. A equipe já foi avisada e a produção começa agora.",["Aprovado","Em produção","Concluído"],1);
+    });
+    document.getElementById("btn-ajuste").addEventListener("click",async function(){
+      var motivo=document.getElementById("motivo").value.trim();
+      if(!motivo){msg.textContent="Escreva o que precisa mudar antes de pedir ajuste.";return}
+      var r=await sb.rpc("arte_pedir_ajuste_publica",{p_token:t,p_motivo:motivo});
+      if(r.error){msg.textContent="Não deu para enviar agora. Tente de novo.";return}
+      sucesso("Pedido de ajuste enviado!","A equipe vai ajustar “"+a.titulo+"” e mandar uma nova versão para você aprovar.",["Enviado","Ajuste","Nova aprovação"],1);
+    });
+  }
+  sb.rpc("arte_publica",{p_token:t}).then(function(r){
+    if(r.error||!r.data){el.innerHTML="<p>Este link não existe ou expirou. Fale com a equipe.</p>";return}
+    mostrarForm(r.data);
+  });
+})();
+</script>
+</body>
+</html>

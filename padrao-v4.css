@@ -11,11 +11,11 @@
   --bg:#F4F4F5; --surface:#FFFFFF; --soft:#F7F7F8; --line:#E5E5E7; --ch-bar:#D4D4D8;
   --ink:#111111; --muted:#6B6B70;
   --brand:#111111; --on-brand:#FFFFFF; --navy:#111111; --navy-2:#1C1C1E; --chumbo:#111111;
-  --accent:#E10600; --accent-dark:#B00000; --accent-2:#FF4D3D;
-  --accent-soft:#FDECEB; --accent-soft2:#F9C9C5; --rosa:#FDECEB;
+  --accent:#0075DE; --accent-dark:#005BAB; --accent-2:#0075DE;
+  --accent-soft:#EAF3FD; --accent-soft2:#EAF3FD; --rosa:#EAF3FD;
   --verde-cta:#1E9E2A; --verde-cta-2:#157A1F;
-  --grad:linear-gradient(90deg,#E10600,#FF4D3D);
-  --grad-hero:linear-gradient(120deg,#E10600 0%,#8A0000 100%);
+  --grad:linear-gradient(90deg,#0075DE,#0075DE);
+  --grad-hero:linear-gradient(120deg,#0075DE 0%,#005BAB 100%);
   --alerta:#E10600;
   --sombra:0 1px 2px rgba(0,0,0,.04),0 10px 24px -18px rgba(0,0,0,.18);
 }
@@ -23,11 +23,11 @@ html[data-tema="escuro"]{
   --bg:#0A0A0A; --surface:#141414; --soft:#1A1A1A; --line:#262626; --ch-bar:#3A3A3A;
   --ink:#F5F5F5; --muted:#A3A3A3;
   --brand:#F5F5F5; --on-brand:#0A0A0A; --navy:#F5F5F5; --navy-2:#1C1C1C; --chumbo:#F5F5F5;
-  --accent:#FF2A1F; --accent-dark:#E10600; --accent-2:#FF6B5E;
-  --accent-soft:rgba(255,42,31,.14); --accent-soft2:rgba(255,42,31,.3); --rosa:rgba(255,42,31,.14);
+  --accent:#0075DE; --accent-dark:#0075DE; --accent-2:#0075DE;
+  --accent-soft:rgba(0,117,222,.14); --accent-soft2:rgba(0,117,222,.3); --rosa:rgba(0,117,222,.14);
   --verde-cta:#22B02F; --verde-cta-2:#1E9E2A;
-  --grad:linear-gradient(90deg,#E10600,#FF4D3D);
-  --grad-hero:linear-gradient(120deg,#8A0000 0%,#E10600 55%,#0A0A0A 100%);
+  --grad:linear-gradient(90deg,#0075DE,#0075DE);
+  --grad-hero:linear-gradient(120deg,#005BAB 0%,#0075DE 55%,#0A0A0A 100%);
   --alerta:#FF2A1F;
   --sombra:none;
 }
@@ -58,7 +58,7 @@ html[data-tema="escuro"] body{background:var(--bg);color:var(--ink)}
 /* destaques vermelhos nos títulos e rótulos */
 h1 mark,h2 mark{color:var(--accent);background:none}
 .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:11px}
-.eyebrow::before{background:var(--accent)!important;box-shadow:0 0 0 4px rgba(225,6,0,.15)!important}
+.eyebrow::before{background:var(--accent)!important;box-shadow:0 0 0 4px rgba(0,117,222,.15)!important}
 
 /* abas e segmentos: selecionado em vermelho V4 */
 .tab[aria-selected="true"],.tab.active,.seg button[aria-pressed="true"],.vis-seg button[aria-pressed="true"],.chip[aria-pressed="true"],.chip.on{background:var(--accent)!important;color:#FFFFFF!important;box-shadow:none!important}
@@ -81,6 +81,6 @@ h1 mark,h2 mark{color:var(--accent);background:none}
 
 /* campos */
 input,select,textarea{border-radius:12px!important;border-color:var(--line)!important;background:var(--surface);color:var(--ink)}
-input:focus,select:focus,textarea:focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(225,6,0,.16)!important}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(0,117,222,.16)!important}
 table th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
 table td{border-top:1px solid var(--line)}
