@@ -1,8 +1,8 @@
 /* Glara · Aprovação de conteúdo — estilos compartilhados (portal e painel) */
 :root{
   --bg:#FFFFFF; --surface:#FFFFFF; --line:#E6E6E6; --ink:#0A0A0A; --muted:#6B6B6B;
-  --brand:#0A0A0A; --accent:#E50914; --on-brand:#FFFFFF; --soft:#F5F5F5; --field:#FAFAFA;
-  --ok:#FFFFFF; --ok-bg:#0A0A0A; --warn:#C00500; --warn-bg:#FDECEB; --wait:#4A4A4A; --wait-bg:#F0F0F0;
+  --brand:#0A0A0A; --accent:#10B981; --on-brand:#FFFFFF; --soft:#F5F5F5; --field:#FAFAFA;
+  --ok:#FFFFFF; --ok-bg:#0A0A0A; --warn:#10B981; --warn-bg:#E6FAF3; --wait:#4A4A4A; --wait-bg:#F0F0F0;
   --font:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
   --display:"Barlow Condensed","Arial Narrow","DejaVu Sans Condensed",Arial,sans-serif;
   color-scheme:light;
@@ -150,7 +150,7 @@ h3{font-weight:800;text-transform:uppercase;font-size:20px;line-height:1.1}
 .btn{border-radius:2px;text-transform:uppercase;letter-spacing:.06em;font-weight:800;font-size:16px;padding:12px 22px}
 .btn.small{font-size:14px;padding:8px 14px;border-radius:2px}
 .btn.primary{background:var(--accent);color:#FFFFFF}
-.btn.primary:hover{background:#B8070F}
+.btn.primary:hover{background:#10B981}
 .btn.outline{border:2px solid var(--ink);color:var(--ink);background:transparent}
 .btn.outline:hover{background:var(--ink);color:#FFFFFF}
 .btn.ghost{font-family:var(--font);text-transform:none;letter-spacing:0;font-weight:600;font-size:14px}
@@ -195,8 +195,8 @@ table.ads{min-width:620px}
 /* === estilo V4 moderno: degradê vermelho, títulos condensados, branco limpo === */
 :root{
   --bg:#FFFFFF; --surface:#FFFFFF; --line:#E8E8E8; --ink:#141414; --muted:#6B6B6B;
-  --brand:#141414; --accent:#EE2B37; --accent-dark:#C70F1B; --soft:#F4F4F4; --field:#FFFFFF;
-  --rosa:#FDE8EA; --warn-bg:#FDE8EA;
+  --brand:#141414; --accent:#10B981; --accent-dark:#10B981; --soft:#F4F4F4; --field:#FFFFFF;
+  --rosa:#E6FAF3; --warn-bg:#E6FAF3;
   --display:"Anton","Bebas Neue",Impact,"Arial Narrow","DejaVu Sans Condensed",sans-serif;
   --font:"IBM Plex Sans","Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
   --raio:10px; --chumbo:#232122;
@@ -236,7 +236,7 @@ mark{background:var(--accent);color:#FFFFFF;padding:0 .12em;-webkit-box-decorati
 /* campos como o formulário da V4 */
 input[type=text],input[type=date],input[type=datetime-local],input[type=tel],input[type=email],input[type=password],input[type=number],input[type=url],select,textarea{
   border-radius:8px;background:#FFFFFF;border:1px solid #CFCFCF;padding:13px 16px;font-family:var(--font)}
-input:focus,select:focus,textarea:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(238,43,55,.15);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(16,185,129,.15);outline:none}
 /* cartões */
 .card,.post{background:#FFFFFF;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(0,0,0,.03),0 8px 24px rgba(0,0,0,.04)}
 .post{border-left:1px solid var(--line)}
@@ -284,7 +284,7 @@ h3{font-weight:600;font-size:17px;line-height:1.3;letter-spacing:-.01em}
 mark{background:none;color:var(--accent);padding:0}
 .hero{padding:clamp(32px,5vw,56px) clamp(24px,5vw,56px);gap:12px}
 .hero h1{font-weight:600}
-.hero mark{color:#FF4B55;background:none}
+.hero mark{color:#10B981;background:none}
 .hero .intro{font-size:16px;color:rgba(255,255,255,.72)}
 .eyebrow{font-weight:600;letter-spacing:.02em;font-size:13px;text-transform:none;color:var(--ink)}
 .eyebrow::before{width:8px;height:8px;border-radius:2px;background:var(--accent)}
@@ -404,8 +404,8 @@ mark{color:var(--accent)}
 .btn.primary:hover{background:var(--accent-dark);box-shadow:0 8px 22px -6px rgba(61,75,255,.7)}
 .btn.outline{border:1px solid var(--accent-soft2);background:#FFFFFF;color:var(--accent)}
 .btn.outline:hover{background:var(--accent-soft);color:var(--accent-dark)}
-.btn.danger{border:1px solid #F3C9CC;color:#C62A35;background:#FFFFFF}
-.btn.danger:hover{background:#FDEEEF}
+.btn.danger{border:1px solid #E6FAF3;color:#10B981;background:#FFFFFF}
+.btn.danger:hover{background:#E6FAF3}
 .btn:not(.primary):not(.outline):not(.danger):not(.ghost){background:var(--accent-soft);color:var(--accent-dark)}
 .btn.ghost{color:var(--accent)}
 .btn:focus-visible,.tab:focus-visible,.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -449,7 +449,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
 .topo-progresso{background:var(--accent-soft)}.topo-progresso i{background:var(--grad)}
 
 /* gráficos */
-.ch-bar{fill:var(--accent-soft2)} .ch-bar-r{fill:var(--accent)} .ch-bar.neg{fill:#E0626B}
+.ch-bar{fill:var(--accent-soft2)} .ch-bar-r{fill:var(--accent)} .ch-bar.neg{fill:#10B981}
 
 /* contrato */
 .doc{border-radius:18px;box-shadow:var(--sombra)}

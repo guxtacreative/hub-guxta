@@ -81,7 +81,7 @@
           <span class="fin-pag-tot"><b>${pg.length} de ${ms.length}</b><small>${brl(rec)} de ${brl(tot)}</small></span></div>
         <div class="bar fin-pag-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pc}"><i style="width:${pc}%"></i></div>
         <ul class="fin-pag-l">${ms.map(l=>{const ok=l.status==="pago",ven=!ok&&vencido(l);return `<li data-l="${l.id}" class="${ok?"ok":ven?"venc":""}">
-          <span class="tk-av" style="--av:${ok?"#19A33B":ven?"#E30613":"#9A9A9A"}">${esc((nomeCli(l)||"?").trim().split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase())}</span>
+          <span class="tk-av" style="--av:${ok?"#19A33B":ven?"#10B981":"#9A9A9A"}">${esc((nomeCli(l)||"?").trim().split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase())}</span>
           <span class="fin-pag-t"><b>${esc(nomeCli(l)||"Cliente")}</b><small>${ok?"Pago":ven?"Venceu "+dm(l.data):"Vence "+dm(l.data)} · ${esc(l.forma||"")}${!ok&&l.recorrencia_id?(l.boleto_em?" · boleto gerado":" · sem boleto"):""}</small></span>
           <b class="fin-pag-v">${brl(l.valor)}</b>
           <button type="button" class="fin-sw-btn" role="switch" aria-checked="${ok}" data-f="status" aria-label="${esc(nomeCli(l)||"Cliente")}: ${ok?"pago":"não pago"}"><i></i></button></li>`}).join("")}</ul></section>`;
