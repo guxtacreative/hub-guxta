@@ -53,3 +53,18 @@ input,select,textarea{background:#0B130E;color:#F3FBF5;border-radius:16px!import
 input:focus,select:focus,textarea:focus{border-color:#22C55E!important;box-shadow:0 0 0 3px rgba(34,197,94,.2)!important}
 table th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#9BB3A3}
 table td{border-top:1px solid var(--line)}
+
+/* ---------- ajustes finais: botões com borda verde, selecionado em verde ---------- */
+.btn,.btn.primary,.btn.outline,html[data-tema="escuro"] .btn.primary{background:transparent!important;color:#22C55E!important;border:1.5px solid #22C55E!important;box-shadow:none!important}
+.btn:hover,.btn.primary:hover{background:rgba(34,197,94,.12)!important;color:#4ADE80!important;border-color:#4ADE80!important}
+.btn[aria-pressed="true"],.btn[aria-selected="true"],.btn.on,.btn.ativo,.btn.active,.btn.sel,.btn.selecionado,.btn.current,
+.chip[aria-pressed="true"],.chip.on,.chip.ativo,.chip.active,.seg-btn[aria-pressed="true"],.seg.on,.pill.on,
+.tabs .btn.on,.filtro.on,.filtro[aria-pressed="true"]{background:#22C55E!important;color:#07100B!important;border-color:#22C55E!important}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ---------- painéis: sempre no mesmo padrão da segunda imagem ---------- */
+.card,.box,.kpi,.post,.doc,.acesso,.plano-card,.tk-card,.pl-card,.tk-col,.caption,.seg{
+  background:#0C0C0C!important;border:1px solid #1A2B20!important;border-radius:20px!important;box-shadow:none!important}
+.kpi .k,.box .k,.kpi .label,.kpi small{font-size:12px;font-weight:700;letter-spacing:0;text-transform:none;color:#E6EDE8}
+.kpi .v,.box .v,.kpi .valor,.kpi .num,.box .num{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:30px;font-weight:600;color:#22C55E;letter-spacing:-.02em}
+.kpi .d,.box .d,.kpi .sub,.kpi small{font-size:12px;color:#8FA596}
