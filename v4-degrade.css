@@ -52,3 +52,16 @@ html:not([data-tema="escuro"]) .post,html:not([data-tema="escuro"]) .doc,html:no
 html:not([data-tema="escuro"]) .plano-card,html:not([data-tema="escuro"]) .tk-card,html:not([data-tema="escuro"]) .pl-card,
 html:not([data-tema="escuro"]) .caption,html:not([data-tema="escuro"]) .seg,html:not([data-tema="escuro"]) .ini-box,
 html:not([data-tema="escuro"]) .ini-card,html:not([data-tema="escuro"]) .arte-item{background:#FBFAF7!important}
+
+/* ---------- relatório: rótulos pretos, só o número em vermelho, cartão em vermelho bem claro ---------- */
+.relatorio .kpi,.relatorio .kpis>*{background:#FDECEC!important;border:1px solid #F5C9C6!important;border-radius:12px!important;box-shadow:none!important}
+.relatorio .kpi *:not(.v):not(.num):not(.valor){color:#111111!important}
+.relatorio .kpi .k,.relatorio .kpi .label,.relatorio .kpi small,.relatorio .kpi h3,.relatorio .kpi .d,.relatorio .kpi .sub{color:#111111!important;opacity:1!important}
+.relatorio .kpi .v,.relatorio .kpi .num,.relatorio .kpi .valor{color:#E10600!important}
+
+/* ---------- padrão V4 no modo escuro: preto com brilho vermelho, cartões escuros, destaques vermelhos ---------- */
+html[data-tema="escuro"] body{background:radial-gradient(circle at 8% 0%,rgba(225,6,0,.22) 0%,rgba(225,6,0,0) 38%),radial-gradient(circle at 100% 100%,rgba(225,6,0,.14) 0%,rgba(225,6,0,0) 34%),#050505!important;color:#F5F5F5}
+html[data-tema="escuro"] .card,html[data-tema="escuro"] .box,html[data-tema="escuro"] .kpi,html[data-tema="escuro"] .post,html[data-tema="escuro"] .doc,html[data-tema="escuro"] .acesso,html[data-tema="escuro"] .plano-card,html[data-tema="escuro"] .tk-card,html[data-tema="escuro"] .caption,html[data-tema="escuro"] .seg,html[data-tema="escuro"] .arte-item{background:#111111!important;border:1px solid #1E1E1E!important;border-radius:16px!important}
+html[data-tema="escuro"] h1 mark,html[data-tema="escuro"] h2 mark,html[data-tema="escuro"] h3 mark,html[data-tema="escuro"] .destaque-v4{color:#E10600!important;background:none!important;font-style:normal}
+html[data-tema="escuro"] .eyebrow{color:#E10600!important}
+html[data-tema="escuro"] .eyebrow::before{background:#E10600!important}
