@@ -244,6 +244,7 @@
 </div>
 
 <script src="config.js"></script>
+<script src="confirma.js"></script>
 <script src="perfil.js"></script>
 <script src="metricas.js"></script>
 <script src="anuncios.js"></script>
@@ -404,6 +405,7 @@
     if(error){p.decisao=antes;renderUm(id);
       $("#note").textContent=/acesso_negado/.test(error.message)?"Este post não está mais disponível. Recarregue a página.":"Não deu para salvar agora. Verifique a internet e tente de novo.";return}
     p.decisao=data;p.partes=decisao==="aprovado"?{tema:{d:"ok"},arte:{d:"ok"},legenda:{d:"ok"}}:null;delete rasc[id];renderUm(id);novidadesRender();$("#note").textContent=decisao==="aprovado"?"Aprovação salva.":"Pedido de ajuste enviado.";
+    if(window.GlaraConfirma)GlaraConfirma.mostrar(decisao==="aprovado"?{titulo:"Aprovação enviada!",texto:"“"+(p.titulo||"Post")+"” foi aprovado. A equipe já foi avisada.",passos:["Enviado","Em produção","Publicado"],atual:0}:{titulo:"Pedido de ajuste enviado!",texto:"A equipe vai ajustar “"+(p.titulo||"Post")+"” e mandar de novo para você aprovar.",passos:["Enviado","Ajuste","Nova aprovação"],atual:0});
   }
   async function decidirPartes(id){
     const p=dados.posts.find(x=>x.id===id), r=rasc[id]||{}, antes={d:p.decisao,pt:p.partes};
@@ -415,6 +417,7 @@
       $("#note").textContent=/acesso_negado/.test(error.message)?"Este post não está mais disponível. Recarregue a página.":/comentario_obrigatorio/.test(error.message)?"Escreva o que quer mudar em cada parte marcada.":/portal_decidir_partes/.test(error.message)?"A aprovação por partes ainda não foi ativada. Use Aprovar tudo ou fale com a equipe.":"Não deu para salvar agora. Verifique a internet e tente de novo.";return}
     p.decisao=data;p.partes=data.partes;delete rasc[id];renderUm(id);novidadesRender();
     $("#note").textContent=ok?"Aprovação salva.":"Decisão enviada. A equipe vai ajustar o que você marcou.";
+    if(window.GlaraConfirma)GlaraConfirma.mostrar(ok?{titulo:"Aprovação enviada!",texto:"“"+(p.titulo||"Post")+"” foi aprovado por partes. A equipe já foi avisada.",passos:["Enviado","Em produção","Publicado"],atual:0}:{titulo:"Ajustes enviados!",texto:"A equipe vai mexer só nas partes que você marcou em “"+(p.titulo||"Post")+"”.",passos:["Enviado","Ajuste","Nova aprovação"],atual:0});
   }
 
   document.addEventListener("click",e=>{
@@ -528,7 +531,17 @@
 
   /* ---------- início: painel do cliente ---------- */
   let piSerie=null;
-  function renderInicio(){if(!dados||!window.GlaraPortalInicio)return;const el=$("#panel-inicio");if(!el)return;el.innerHTML=window.GlaraPortalInicio.html(dados,{serie:piSerie})}
+  function bannerPublicados(){
+    const limite=Date.now()-14*24*3600*1000;
+    const pubs=(dados.posts||[]).filter(p=>p.publicacao==="publicado").filter(p=>{const d=p.publicacao_em?Date.parse(p.publicacao_em):(p.data?Date.parse(p.data):0);return d>=limite})
+      .sort((a,b)=>String(b.publicacao_em||b.data||"").localeCompare(String(a.publicacao_em||a.data||""))).slice(0,3);
+    if(!pubs.length)return "";
+    return `<div class="pub-avisos" role="status" aria-live="polite">${pubs.map(p=>{
+      const quando=p.publicacao_em?new Date(p.publicacao_em).toLocaleDateString("pt-BR"):"";
+      const link=p.publicado_url?` · <a href="${esc(p.publicado_url)}" target="_blank" rel="noopener">ver no Instagram</a>`:"";
+      return `<div class="pub-aviso"><span class="pub-check" aria-hidden="true">✓</span><div><b>Publicado: ${esc(p.titulo||"Post")}</b><small>${quando?"em "+quando:""}${link}</small></div></div>`;}).join("")}</div>`;
+  }
+  function renderInicio(){if(!dados||!window.GlaraPortalInicio)return;const el=$("#panel-inicio");if(!el)return;el.innerHTML=bannerPublicados()+window.GlaraPortalInicio.html(dados,{serie:piSerie})}
   document.addEventListener("click",e=>{
     const s=e.target.closest("[data-pi-serie]");if(s){piSerie=s.dataset.piSerie;renderInicio();return}
     const p=e.target.closest("[data-pi-post]");if(p){const id=p.dataset.piPost;$("#tab-aprovar").click();
@@ -800,6 +813,7 @@
     const {data,error}=await sb.rpc("portal_materiais",{...P(),p_link:v});
     if(error){$("#mat-note").textContent="Não deu para salvar agora. Tente de novo.";return}
     dados.cliente.materiais_link=data;$("#mat-note").textContent=v?"Link salvo. Obrigado!":"Link removido.";
+    if(window.GlaraConfirma&&v)GlaraConfirma.mostrar({titulo:"Link salvo!",texto:"Recebemos a sua pasta de materiais. Vamos usar o que estiver lá nas próximas entregas.",ms:7000});
   });
   $("#pedido-form").addEventListener("submit",async e=>{
     e.preventDefault();
@@ -919,8 +933,18 @@
   {const M=cfg.marca||"GUXTA",PL=cfg.plataforma||"Hub de Marketing";$("#auth-marca").textContent=M;document.querySelector(".auth .plat").textContent=PL;
    $("#auth-assina").textContent=M+" · "+PL;$("#auth-rodape").textContent="© "+new Date().getFullYear()+" "+M+" · "+PL;}
   if(!window.supabase||!cfg.supabaseUrl||/SEU-PROJETO/.test(cfg.supabaseUrl)){erro("O site ainda não foi configurado.");return}
+  const fetchComSessao=async(url,init)=>{
+    const r=await fetch(url,init);
+    if(r.status!==401&&r.status!==403)return r;
+    const txt=await r.clone().text().catch(()=>"");
+    if(!/jwt expired|token is expired/i.test(txt))return r;
+    const {data,error}=await sb.auth.refreshSession().catch(()=>({data:null,error:true}));
+    if(error||!data||!data.session)return r;
+    const h=new Headers((init&&init.headers)||{});h.set("Authorization","Bearer "+data.session.access_token);
+    return fetch(url,{...(init||{}),headers:h});
+  };
   sb=window.supabase.createClient(urlSupabase(cfg.supabaseUrl),String(cfg.supabaseAnonKey||"").trim(),
-    {auth:{persistSession:modo==="login",storageKey:"guxta-cliente",detectSessionInUrl:modo==="login",autoRefreshToken:modo==="login"}});
+    {global:{fetch:fetchComSessao},auth:{persistSession:modo==="login",storageKey:"guxta-cliente",detectSessionInUrl:modo==="login",autoRefreshToken:modo==="login"}});
   $("#nome").value=store.get("glara_nome");
   if(modo==="link")carregar(null);else iniciarLogin();
 })();

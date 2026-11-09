@@ -147,7 +147,18 @@
 
   if(!window.supabase||!cfg.supabaseUrl||/SEU-PROJETO/.test(cfg.supabaseUrl)){
     $("#main").innerHTML="";$("#login").hidden=false;$("#login-msg").textContent="Preencha o arquivo config.js com o endereço e a chave do Supabase antes de usar o painel.";return}
-  const sb=window.supabase.createClient(urlSupabase(cfg.supabaseUrl),String(cfg.supabaseAnonKey||"").trim());
+  let sb=null;
+  const fetchComSessao=async(url,init)=>{
+    const r=await fetch(url,init);
+    if(r.status!==401&&r.status!==403)return r;
+    const txt=await r.clone().text().catch(()=>"");
+    if(!/jwt expired|token is expired/i.test(txt))return r;
+    const {data,error}=await sb.auth.refreshSession().catch(()=>({data:null,error:true}));
+    if(error||!data||!data.session)return r;
+    const h=new Headers((init&&init.headers)||{});h.set("Authorization","Bearer "+data.session.access_token);
+    return fetch(url,{...(init||{}),headers:h});
+  };
+  sb=window.supabase.createClient(urlSupabase(cfg.supabaseUrl),String(cfg.supabaseAnonKey||"").trim(),{global:{fetch:fetchComSessao}});
 
   let avSino=null, finAbrir=null;
   let clientes=[], cliAtual=null, ciclos=[], cicloAtual=null, aba="posts", vista="inicio", alertas={clientes:{},tarefas:{}}, pedFiltro="abertos";
