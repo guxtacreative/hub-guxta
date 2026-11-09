@@ -18,3 +18,37 @@
 .cli[aria-current="true"] .cli-ico{color:#E10600!important}
 #side-av,.side-av{background:#E10600!important;color:#FFFFFF!important}
 .topo-progresso i,.progresso>i,.bar>i,.barra>i,.ped-bar i{background:#E10600!important}
+
+/* ---------- ajustes V4 (rodada 2) ---------- */
+/* botões principais em verde V4 */
+.btn.primary,.btn.yel,.btn.amarelo,html[data-tema="escuro"] .btn.primary{background:#1E9E2A!important;border-color:#1E9E2A!important;color:#FFFFFF!important;box-shadow:0 8px 18px -12px rgba(30,158,42,.7)!important}
+.btn.primary:hover,html[data-tema="escuro"] .btn.primary:hover{background:#157A1F!important;border-color:#157A1F!important}
+
+/* cabeçalho centralizado (estilo V4) */
+.hero{text-align:center!important}
+.hero>*,.hero .hero-tag,.hero .eyebrow{margin-left:auto!important;margin-right:auto!important}
+.hero p,.hero .intro{max-width:62ch;margin-left:auto!important;margin-right:auto!important}
+.hero .hero-tag{display:inline-block}
+.hero .btn,.hero .acoes,.hero .actions{justify-content:center}
+
+/* seleção em vermelho com texto branco (segmentos, abas, chips) */
+.vis-seg button[aria-pressed="true"],.seg button[aria-pressed="true"],.chip[aria-pressed="true"],.chip.on,
+.tab[aria-selected="true"],.tab.active{background:#E10600!important;color:#FFFFFF!important;box-shadow:none!important;border-color:#E10600!important}
+.vis-seg button:not([aria-pressed="true"]),.seg button:not([aria-pressed="true"]){color:#111111!important;opacity:1!important}
+html[data-tema="escuro"] .vis-seg button:not([aria-pressed="true"]),html[data-tema="escuro"] .seg button:not([aria-pressed="true"]){color:#F5F5F5!important}
+
+/* chips não selecionados: texto legível */
+.chip:not([aria-pressed="true"]):not(.on){color:#111111!important;background:#FFFFFF!important;border:1px solid #DDDAD3!important}
+html[data-tema="escuro"] .chip:not([aria-pressed="true"]):not(.on){color:#F5F5F5!important;background:#1F1F1F!important;border-color:#333!important}
+
+/* números dos indicadores em preto (claro) */
+html:not([data-tema="escuro"]) .kpi .v,html:not([data-tema="escuro"]) .kpi .num,html:not([data-tema="escuro"]) .kpi .valor,
+html:not([data-tema="escuro"]) .box .v,html:not([data-tema="escuro"]) .box .num{color:#111111!important}
+
+/* off-white V4 no modo claro */
+html:not([data-tema="escuro"]) body,html:not([data-tema="escuro"]) html{background:#F5F3EF!important}
+html:not([data-tema="escuro"]) .card,html:not([data-tema="escuro"]) .box,html:not([data-tema="escuro"]) .kpi,
+html:not([data-tema="escuro"]) .post,html:not([data-tema="escuro"]) .doc,html:not([data-tema="escuro"]) .acesso,
+html:not([data-tema="escuro"]) .plano-card,html:not([data-tema="escuro"]) .tk-card,html:not([data-tema="escuro"]) .pl-card,
+html:not([data-tema="escuro"]) .caption,html:not([data-tema="escuro"]) .seg,html:not([data-tema="escuro"]) .ini-box,
+html:not([data-tema="escuro"]) .ini-card,html:not([data-tema="escuro"]) .arte-item{background:#FBFAF7!important}
