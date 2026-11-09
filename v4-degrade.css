@@ -1,0 +1,20 @@
+/* =====================================================================
+   Padrão V4: degradê preto→vermelho escuro nos cabeçalhos, detalhes em
+   vermelho V4 (nada azul), botão principal vermelho. Alertas vermelhos.
+   Carregar por último.
+   ===================================================================== */
+:root{--accent:#E10600;--accent-dark:#B00000;--accent-2:#FF4D3D;--alerta:#E10600}
+.hero,.hero-banner,.cta-banner{background:linear-gradient(120deg,#0A0A0A 0%,#3A0004 55%,#6B0008 100%)!important;color:#FFFFFF!important;border:0!important}
+.hero::before,.hero::after{display:none!important}
+.hero h1,.hero h2,.hero h3,.hero b,.hero strong{color:#FFFFFF!important}
+.hero mark{color:#FFFFFF!important;background:none!important;text-decoration:underline;text-decoration-color:#E10600;text-decoration-thickness:3px;text-underline-offset:6px}
+.hero p,.hero .intro,.hero .label{color:rgba(255,255,255,.82)!important}
+.hero-tag,.hero .eyebrow{background:#E10600!important;color:#FFFFFF!important;border-radius:4px!important;font-weight:700}
+.eyebrow,.eyebrow::before{color:#E10600}
+.eyebrow::before{background:#E10600!important;box-shadow:none!important}
+.btn.primary,.btn.yel,.btn.amarelo{background:#E10600!important;border-color:#E10600!important;color:#FFFFFF!important;box-shadow:none!important}
+.btn.primary:hover{background:#B00000!important;border-color:#B00000!important}
+.cli[aria-current="true"]{background:rgba(225,6,0,.12)!important;box-shadow:inset 3px 0 0 #E10600!important;color:inherit!important}
+.cli[aria-current="true"] .cli-ico{color:#E10600!important}
+#side-av,.side-av{background:#E10600!important;color:#FFFFFF!important}
+.topo-progresso i,.progresso>i,.bar>i,.barra>i,.ped-bar i{background:#E10600!important}

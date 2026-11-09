@@ -6,29 +6,29 @@
    Carregado por último: tirar este arquivo volta ao visual anterior.
    ===================================================================== */
 :root{
-  --accent:#0071E3; --accent-dark:#0058B0; --accent-2:#2997FF; --accent-soft:#EAF3FF; --accent-soft2:#CFE3FB;
-  --azul:#0071E3; --azul-hover:#0077ED; --azul-sombra:rgba(0,113,227,.55);
-  --alerta:#FF3B30; --ok:#34C759; --ok-txt:#248A3D; --verde-cta:#0071E3; --verde-cta-2:#0077ED;
+  --accent:#E10600; --accent-dark:#0058B0; --accent-2:#2997FF; --accent-soft:#EAF3FF; --accent-soft2:#CFE3FB;
+  --azul:#E10600; --azul-hover:#B00000; --azul-sombra:rgba(0,113,227,.55);
+  --alerta:#FF3B30; --ok:#34C759; --ok-txt:#248A3D; --verde-cta:#E10600; --verde-cta-2:#B00000;
   --rosa:#F5F5F7; --warn-bg:#FFF4E5; --warn:#B25000;
   --navy:#1D1D1F; --navy-2:#2C2C2E; --chumbo:#1D1D1F; --brand:#1D1D1F;
   --ink:#1D1D1F; --muted:#6E6E73; --line:#E3E3E8; --soft:#F5F5F7; --bg:#F5F5F7; --surface:#FFFFFF;
   --caixa:#F5F5F7;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Helvetica Neue",Arial,sans-serif;
   --display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Helvetica Neue",Arial,sans-serif;
-  --grad:linear-gradient(180deg,#0A7CF0 0%,#0071E3 100%);
+  --grad:linear-gradient(180deg,#0A7CF0 0%,#E10600 100%);
   --grad-hero:#FFFFFF;
   --sombra:0 1px 2px rgba(0,0,0,.04),0 12px 32px -24px rgba(0,0,0,.28);
   --ch-bar:#E3E3E8;
 }
 html[data-tema="escuro"]{
-  --accent:#0A84FF; --accent-dark:#0A6FD6; --accent-2:#409CFF; --accent-soft:#0A2540; --accent-soft2:#123A63;
-  --azul:#0A84FF; --azul-hover:#2E96FF; --azul-sombra:rgba(10,132,255,.5);
-  --alerta:#FF453A; --ok:#30D158; --ok-txt:#30D158; --verde-cta:#0A84FF; --verde-cta-2:#2E96FF;
+  --accent:#E10600; --accent-dark:#0A6FD6; --accent-2:#409CFF; --accent-soft:#0A2540; --accent-soft2:#123A63;
+  --azul:#E10600; --azul-hover:#FF4D3D; --azul-sombra:rgba(10,132,255,.5);
+  --alerta:#FF453A; --ok:#30D158; --ok-txt:#30D158; --verde-cta:#E10600; --verde-cta-2:#FF4D3D;
   --rosa:#1C1C1E; --warn-bg:#2E2010; --warn:#FFB340;
   --navy:#F5F5F7; --brand:#F5F5F7; --chumbo:#F5F5F7;
   --ink:#F5F5F7; --muted:#98989D; --line:#38383A; --soft:#2C2C2E; --bg:#000000; --surface:#1C1C1E;
   --caixa:#2C2C2E;
-  --grad:linear-gradient(180deg,#2E96FF 0%,#0A84FF 100%);
+  --grad:linear-gradient(180deg,#FF4D3D 0%,#E10600 100%);
   --grad-hero:#1C1C1E;
 }
 html body{background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}
