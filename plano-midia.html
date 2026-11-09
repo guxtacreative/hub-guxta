@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
 <style>
-  :root{--red:#E30613;--ink:#111111;--muted:#6B6B6B;--line:#E6E6E6;--soft:#F6F6F6;--font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+  :root{--red:#00C853;--ink:#111111;--muted:#6B6B6B;--line:#E6E6E6;--soft:#F6F6F6;--font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
   *{box-sizing:border-box}
   html,body{margin:0;background:#E9E9E9;color:var(--ink);font:400 14px/1.45 var(--font);-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .bar{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px 16px;background:#0A0A0A;color:#fff}
@@ -36,7 +36,7 @@
   .box b{font-size:15px}
   .box p{margin:0;font-size:13px;white-space:pre-line}
   .box.inv{background:#0A0A0A;color:#fff}
-  .box.inv .rot{color:#FF6B73}
+  .box.inv .rot{color:#00C853}
   .box.inv b{font:900 24px var(--font)}
   .box.inv small{display:block;color:#BDBDBD;font-size:12px}
   table{width:100%;border-collapse:collapse;font-size:12.5px}
@@ -83,7 +83,7 @@
   const dmy=iso=>{if(!iso)return"";const [y,m,d]=String(iso).slice(0,10).split("-");return d+"/"+m+"/"+y};
   const slug=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-zA-Z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40);
   const cfg=window.GLARA_CONFIG||{};
-  const cor=c=>window.GlaraPlanoMidia?window.GlaraPlanoMidia.corCanal(c):"#E30613";
+  const cor=c=>window.GlaraPlanoMidia?window.GlaraPlanoMidia.corCanal(c):"#00C853";
   const urlSupabase=u=>{u=String(u||"").trim();let m=u.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);if(m)return "https://"+m[1]+".supabase.co";m=u.match(/^(?:https?:\/\/)?([a-z0-9-]+\.supabase\.(?:co|in))/i);if(m)return "https://"+m[1].toLowerCase();return u.replace(/\/+$/,"")};
   const erro=t=>{$("#root").className="msg";$("#root").innerHTML=t};
   const qs=new URLSearchParams(location.search), id=qs.get("id"), tk=qs.get("t");
