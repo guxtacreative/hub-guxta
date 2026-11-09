@@ -1,0 +1,55 @@
+/* =====================================================================
+   Estilo inspirado na referência: fundo escuro, gradiente verde no cabeçalho,
+   cantos bem arredondados, botões brancos em pílula e destaques verdes.
+   Aplicado nas duas versões (clara e escura) para manter o mesmo visual.
+   Carregar por último.
+   ===================================================================== */
+:root,
+html[data-tema="escuro"],
+html:not([data-tema="escuro"]){
+  --bg:#07100B; --surface:#0F1812; --soft:#121E16; --line:#1C2B21; --ch-bar:#2A3D31;
+  --ink:#F3FBF5; --muted:#9BB3A3;
+  --brand:#F3FBF5; --on-brand:#07100B; --navy:#F3FBF5; --navy-2:#121E16; --chumbo:#F3FBF5;
+  --accent:#22C55E; --accent-dark:#16A34A; --accent-2:#4ADE80;
+  --accent-soft:rgba(34,197,94,.14); --accent-soft2:rgba(34,197,94,.28); --rosa:rgba(34,197,94,.12);
+  --verde-cta:#22C55E; --verde-cta-2:#16A34A;
+  --grad:linear-gradient(135deg,#34D399 0%,#16A34A 100%);
+  --grad-hero:radial-gradient(120% 90% at 85% 10%,#1FAF5A 0%,#0B5D2E 45%,#07100B 100%);
+  --sombra:0 24px 60px -30px rgba(0,0,0,.6);
+}
+body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Arial,sans-serif;letter-spacing:-.01em}
+h1{font-weight:800;letter-spacing:-.05em;line-height:1;color:var(--ink)}
+h2{font-weight:700;letter-spacing:-.035em;color:var(--ink)}
+
+/* botões: branco em pílula (como "Get in touch"), verde de destaque */
+.btn{border-radius:999px!important;font-weight:700;padding:11px 20px}
+.btn.primary,html[data-tema="escuro"] .btn.primary,html:not([data-tema="escuro"]) .btn.primary{background:#FFFFFF!important;border-color:#FFFFFF!important;color:#07100B!important;box-shadow:none!important}
+.btn.primary:hover{background:#E8FBEF!important;border-color:#E8FBEF!important}
+.btn.outline{border:1.5px solid #3A5A46;color:#F3FBF5;background:transparent}
+.btn.ghost{color:#4ADE80}
+.btn.yel,.btn.amarelo{background:#22C55E!important;color:#07100B!important;border-color:#22C55E!important}
+
+/* cabeçalho em gradiente verde, cantos grandes */
+.hero{position:relative;background:var(--grad-hero)!important;color:#F3FBF5!important;border-radius:32px!important;border:0!important;box-shadow:var(--sombra)!important;overflow:hidden}
+.hero::before{display:none!important}
+.hero::after{display:none!important}
+.hero h1,.hero h2,.hero h3,.hero b,.hero strong{color:#FFFFFF!important}
+.hero mark{color:#BBF7D0!important;background:none!important;font-family:Georgia,"Times New Roman",serif;font-style:italic;font-weight:400}
+.hero p,.hero .intro,.hero .label{color:rgba(243,251,245,.78)!important}
+.hero-tag{background:rgba(255,255,255,.16)!important;color:#FFFFFF!important;border:1px solid rgba(255,255,255,.25);border-radius:999px!important}
+
+/* cartões escuros e arredondados */
+.card,.box,.kpi,.post,.doc,.cli,.acesso,.plano-card,.tk-card,.pl-card,.tk-col,.caption,.seg{background:var(--surface);border:1px solid var(--line);border-radius:28px;box-shadow:var(--sombra)}
+
+/* detalhes */
+.eyebrow{font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:11px;color:#4ADE80}
+.eyebrow::before{background:#22C55E!important;box-shadow:0 0 0 4px rgba(34,197,94,.18)!important}
+.topo-progresso i{background:#22C55E!important}
+.cli{border-radius:999px}
+.cli[aria-current="true"]{background:#FFFFFF;color:#07100B;border-radius:999px;box-shadow:none}
+.cli[aria-current="true"] small{color:#15803D}
+.tab[aria-selected="true"],.tab.active{color:#F3FBF5;box-shadow:inset 0 -3px 0 #22C55E}
+input,select,textarea{background:#0B130E;color:#F3FBF5;border-radius:16px!important;border-color:#2A3D31}
+input:focus,select:focus,textarea:focus{border-color:#22C55E!important;box-shadow:0 0 0 3px rgba(34,197,94,.2)!important}
+table th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#9BB3A3}
+table td{border-top:1px solid var(--line)}
