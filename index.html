@@ -247,6 +247,7 @@
 
 <script src="config.js"></script>
 <script src="confirma.js"></script>
+<script src="artes.js"></script>
 <script src="perfil.js"></script>
 <script src="metricas.js"></script>
 <script src="anuncios.js"></script>
@@ -543,7 +544,7 @@
       const link=p.publicado_url?` · <a href="${esc(p.publicado_url)}" target="_blank" rel="noopener">ver no Instagram</a>`:"";
       return `<div class="pub-aviso"><span class="pub-check" aria-hidden="true">✓</span><div><b>Publicado: ${esc(p.titulo||"Post")}</b><small>${quando?"em "+quando:""}${link}</small></div></div>`;}).join("")}</div>`;
   }
-  function renderInicio(){if(!dados||!window.GlaraPortalInicio)return;const el=$("#panel-inicio");if(!el)return;el.innerHTML=bannerPublicados()+window.GlaraPortalInicio.html(dados,{serie:piSerie})}
+  function renderInicio(){if(!dados||!window.GlaraPortalInicio)return;const el=$("#panel-inicio");if(!el)return;el.innerHTML=bannerPublicados()+'<div id="artes-portal"></div>'+window.GlaraPortalInicio.html(dados,{serie:piSerie});if(window.GlaraArtes&&sb)GlaraArtes.portal(sb,document.getElementById("artes-portal")).catch(function(){})}
   document.addEventListener("click",e=>{
     const s=e.target.closest("[data-pi-serie]");if(s){piSerie=s.dataset.piSerie;renderInicio();return}
     const p=e.target.closest("[data-pi-post]");if(p){const id=p.dataset.piPost;$("#tab-aprovar").click();
