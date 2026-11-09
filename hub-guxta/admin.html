@@ -29,9 +29,7 @@
   .layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:24px;align-items:start}
   .layout>*{min-width:0}
   #main .tabs{flex-wrap:wrap;overflow:visible}#main .tab{font-size:15px;padding:12px 12px}
-  .side{display:flex;flex-direction:column;gap:8px;position:sticky;top:16px;max-height:calc(100vh - 32px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding:2px 6px 8px 2px;margin:-2px -6px 0 -2px}
-  /* com o painel aberto, o cabeçalho grande some em todas as telas: o menu fica sempre no mesmo lugar */
-  .wrap:has(#painel:not([hidden])) .hero{display:none}
+  .side{display:flex;flex-direction:column;gap:8px;position:sticky;top:16px}
   @media (max-width:860px){.layout{grid-template-columns:minmax(0,1fr)}.side{position:static}}
   .cli{appearance:none;text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:12px 14px;font:500 14px var(--font);text-transform:none;letter-spacing:-.005em;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
   .cli[aria-current="true"]{background:var(--navy,#0B0E2C);color:#FFFFFF;border-color:var(--navy,#0B0E2C);box-shadow:inset 4px 0 0 var(--accent-2,#6C78FF),0 8px 20px -10px rgba(39,51,230,.6)}
@@ -67,8 +65,8 @@
 <body>
 <div class="wrap">
   <div class="top">
-    <div class="brandbar"><img class="logo" src="logo.png" alt="GUXTA HUB" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='logo.svg'}else{this.remove()}"><span class="eyebrow marca-tag" id="marca">Onde estratégia, criação e gestão se encontram</span></div>
-    <div class="actions"><div class="sino-box av-box" id="av-box" hidden></div><button type="button" class="tema-btn" data-tema-btn></button><div class="actions" id="userbox" hidden><span class="perfil-av" id="perfil-av" aria-hidden="true"></span><button class="btn small ghost" id="meu-perfil" hidden>Meu perfil</button><span class="note" id="useremail"></span><button class="btn small" id="sair">Sair</button></div></div>
+    <div class="brandbar"><img class="logo" src="logo.png" alt="" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='logo.svg'}else{this.remove()}"><span class="eyebrow" id="marca">Hub de Marketing</span></div>
+    <div class="actions"><div class="sino-box av-box" id="av-box" hidden></div><button type="button" class="tema-btn" data-tema-btn></button><div class="actions" id="userbox" hidden><span class="note" id="useremail"></span><button class="btn small" id="sair">Sair</button></div></div>
   </div>
   <header class="hero hero-sm"><span class="hero-tag">Uso interno · GUXTA</span><h1>Painel de <mark>gestão</mark></h1><p class="intro" id="hero-sub">Hub de Marketing · clientes, planejamento, aprovações, resultados, anúncios e pedidos num lugar só.</p></header>
 
@@ -83,23 +81,22 @@
 
   <div id="painel" class="layout" hidden>
     <aside class="side">
-      <div class="side-ola" aria-label="Saudação"><span class="side-av" id="side-av" aria-hidden="true">G</span><span class="side-ola-t"><small id="side-sauda">Olá,</small><b id="side-nome">Gustavo</b></span></div>
-      <span class="side-sec">Operação</span>
       <button class="cli cli-tarefas" id="btn-inicio" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Início</button>
-      <button class="cli cli-tarefas" id="btn-meudia" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span>Meu dia<span class="badge" id="md-badge" hidden></span></button>
       <button class="cli cli-tarefas" id="btn-tarefas" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Minhas tarefas<span class="badge" id="tk-badge" hidden></span></button>
       <button class="cli cli-tarefas" id="btn-agenda" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 14h2M12 14h2M16 14h2M8 18h2M12 18h2"/></svg></span>Agenda</button>
-      <button class="cli cli-tarefas" id="btn-clientes" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21v-1a6 6 0 0 1 12 0v1"/><circle cx="9" cy="8" r="4"/><path d="M17 11a3 3 0 1 0 0-6"/><path d="M21 21v-1a5 5 0 0 0-3.5-4.8"/></svg></span>Clientes<span class="badge" id="cli-badge" hidden></span></button>
-      <button class="cli cli-tarefas" id="btn-aprovacoes" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l2 2 4-4"/><rect x="3" y="4" width="18" height="16" rx="3"/></svg></span>Aprovações<span class="badge" id="ap-badge" hidden></span></button>
-      <span class="side-sec">Comercial</span>
       <button class="cli cli-tarefas" id="btn-crm" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>CRM · Contatos<span class="badge" id="crm-badge" hidden></span></button>
       <button class="cli cli-tarefas" id="btn-orcamentos" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span>Orçamentos<span class="badge" id="orc-badge" hidden></span></button>
-      <button class="cli cli-tarefas" id="btn-loja" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 13v8h14v-8M10 21v-5h4v5"/></svg></span>Loja</button>
-      <button class="cli cli-tarefas" id="btn-midia" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l15-6v14L3 13z"/><path d="M7 12.5V18a2 2 0 0 0 4 0v-4"/><path d="M21 9v6"/></svg></span>Planos e mídia</button>
-      <span class="side-sec">Gestão</span>
+      <button class="cli cli-tarefas" id="btn-midia" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l15-6v14L3 13z"/><path d="M7 12.5V18a2 2 0 0 0 4 0v-4"/><path d="M21 9v6"/></svg></span>Plano de mídia</button>
       <button class="cli cli-tarefas" id="btn-financeiro" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg></span>Financeiro<span class="badge" id="fin-badge" hidden></span></button>
       <button class="cli cli-tarefas" id="btn-notas" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.5z"/><path d="M15 3v6h6M7 13h10M7 17h6"/></svg></span>Notas</button>
       <button class="cli cli-tarefas" id="btn-avisos" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>Avisos e lembretes<span class="badge calma" id="av-badge" hidden></span></button>
+      <span class="label" style="margin-top:10px">Clientes</span>
+      <div id="clientes" class="list" style="gap:8px"></div>
+      <form id="novo-cliente" class="card" style="padding:14px;gap:8px">
+        <label class="label" for="nc-nome" style="margin:0">Novo cliente</label>
+        <input type="text" id="nc-nome" placeholder="Nome do cliente" required>
+        <button class="btn small primary" type="submit">Adicionar</button>
+      </form>
     </aside>
 
     <main class="list" id="main">
@@ -110,15 +107,12 @@
 <div class="toast" id="toast" hidden role="status"></div>
 
 <script src="config.js"></script>
-<script src="perfil.js"></script>
 <script src="metricas.js"></script>
 <script src="anuncios.js"></script>
 <script src="importar-ads.js"></script>
 <script src="tarefas.js"></script>
 <script src="anel.js"></script>
 <script src="inicio.js"></script>
-<script src="operacao.js"></script>
-<script>document.addEventListener("click",e=>{const b=e.target.closest(".side .cli");if(b&&matchMedia("(max-width:860px)").matches)try{b.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"})}catch(_){}});</script>
 <script src="orcamentos.js"></script>
 <script src="crm.js"></script>
 <script src="financeiro.js"></script>
@@ -126,7 +120,6 @@
 <script src="agenda.js"></script>
 <script src="notas.js"></script>
 <script src="planomidia.js"></script>
-<script src="planos.js"></script>
 <script src="avisos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
@@ -136,7 +129,7 @@
   const urlSupabase=u=>{u=String(u||"").trim();let m=u.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);if(m)return "https://"+m[1]+".supabase.co";m=u.match(/^(?:https?:\/\/)?([a-z0-9-]+\.supabase\.(?:co|in))/i);if(m)return "https://"+m[1].toLowerCase();return u.replace(/\/+$/,"")};
   const cfg=window.GLARA_CONFIG||{};
   const PADRAO_COR=["","#E10600","#EE2B37","#E50914","#C0703A","#3D4BFF","#0F8A4A","#0866FF","#1877F2"];
-  $("#hero-sub").textContent=(cfg.plataforma||"Hub de Marketing")+" · clientes, planejamento, aprovações, resultados, anúncios e pedidos num lugar só.";
+  $("#marca").textContent=cfg.plataforma||"Hub de Marketing";$("#hero-sub").textContent=(cfg.plataforma||"Hub de Marketing")+" · clientes, planejamento, aprovações, resultados, anúncios e pedidos num lugar só.";
   let toastT=null;
   const toast=m=>{const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)};
   const falha=(acao,error)=>{console.error(error);toast("Não deu para "+acao+". "+(error&&error.message?error.message:"Tente de novo."))};
@@ -171,10 +164,7 @@
     if(!session){$("#login").hidden=false;$("#painel").hidden=true;$("#userbox").hidden=true;return}
     const {data:adm}=await sb.rpc("is_admin");
     if(!adm){$("#login").hidden=false;$("#login-msg").textContent="Este e-mail não está liberado como administrador. Veja o passo 4 do guia de instalação.";await sb.auth.signOut();return}
-    {const nm=(cfg.nomeAdmin||session.user.email.split("@")[0]||"").trim(), h=new Date().getHours();
-     $("#side-nome").textContent=nm.split(" ")[0]||"Olá";$("#side-sauda").textContent=(h<12?"Bom dia":h<18?"Boa tarde":"Boa noite")+",";$("#side-av").textContent=(nm[0]||"G").toUpperCase()}
     $("#login").hidden=true;$("#painel").hidden=false;$("#userbox").hidden=false;$("#useremail").textContent=session.user.email;
-    if(window.GlaraPerfil)GlaraPerfil.iniciar(sb,session,{botao:"#meu-perfil",av:"#perfil-av",nome:"#side-nome",sidebar:"#side-av"});
     await carregarClientes();
     await sb.rpc("gerar_recorrencias"); // cria as mensalidades do mês dos planos recorrentes
     if(vista==="inicio")abrirInicio();
@@ -195,8 +185,6 @@
     bo.hidden=!no;bo.textContent=no;bo.title=`${o.sem_resposta||0} enviados há mais de 3 dias sem resposta · ${o.aprovados_sem_lancar||0} aprovados para lançar no financeiro`;
     const f=data.financeiro||{}, nf=(f.boletos||0)+(f.receber_vencido||0)+(f.pagar_vencido||0), bf=$("#fin-badge");
     bf.hidden=!nf;bf.textContent=nf;bf.title=`${f.boletos||0} boleto(s) para gerar · ${f.receber_vencido||0} a receber vencido(s) · ${f.pagar_vencido||0} a pagar vencido(s)`;
-    {const md=$("#md-badge");if(md){md.hidden=!n;md.textContent=n;md.title=b.title}
-     const aj=Object.values(data.clientes||{}).reduce((s2,c)=>s2+(c.ajustes||0),0), ap=$("#ap-badge");if(ap){ap.hidden=!aj;ap.textContent=aj;ap.title=aj?aj+" ajuste(s) pedido(s) pelos clientes":""}}
     const cr=data.crm||{}, nc=(cr.acoes||0), bc=$("#crm-badge");
     bc.hidden=!nc;bc.textContent=nc;bc.title=`${cr.acoes||0} retorno(s) para hoje ou atrasado(s) · ${cr.novos||0} contato(s) novo(s)`;
     const total=Object.values(data.clientes||{}).reduce((s,c)=>s+(c.pedidos||0)+(c.ajustes||0)+(c.alteracoes||0),0)+n+no+nf+nc;
@@ -208,18 +196,13 @@
     const {data,error}=await sb.from("clientes").select("*").order("nome");
     if(error)return falha("carregar os clientes",error);
     clientes=data;renderClientes();
-    if(window.GlaraPerfil){GlaraPerfil.fotosDosClientes(sb,clientes).then(m=>{fotosCli=m;renderClientes()}).catch(()=>{})}
     if(cliAtual)abrirCliente(cliAtual.id);
   }
   function renderClientes(){
-    {const tot=clientes.reduce((t,c)=>{const a=(alertas.clientes||{})[c.id]||{};return t+(a.pedidos||0)+(a.ajustes||0)+(a.alteracoes||0)},0), bd=$("#cli-badge");
-      if(bd){bd.hidden=!tot;bd.textContent=tot>99?"99+":tot;bd.title=tot?tot+" pendência(s) de clientes":""}
-      $("#btn-clientes").setAttribute("aria-current",String(vista==="clientes"||vista==="cliente"));
-      if(vista==="clientes"&&$("#cl-grade"))$("#cl-grade").innerHTML=gradeClientesHTML()}
+    $("#clientes").innerHTML=clientes.length?clientes.map(c=>{const a=(alertas.clientes||{})[c.id]||{}, n=(a.pedidos||0)+(a.ajustes||0)+(a.alteracoes||0);
+      return `<button class="cli" data-cli="${c.id}" aria-current="${vista==="cliente"&&cliAtual&&cliAtual.id===c.id}"><span class="cli-nome">${esc(c.nome)}</span>${c.ativo?"":"<small>desativado</small>"}${bolha(n,[(a.pedidos?a.pedidos+" pedido(s) novo(s)":""),(a.ajustes?a.ajustes+" ajuste(s) pedido(s)":"")].filter(Boolean).join(" · "))}${a.aprovados_24h&&!n?`<span class="dot-ok" title="${a.aprovados_24h} aprovação(ões) nas últimas 24 h"></span>`:""}</button>`}).join(""):`<p class="note">Nenhum cliente ainda.</p>`;
     $("#btn-tarefas").setAttribute("aria-current",String(vista==="tarefas"));
-    $("#btn-meudia").setAttribute("aria-current",String(vista==="meudia"));$("#btn-aprovacoes").setAttribute("aria-current",String(vista==="aprovacoes"));
     $("#btn-orcamentos").setAttribute("aria-current",String(vista==="orcamentos"));
-    $("#btn-loja").setAttribute("aria-current",String(vista==="loja"));
     $("#btn-crm").setAttribute("aria-current",String(vista==="crm"));
     $("#btn-financeiro").setAttribute("aria-current",String(vista==="financeiro"));
     $("#btn-agenda").setAttribute("aria-current",String(vista==="agenda"));
@@ -229,45 +212,14 @@
     $("#btn-inicio").setAttribute("aria-current",String(vista==="inicio"));
     document.body.classList.toggle("vista-inicio",vista==="inicio");
   }
-  /* ---------- Clientes: todos numa aba só ---------- */
-  let cliBusca="", cliFiltro="ativos";
-  var fotosCli={};
-  function gradeClientesHTML(){
-    const q=cliBusca.trim().toLowerCase(), lista=clientes.filter(c=>(cliFiltro==="todos"||(cliFiltro==="ativos"?c.ativo:!c.ativo))&&(!q||c.nome.toLowerCase().includes(q)));
-    if(!lista.length)return `<p class="note">${clientes.length?"Nenhum cliente encontrado.":"Nenhum cliente ainda. Adicione o primeiro acima."}</p>`;
-    return lista.map(c=>{const a=(alertas.clientes||{})[c.id]||{}, n=(a.pedidos||0)+(a.ajustes||0)+(a.alteracoes||0), ini=c.nome.trim().split(/\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase();
-      const info=[a.pedidos?`${a.pedidos} pedido${a.pedidos>1?"s":""} novo${a.pedidos>1?"s":""}`:"",a.ajustes?`${a.ajustes} ajuste${a.ajustes>1?"s":""} pedido${a.ajustes>1?"s":""}`:"",a.alteracoes?`${a.alteracoes} alteraç${a.alteracoes>1?"ões":"ão"}`:"",a.aprovados_24h?`${a.aprovados_24h} aprovad${a.aprovados_24h>1?"os":"o"} em 24 h`:""].filter(Boolean);
-      return `<button type="button" class="clg-card${c.ativo?"":" off"}" data-cli="${c.id}">
-        <span class="clg-av" style="${c.cor_destaque&&/^#[0-9a-f]{3,8}$/i.test(c.cor_destaque)?`background:${c.cor_destaque}`:""}" aria-hidden="true">${fotosCli[c.id]&&fotosCli[c.id].url?`<img src="${esc(fotosCli[c.id].url)}" alt="">`:esc(ini)}</span>
-        <span class="clg-t"><b>${esc(c.nome)}</b><small>${esc(c.plano_nome||(c.ativo?"Cliente ativo":"Desativado"))}</small>${info.length?`<span class="clg-info">${esc(info.join(" · "))}</span>`:""}</span>
-        ${bolha(n,info.join(" · "))}</button>`}).join("")}
-  function abrirClientesLista(){vista="clientes";renderClientes();
-    $("#main").innerHTML=`<section class="card clg">
-      <div class="head"><h2>Clientes</h2><span class="note">${clientes.filter(c=>c.ativo).length} ativo${clientes.filter(c=>c.ativo).length===1?"":"s"}</span></div>
-      <div class="clg-bar"><input type="search" id="cl-busca" placeholder="Buscar cliente" aria-label="Buscar cliente" value="${esc(cliBusca)}">
-        <div class="seg clg-seg" role="group" aria-label="Filtrar clientes">${[["ativos","Ativos"],["inativos","Desativados"],["todos","Todos"]].map(([v,t])=>`<button type="button" data-clf="${v}" aria-pressed="${cliFiltro===v}">${t}</button>`).join("")}</div></div>
-      <form id="novo-cliente" class="clg-novo"><label class="label" for="nc-nome">Novo cliente</label><div class="clg-novo-r"><input type="text" id="nc-nome" placeholder="Nome do cliente" required><button class="btn small primary" type="submit">Adicionar</button></div></form>
-      <div id="cl-grade" class="clg-grade">${gradeClientesHTML()}</div></section>`;
-    if(window.matchMedia("(max-width:860px)").matches)$("#main").scrollIntoView({block:"start"})}
-  $("#btn-clientes").addEventListener("click",abrirClientesLista);
-  document.addEventListener("click",e=>{const b=e.target.closest("#cl-grade [data-cli]");if(b){vista="cliente";abrirCliente(b.dataset.cli);window.scrollTo({top:0});return}
-    const f=e.target.closest("[data-clf]");if(f){cliFiltro=f.dataset.clf;document.querySelectorAll("[data-clf]").forEach(x=>x.setAttribute("aria-pressed",String(x===f)));$("#cl-grade").innerHTML=gradeClientesHTML()}});
-  document.addEventListener("input",e=>{if(e.target.id==="cl-busca"){cliBusca=e.target.value;$("#cl-grade").innerHTML=gradeClientesHTML()}});
+  $("#clientes").addEventListener("click",e=>{const b=e.target.closest("[data-cli]");if(b){vista="cliente";abrirCliente(b.dataset.cli)}});
   let quadro=null;
   function abrirInicio(){vista="inicio";renderClientes();
     $("#main").innerHTML=`<div id="ini-root" class="list ini"></div>`;
     window.GlaraInicio.criar($("#ini-root"),sb,{nome:cfg.nomeAdmin||"",plataforma:cfg.plataforma,
       abrirTarefas:()=>$("#btn-tarefas").click(),
-      depois:root=>{const b=root.querySelector("#ini-ent");if(b&&window.GlaraOperacao)window.GlaraOperacao.entregas(b,sb,{abrirCliente:abrirCliTab})},
       ir:d=>{const b=$("#btn-"+d);if(b){b.click();window.scrollTo({top:0,behavior:"smooth"})}},
       abrirCliente:(id,ab)=>{if(!clientes.find(c=>c.id===id)){toast("Cliente não encontrado.");return}if(ab)aba=ab;vista="cliente";abrirCliente(id);window.scrollTo({top:0,behavior:"smooth"})}});}
-  const abrirCliTab=(id,ab)=>{if(!clientes.find(c=>c.id===id)){toast("Cliente não encontrado.");return}if(ab)aba=ab;vista="cliente";abrirCliente(id);window.scrollTo({top:0,behavior:"smooth"})};
-  $("#btn-meudia").addEventListener("click",()=>{vista="meudia";renderClientes();$("#main").innerHTML=`<div id="md-root" class="list md"></div>`;
-    window.GlaraOperacao.meuDia($("#md-root"),sb,{nome:(cfg.nomeAdmin||"").split(" ")[0],clientes:()=>clientes,abrirCliente:abrirCliTab,ir:d=>{const b=$("#btn-"+d);b&&b.click()}});
-    if(window.matchMedia("(max-width:860px)").matches)$("#main").scrollIntoView({block:"start"})});
-  $("#btn-aprovacoes").addEventListener("click",()=>{vista="aprovacoes";renderClientes();$("#main").innerHTML=`<div id="ap-root" class="list"></div>`;
-    window.GlaraOperacao.aprovacoes($("#ap-root"),sb,{clientes:()=>clientes,abrirCliente:abrirCliTab,portalURL,foneWa:v=>window.GlaraAvisos?window.GlaraAvisos.foneWa(v):""});
-    if(window.matchMedia("(max-width:860px)").matches)$("#main").scrollIntoView({block:"start"})});
   $("#btn-inicio").addEventListener("click",()=>{abrirInicio();if(window.matchMedia("(max-width:860px)").matches)$("#main").scrollIntoView({block:"start"})});
   $("#btn-tarefas").addEventListener("click",()=>{vista="tarefas";renderClientes();
     $("#main").innerHTML=`<div id="tk-root" class="list"></div>`;
@@ -279,14 +231,9 @@
     window.GlaraOrcamentos.criar($("#orc-root"),sb,Object.assign({toast,falha,clientes:()=>clientes,mudou:carregarAlertas},extra||{}));
     if(window.matchMedia("(max-width:860px)").matches)$("#main").scrollIntoView({block:"start"});else window.scrollTo({top:0});}
   $("#btn-orcamentos").addEventListener("click",()=>abrirOrcamentos());
-  $("#btn-loja").addEventListener("click",()=>{vista="loja";renderClientes();
-    $("#main").innerHTML=`<div id="loja-root" class="list"></div>`;
-    window.GlaraOrcamentos.criar($("#loja-root"),sb,{toast,falha,clientes:()=>clientes,mudou:carregarAlertas,modo:"loja"});
-    if(window.matchMedia("(max-width:860px)").matches)$("#main").scrollIntoView({block:"start"});else window.scrollTo({top:0})});
   $("#btn-crm").addEventListener("click",()=>{vista="crm";renderClientes();
     $("#main").innerHTML=`<div id="crm-root" class="list"></div>`;
-    const ab_=crmAbrir;crmAbrir=null;
-    window.GlaraCRM.criar($("#crm-root"),sb,{toast,falha,cfg,clientes:()=>clientes,mudou:carregarAlertas,abrirId:ab_,
+    window.GlaraCRM.criar($("#crm-root"),sb,{toast,falha,cfg,clientes:()=>clientes,mudou:carregarAlertas,
       novoOrcamento:c=>abrirOrcamentos({prefill:c}),abrirOrcamento:id=>abrirOrcamentos({abrirId:id}),
       criarCliente:async nome=>{const {data,error}=await sb.from("clientes").insert({nome}).select().single();if(error){falha("criar o cliente",error);return null}
         clientes.push(data);clientes.sort((a,b)=>a.nome.localeCompare(b.nome));renderClientes();return data}});
@@ -300,12 +247,10 @@
   function abrirAvisos(){vista="avisos";renderClientes();
     $("#main").innerHTML=`<div id="av-root" class="list"></div>`;
     window.GlaraAvisos.criar($("#av-root"),sb,{toast,falha,clientes:()=>clientes,ir:irDestino,mudou:()=>carregarAlertas()});rolarMain()}
-  let crmAbrir=null;
   function irDestino(d){d=d||{};
     if(d.vista==="avisos")return abrirAvisos();
     if(d.vista==="orcamentos")return abrirOrcamentos(d.orcamento?{abrirId:d.orcamento}:null);
     if(d.vista==="financeiro"){finAbrir=d.lancamento||null;$("#btn-financeiro").click();return}
-    if(d.vista==="crm"){crmAbrir=d.contato||null;$("#btn-crm").click();return}
     if(d.cliente&&clientes.find(c=>c.id===d.cliente)){
       if(d.ciclo)cicloAtual={id:d.ciclo};aba=d.aba||"posts";vista="cliente";
       abrirCliente(d.cliente).then(()=>{if(d.config){const det=$("#cl-config");if(det){det.open=true;const w=$("#cl-wa");if(w){w.focus();w.scrollIntoView({block:"center"})}}}});
@@ -319,14 +264,10 @@
   $("#btn-notas").addEventListener("click",()=>{vista="notas";renderClientes();
     $("#main").innerHTML=`<div id="nt-root" class="list"></div>`;
     window.GlaraNotas.criar($("#nt-root"),sb,{toast,falha,clientes:()=>clientes});rolarMain()});
-  let midiaAba="planos";
-  function abrirMidia(){vista="midia";renderClientes();
-    $("#main").innerHTML=`<div class="seg orc-seg pm-abas" role="group" aria-label="Seção"><button type="button" data-pm-aba="planos" aria-pressed="${midiaAba==="planos"}">Planos de serviço</button><button type="button" data-pm-aba="midia" aria-pressed="${midiaAba==="midia"}">Plano de mídia (anúncios)</button></div><div id="pm-root" class="list"></div>`;
-    if(midiaAba==="planos"&&window.GlaraPlanos)window.GlaraPlanos.criar($("#pm-root"),sb,{toast,falha});
-    else window.GlaraPlanoMidia.criar($("#pm-root"),sb,{toast,falha,clientes:()=>clientes});
-    $("#main").querySelectorAll("[data-pm-aba]").forEach(b=>b.addEventListener("click",()=>{midiaAba=b.dataset.pmAba;abrirMidia()}));rolarMain()}
-  $("#btn-midia").addEventListener("click",abrirMidia);
-  document.addEventListener("submit",async e=>{if(e.target.id!=="novo-cliente")return;
+  $("#btn-midia").addEventListener("click",()=>{vista="midia";renderClientes();
+    $("#main").innerHTML=`<div id="pm-root" class="list"></div>`;
+    window.GlaraPlanoMidia.criar($("#pm-root"),sb,{toast,falha,clientes:()=>clientes});rolarMain()});
+  $("#novo-cliente").addEventListener("submit",async e=>{
     e.preventDefault();const nome=$("#nc-nome").value.trim();if(!nome)return;
     const {data,error}=await sb.from("clientes").insert({nome}).select().single();
     if(error)return falha("criar o cliente",error);
@@ -419,7 +360,6 @@
         <p class="note" style="margin-top:6px">“Gerar link novo” desativa o link antigo na hora.</p>
       </details>
     </section>
-    ${window.GlaraOperacao?window.GlaraOperacao.onboardingHTML(c,{documentos,acessos,ciclos}):""}
     ${documentosHTML()}
     <section class="card">
       <div class="row">
@@ -509,7 +449,6 @@
     $("#main").innerHTML=clienteHTML()+cicloHTML();
     const dash=document.getElementById("ads-dash");
     if(dash)window.GlaraAnuncios.montar(dash,anuncios,{admin:true,arquivo:"anuncios_"+(cliAtual.nome||"cliente").toLowerCase().replace(/\s+/g,"-")});
-    if(document.getElementById("vb-adm"))vbCarregar();
   }
 
   /* ---------- posts ---------- */
@@ -796,7 +735,7 @@
   async function impLer(arq){
     try{toast("Lendo o arquivo…");const r=await window.GlaraImportAds.lerArquivo(arq);
       if(!r.rows.length){toast("Não achei lançamentos com valor nesse arquivo.");return}
-      impPrev={rows:impMarcar(r.rows),avisos:r.avisos,nome:arq.name,campanhas:r.campanhas||{}};render();
+      impPrev={rows:impMarcar(r.rows),avisos:r.avisos,nome:arq.name};render();
       const c=document.querySelector(".imp-card");c&&c.scrollIntoView({block:"start",behavior:"smooth"})}
     catch(err){toast(err.message||"Não consegui ler o arquivo.")}
   }
@@ -805,10 +744,8 @@
     const novos=ok.filter(r=>!r._ex).map(r=>({...limpa(r),ciclo_id:cicloAtual.id})), atual=subst?ok.filter(r=>r._ex):[];
     if(novos.length){const {error}=await sb.from("anuncios").insert(novos);if(error)return falha("importar",error)}
     for(const r of atual){const c=limpa(r);delete c.data;delete c.campanha;const {error}=await sb.from("anuncios").update(c).eq("id",r._ex);if(error)return falha("atualizar "+r.campanha,error)}
-    const cps=Object.entries(impPrev.campanhas||{}).map(([nome,o])=>({cliente_id:cliAtual.id,nome,...o,atualizado_em:new Date().toISOString()}));
-    let nCamp=0;for(const cp of cps){const {error}=await sb.from("anuncios_campanhas").upsert(cp,{onConflict:"cliente_id,nome"});if(!error)nCamp++}
     const ad=await sb.from("anuncios").select("*").eq("ciclo_id",cicloAtual.id).order("data");if(!ad.error)anuncios=ad.data;
-    impPrev=null;render();toast(`Importado: ${novos.length} novo${novos.length===1?"":"s"}${atual.length?` e ${atual.length} atualizado${atual.length===1?"":"s"}`:""}${nCamp?` · situação de ${nCamp} campanha${nCamp===1?"":"s"} atualizada`:""}.`);
+    impPrev=null;render();toast(`Importado: ${novos.length} novo${novos.length===1?"":"s"}${atual.length?` e ${atual.length} atualizado${atual.length===1?"":"s"}`:""}.`);
   }
 
   /* ---------- anúncios (Meta Ads) ---------- */
@@ -817,7 +754,7 @@
     const ultimo=anuncios.length?anuncios[anuncios.length-1]:null;
     const nomes=[...new Set(anuncios.map(a=>a.campanha))];
     const tipos=[...new Set(["Conversas no WhatsApp","Mensagens no Direct","Leads (formulário)","Cliques no link","Seguidores","Visitas ao perfil",...anuncios.map(a=>a.tipo_resultado)])];
-    return `<article class="card vb-adm" id="vb-adm"><p class="note">Carregando a verba…</p></article>`+impHTML()+`<article class="card">
+    return impHTML()+`<article class="card">
       <div class="head"><h3>Lançar dia</h3></div>
       <p class="intro">No Gerenciador de Anúncios, filtre o dia e copie os números de cada campanha. Um lançamento por dia e campanha.</p>
       <div class="grid2" id="ad-form">
@@ -836,65 +773,6 @@
     </article>
     <article class="card"><div class="head"><h3>Dashboard de investimento · ${esc(cicloAtual.titulo)}</h3></div><div id="ads-dash" class="dash"></div></article>`;
   }
-
-  document.addEventListener("change",async e=>{const cb=e.target.closest("[data-onb]");if(!cb||!cliAtual)return;
-    const o=Object.assign({},cliAtual.onboarding||{});if(cb.checked)o[cb.dataset.onb]=new Date().toISOString().slice(0,10);else delete o[cb.dataset.onb];
-    const {data,error}=await sb.from("clientes").update({onboarding:o}).eq("id",cliAtual.id).select().single();
-    if(error){cb.checked=!cb.checked;return falha("salvar a etapa",/onboarding/.test(error.message||"")?{message:"Rode o arquivo 27 no Supabase."}:error)}
-    Object.assign(cliAtual,data);const sec=cb.closest(".onb");if(sec){const t=document.createElement("div");t.innerHTML=window.GlaraOperacao.onboardingHTML(cliAtual,{documentos,acessos,ciclos});sec.replaceWith(t.firstElementChild)}});
-
-  /* ---------- verba dos anúncios e situação das campanhas ---------- */
-  let vbDados=null;
-  async function vbCarregar(){const box=document.getElementById("vb-adm");if(!box)return;
-    const id=cliAtual.id;const {data,error}=await sb.rpc("verba_admin",{p_cliente:id});
-    if(!cliAtual||cliAtual.id!==id)return;const b2=document.getElementById("vb-adm");if(!b2)return;
-    if(error){b2.innerHTML=`<div class="head"><h3>Verba e campanhas</h3></div><p class="note">Para usar a verba, rode o arquivo 26 no Supabase. (${esc(error.message)})</p>`;return}
-    vbDados=data;b2.innerHTML=vbHTML()}
-  function vbHTML(){const V=vbDados||{}, c=cliAtual, GA=window.GlaraAnuncios, hoje=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
-    const ST=GA.ST_CAMP, op=v=>Object.keys(ST).map(k=>`<option value="${k}" ${v===k?"selected":""}>${ST[k][0]}</option>`).join("");
-    const linha=(cp,novo)=>`<div class="vb-adm-camp" data-vb-camp="${esc(cp.nome||"")}">
-        ${novo?`<div><label class="label">Nova campanha</label><input type="text" data-k="nome" placeholder="Nome igual ao do Gerenciador"></div>`:`<b>${esc(cp.nome)}${cp.status_auto?' <small class="note">(situação automática)</small>':""}</b>`}
-        <div><label class="label">Situação</label><select data-k="status">${op(cp.status||"ativa")}</select></div>
-        <div><label class="label">Orçamento/dia (R$)</label><input type="text" inputmode="decimal" data-k="orcamento_dia" value="${cp.orcamento_dia!=null?Number(cp.orcamento_dia).toLocaleString("pt-BR",{minimumFractionDigits:2}):""}" placeholder="0,00"></div>
-        <div><label class="label">Início</label><input type="date" data-k="inicio" value="${esc(cp.inicio||"")}"></div>
-        <div><label class="label">Término</label><input type="date" data-k="fim" value="${esc(cp.fim||"")}"></div>
-        <button type="button" class="btn small" data-vb="camp">${novo?"Adicionar":"Salvar"}</button></div>`;
-    return `<div class="head"><h3>Verba e campanhas · ${esc(c.nome)}</h3></div>
-      <label class="check"><input type="checkbox" data-vb-cfg="verba_ativa" ${c.verba_ativa?"checked":""}> Mostrar verba, saldo e situação das campanhas para o cliente (portal, aba Investimento, e relatório)</label>
-      <label class="check"><input type="checkbox" data-vb-cfg="verba_pedir" ${c.verba_pedir!==false?"checked":""}> O cliente pode adicionar verba pelo portal (gera a cobrança; quando é paga, a verba entra sozinha)</label>
-      <div class="grid2">
-        <div><label class="label" for="vb-alerta">Avisar o cliente quando a verba durar menos de (dias)</label><input type="number" min="1" max="30" id="vb-alerta" data-vb-cfg="verba_alerta_dias" value="${esc(c.verba_alerta_dias??5)}"></div>
-        <div><label class="label" for="vb-desde">Contar o gasto a partir de (opcional)</label><input type="date" id="vb-desde" data-vb-cfg="verba_desde" value="${esc(c.verba_desde||"")}"></div></div>
-      <h4 class="vb-sub">Registrar verba colocada</h4>
-      <div class="grid2">
-        <div><label class="label" for="vb-data">Dia</label><input type="date" id="vb-data" value="${hoje}"></div>
-        <div><label class="label" for="vb-val">Valor (R$)</label><input type="text" inputmode="decimal" id="vb-val" placeholder="0,00"></div>
-        <div style="grid-column:1/-1"><label class="label" for="vb-desc">Descrição</label><input type="text" id="vb-desc" placeholder="Ex.: Cliente colocou no cartão da conta de anúncios"></div></div>
-      <div class="actions"><button type="button" class="btn small primary" data-vb="add">Adicionar verba</button></div>
-      <p class="note">Use quando o cliente colocar a verba direto na conta de anúncios ou pagar por fora. Para corrigir, lance um valor negativo. O que ele paga pelo portal entra sozinho.</p>
-      <h4 class="vb-sub">Situação das campanhas</h4>
-      <p class="note">As campanhas dos lançamentos aparecem aqui. Sem cadastro, a situação é automática: ativa se teve gasto nos últimos 2 dias. Ao importar o relatório da Meta com a coluna de veiculação e orçamento, isso é atualizado sozinho.</p>
-      <div class="vb-adm-camps">${(V.campanhas||[]).map(cp=>linha(cp,false)).join("")}${linha({status:"ativa"},true)}</div>
-      <h4 class="vb-sub">Como o cliente vê</h4>
-      ${c.verba_ativa?"":'<p class="note">Ainda oculto para o cliente. Marque a primeira opção para liberar.</p>'}
-      ${GA.verbaHTML(V,{admin:true})}`}
-  document.addEventListener("change",async e=>{const el=e.target.closest("[data-vb-cfg]");if(!el||!cliAtual)return;
-    const k=el.dataset.vbCfg, v=el.type==="checkbox"?el.checked:el.type==="number"?Math.min(30,Math.max(1,parseInt(el.value)||5)):(el.value||null);
-    const {data,error}=await sb.from("clientes").update({[k]:v}).eq("id",cliAtual.id).select().single();
-    if(error){if(el.type==="checkbox")el.checked=!v;return falha("salvar",error)}
-    Object.assign(cliAtual,data);toast(k==="verba_ativa"?(v?"O cliente já vê a verba e as campanhas.":"Verba oculta para o cliente."):"Salvo.");vbCarregar()});
-  document.addEventListener("click",async e=>{const b=e.target.closest("[data-vb]");if(!b||!cliAtual)return;const GA=window.GlaraAnuncios;
-    if(b.dataset.vb==="add"){const val=GA.parseMoeda(document.getElementById("vb-val").value);if(!val){toast("Informe o valor da verba.");return}
-      const {error}=await sb.from("anuncios_verba").insert({cliente_id:cliAtual.id,data:document.getElementById("vb-data").value||null,valor:val,descricao:document.getElementById("vb-desc").value.trim()||"Verba adicionada"});
-      if(error)return falha("adicionar a verba",error);toast("Verba de "+GA.brl(val)+" registrada.");vbCarregar();return}
-    if(b.dataset.vb==="apagar"){if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Apagar?";return}
-      const {error}=await sb.from("anuncios_verba").delete().eq("id",b.dataset.id);if(error)return falha("apagar",error);toast("Aporte apagado.");vbCarregar();return}
-    if(b.dataset.vb==="camp"){const row=b.closest("[data-vb-camp]"), g=k=>{const x=row.querySelector(`[data-k="${k}"]`);return x?x.value.trim():""};
-      const nome=row.dataset.vbCamp||g("nome");if(!nome){toast("Escreva o nome da campanha.");return}
-      const od=g("orcamento_dia");
-      const {error}=await sb.from("anuncios_campanhas").upsert({cliente_id:cliAtual.id,nome,status:g("status")||"ativa",orcamento_dia:od?GA.parseMoeda(od):null,inicio:g("inicio")||null,fim:g("fim")||null,atualizado_em:new Date().toISOString()},{onConflict:"cliente_id,nome"});
-      if(error)return falha("salvar a campanha",error);toast("Campanha salva.");vbCarregar();return}
-  });
 
   /* ---------- números do Instagram ---------- */
   function numerosHTML(){

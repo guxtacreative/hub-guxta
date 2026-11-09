@@ -60,7 +60,7 @@
       <div class="sino-pop" id="sino-pop" hidden role="dialog" aria-label="Novidades"></div>
     </div>
     <button type="button" class="tema-btn" data-tema-btn></button>
-    <div class="userbox" id="userbox" hidden><select id="cliente-sel" aria-label="Cliente" hidden></select><span class="perfil-av" id="perfil-av" aria-hidden="true"></span><button class="btn small ghost" id="meu-perfil" hidden>Meu perfil</button><span id="user-email"></span><button class="btn small" id="sair">Sair</button></div></div>
+    <div class="userbox" id="userbox" hidden><select id="cliente-sel" aria-label="Cliente" hidden></select><span id="user-email"></span><button class="btn small" id="sair">Sair</button></div></div>
   <header class="hero">
     <span class="hero-tag" id="hero-tag">Hub de Marketing</span>
     <h1 id="titulo">Carregando…</h1>
@@ -244,7 +244,6 @@
 </div>
 
 <script src="config.js"></script>
-<script src="perfil.js"></script>
 <script src="metricas.js"></script>
 <script src="anuncios.js"></script>
 <script src="anel.js"></script>
@@ -264,7 +263,7 @@
   const _h=location.hash.replace(/^#/,""), token=new URLSearchParams(location.search).get("c")||(/^[a-f0-9]{32,}$/i.test(_h)?_h:"");
   const urlSupabase=u=>{u=String(u||"").trim();let m=u.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);if(m)return "https://"+m[1]+".supabase.co";m=u.match(/^(?:https?:\/\/)?([a-z0-9-]+\.supabase\.(?:co|in))/i);if(m)return "https://"+m[1].toLowerCase();return u.replace(/\/+$/,"")};
   const cfg=window.GLARA_CONFIG||{};
-  const corPropria=c=>/^#[0-9a-f]{6}$/i.test(c||"")&&!["#219E3D","#219E3D","#219E3D","#C0703A","#3D4BFF","#00A142","#0866FF","#1877F2"].includes(String(c).toUpperCase());
+  const corPropria=c=>/^#[0-9a-f]{6}$/i.test(c||"")&&!["#219E3D","#219E3D","#219E3D","#C0703A","#3D4BFF","#0F8A4A","#0866FF","#1877F2"].includes(String(c).toUpperCase());
   let sb=null, dados=null, filtro="todos", modo=token?"link":"login", clienteId=null;
   const P=()=>({p_token:modo==="link"?token:null,p_cliente:modo==="login"?clienteId:null});
   const slideIdx={}, editando={}, rasc={};
@@ -516,8 +515,8 @@
     const ord=[...L.produtos].sort((a,b)=>(a.tipo==="servico"?0:1)-(b.tipo==="servico"?0:1));
     box.innerHTML=`<section class="card lj-portal-h"><div><span class="eyebrow">Loja</span><h2>Serviços avulsos e material gráfico</h2>
         <p class="note" style="margin:4px 0 0">Precisa de algo além do seu plano? Peça e pague por aqui: pacotes de posts, captação e edição de vídeo, sites, cartões, banners e mais.</p></div>
-        <a class="btn primary" href="https://loja.guxta.com.br/?origem=portal" target="_blank" rel="noopener">Abrir a loja</a></section>
-      <div class="lj-portal">${ord.map(p=>`<a class="lj-portal-p" href="https://loja.guxta.com.br/?p=${encodeURIComponent(p.id)}&origem=portal" target="_blank" rel="noopener">
+        <a class="btn primary" href="loja.html?origem=portal" target="_blank" rel="noopener">Abrir a loja</a></section>
+      <div class="lj-portal">${ord.map(p=>`<a class="lj-portal-p" href="loja.html?p=${encodeURIComponent(p.id)}&origem=portal" target="_blank" rel="noopener">
           <span class="lj-portal-f">${p.foto?`<img src="${esc(p.foto)}" alt="" loading="lazy">`:`<i aria-hidden="true">${esc((p.nome||"?").slice(0,1).toUpperCase())}</i>`}</span>
           <span class="lj-portal-t"><small>${esc(p.categoria||"")}</small><b>${esc(p.nome)}</b><span>${p.preco_tipo==="m2"?"por m² ":"a partir de "}<strong>${brl(ap(p))}</strong></span></span></a>`).join("")}</div>`}
   /* link dos e-mails e do WhatsApp: ?aba=aprovar ou ?aba=relatorio abre direto na aba */
@@ -583,7 +582,7 @@
   document.addEventListener("keydown",e=>{if(e.key==="Escape")fecharSino()});
 
   /* ---------- painel do plano ---------- */
-  function anel(u,l){if(window.GlaraAnel)return window.GlaraAnel.progresso({pct:l>0?u/l:1,cor:u>l?"#00C853":u>=l?"#FF9500":"var",w:16});const r=42,C=2*Math.PI*r,pc=l>0?Math.min(1,u/l):1,cls=u>l?"over":u>=l?"full":"";
+  function anel(u,l){if(window.GlaraAnel)return window.GlaraAnel.progresso({pct:l>0?u/l:1,cor:u>l?"#0075DE":u>=l?"#FF9500":"var",w:16});const r=42,C=2*Math.PI*r,pc=l>0?Math.min(1,u/l):1,cls=u>l?"over":u>=l?"full":"";
     return `<svg class="anel ${cls}" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="${r}" class="anel-bg"/><circle cx="50" cy="50" r="${r}" class="anel-fg" stroke-dasharray="${(C*pc).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 50 50)"/></svg>`}
   function renderPlanoDash(){
     const c=dados.cliente||{}, lim=c.limites||{}, tipos=Object.keys(TIPOS).filter(t=>typeof lim[t]==="number"), tab=$("#tab-plano");
@@ -861,7 +860,6 @@
     const {data:{session}}=await sb.auth.getSession();if(!session){tela("login");return}
     if(session.user&&session.user.user_metadata&&session.user.user_metadata.trocar_senha){tela("trocar");return} // senha provisória: troca obrigatória
     $("#user-email").textContent=session.user.email;$("#userbox").hidden=false;
-    if(window.GlaraPerfil)GlaraPerfil.iniciar(sb,session,{botao:"#meu-perfil",av:"#perfil-av"});
     const {data:lista,error}=await sb.rpc("portal_meus_clientes");
     if(error){tela("login","Não conseguimos conferir seu acesso agora. Tente de novo.");return}
     if(!lista||!lista.length){tela("sem");$("#sem-msg").textContent=`O e-mail ${session.user.email} ainda não está ligado a nenhum cliente. Peça para a nossa equipe liberar seu acesso.`;return}
