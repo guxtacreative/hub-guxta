@@ -14,6 +14,9 @@
 <link rel="stylesheet" href="tema-escuro.css">
 <link rel="stylesheet" href="componentes.css">
 <link rel="stylesheet" href="leve.css">
+<link rel="stylesheet" href="ajustes.css">
+<link rel="stylesheet" href="visual-guxta.css">
+<link rel="stylesheet" href="padrao-v4.css">
 <script src="tema.js"></script>
 <style>
   .cli-acoes{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -21,7 +24,7 @@
   .status.ativo::before{content:"";width:7px;height:7px;border-radius:50%;background:#1FA750}
   .status.inativo{background:#F1F1F3;color:#6E6E73}
   .icone-lixo{appearance:none;border:1px solid var(--line);background:#FFFFFF;color:#8A8A90;width:36px;height:36px;border-radius:8px;display:grid;place-items:center;cursor:pointer}
-  .icone-lixo:hover{color:#0075DE;border-color:#E9F3FC;background:#E9F3FC}
+  .icone-lixo:hover{color:#C62A35;border-color:#F3C9CC;background:#FDEEEF}
   .aviso-inativo{margin:0;padding:10px 14px;border-radius:8px;background:#F4F4F6;color:#4A4A4F;font-size:14px}
   .cli small{color:#8A8A90;font-weight:500}
   .wrap{max-width:1240px}
@@ -34,7 +37,7 @@
   .wrap:has(#painel:not([hidden])) .hero{display:none}
   @media (max-width:860px){.layout{grid-template-columns:minmax(0,1fr)}.side{position:static}}
   .cli{appearance:none;text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:12px 14px;font:500 14px var(--font);text-transform:none;letter-spacing:-.005em;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
-  .cli[aria-current="true"]{background:var(--navy,#0B0E2C);color:#FFFFFF;border-color:var(--navy,#0B0E2C);box-shadow:inset 4px 0 0 var(--accent-2,#6C78FF),0 8px 20px -10px rgba(39,51,230,.6)}
+  .cli[aria-current="true"]{background:var(--accent);color:#FFFFFF;border-color:var(--accent);box-shadow:none}
   .cli small{color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
   .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px}
   .row{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
@@ -61,6 +64,17 @@
   .brow textarea,.srow textarea{min-height:60px}
   .head{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap}
   .pill-sm{font-size:12px}
+  .pn-box{border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+  .pn-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .pn-head .pn-tag{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent)}
+  .pn-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  .pn-item{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;gap:4px}
+  .pn-item p{margin:0;white-space:pre-wrap;word-break:break-word;font-size:14px;color:var(--ink)}
+  .pn-meta{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+  .pn-rm{appearance:none;border:0;background:none;color:var(--muted);cursor:pointer;font-size:12px;padding:2px 6px;border-radius:6px}
+  .pn-rm:hover{color:var(--accent);background:var(--accent-soft)}
+  .pn-add{display:flex;flex-direction:column;gap:8px}
+  .pn-add textarea{min-height:56px}
   .toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--brand);color:var(--on-brand);padding:10px 16px;border-radius:10px;font-weight:600;font-size:14px;z-index:20;max-width:90vw}
 </style>
 </head>
@@ -68,7 +82,7 @@
 <div class="wrap">
   <div class="top">
     <div class="brandbar"><img class="logo" src="logo.png" alt="GUXTA HUB" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='logo.svg'}else{this.remove()}"><span class="eyebrow marca-tag" id="marca">Onde estratégia, criação e gestão se encontram</span></div>
-    <div class="actions"><div class="sino-box av-box" id="av-box" hidden></div><button type="button" class="tema-btn" data-tema-btn></button><div class="actions" id="userbox" hidden><span class="note" id="useremail"></span><button class="btn small" id="sair">Sair</button></div></div>
+    <div class="actions"><div class="sino-box av-box" id="av-box" hidden></div><button type="button" class="tema-btn" data-tema-btn></button><div class="actions" id="userbox" hidden><span class="perfil-av" id="perfil-av" aria-hidden="true"></span><button class="btn small ghost" id="meu-perfil" hidden>Meu perfil</button><span class="note" id="useremail"></span><button class="btn small" id="sair">Sair</button></div></div>
   </div>
   <header class="hero hero-sm"><span class="hero-tag">Uso interno · GUXTA</span><h1>Painel de <mark>gestão</mark></h1><p class="intro" id="hero-sub">Hub de Marketing · clientes, planejamento, aprovações, resultados, anúncios e pedidos num lugar só.</p></header>
 
@@ -100,6 +114,7 @@
       <button class="cli cli-tarefas" id="btn-financeiro" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg></span>Financeiro<span class="badge" id="fin-badge" hidden></span></button>
       <button class="cli cli-tarefas" id="btn-notas" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.5z"/><path d="M15 3v6h6M7 13h10M7 17h6"/></svg></span>Notas</button>
       <button class="cli cli-tarefas" id="btn-avisos" aria-current="false"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>Avisos e lembretes<span class="badge calma" id="av-badge" hidden></span></button>
+      <a class="cli cli-tarefas" href="https://mail.google.com/mail/u/0/" target="_blank" rel="noopener" style="text-decoration:none" title="Abre o Gmail, que recebe os e-mails de contato@guxta.com.br em outra aba"><span class="cli-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>Caixa de entrada<span class="note" style="margin-left:auto;font-size:11px">Gmail ↗</span></a>
     </aside>
 
     <main class="list" id="main">
@@ -110,6 +125,7 @@
 <div class="toast" id="toast" hidden role="status"></div>
 
 <script src="config.js"></script>
+<script src="perfil.js"></script>
 <script src="metricas.js"></script>
 <script src="anuncios.js"></script>
 <script src="importar-ads.js"></script>
@@ -134,7 +150,7 @@
   const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const urlSupabase=u=>{u=String(u||"").trim();let m=u.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);if(m)return "https://"+m[1]+".supabase.co";m=u.match(/^(?:https?:\/\/)?([a-z0-9-]+\.supabase\.(?:co|in))/i);if(m)return "https://"+m[1].toLowerCase();return u.replace(/\/+$/,"")};
   const cfg=window.GLARA_CONFIG||{};
-  const PADRAO_COR=["","#0075DE","#0075DE","#0075DE","#C0703A","#3D4BFF","#0F8A4A","#0866FF","#1877F2"];
+  const PADRAO_COR=["","#E10600","#EE2B37","#E50914","#C0703A","#3D4BFF","#0F8A4A","#0866FF","#1877F2"];
   $("#hero-sub").textContent=(cfg.plataforma||"Hub de Marketing")+" · clientes, planejamento, aprovações, resultados, anúncios e pedidos num lugar só.";
   let toastT=null;
   const toast=m=>{const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)};
@@ -145,11 +161,22 @@
 
   if(!window.supabase||!cfg.supabaseUrl||/SEU-PROJETO/.test(cfg.supabaseUrl)){
     $("#main").innerHTML="";$("#login").hidden=false;$("#login-msg").textContent="Preencha o arquivo config.js com o endereço e a chave do Supabase antes de usar o painel.";return}
-  const sb=window.supabase.createClient(urlSupabase(cfg.supabaseUrl),String(cfg.supabaseAnonKey||"").trim());
+  let sb=null;
+  const fetchComSessao=async(url,init)=>{
+    const r=await fetch(url,init);
+    if(r.status!==401&&r.status!==403)return r;
+    const txt=await r.clone().text().catch(()=>"");
+    if(!/jwt expired|token is expired/i.test(txt))return r;
+    const {data,error}=await sb.auth.refreshSession().catch(()=>({data:null,error:true}));
+    if(error||!data||!data.session)return r;
+    const h=new Headers((init&&init.headers)||{});h.set("Authorization","Bearer "+data.session.access_token);
+    return fetch(url,{...(init||{}),headers:h});
+  };
+  sb=window.supabase.createClient(urlSupabase(cfg.supabaseUrl),String(cfg.supabaseAnonKey||"").trim(),{global:{fetch:fetchComSessao}});
 
   let avSino=null, finAbrir=null;
   let clientes=[], cliAtual=null, ciclos=[], cicloAtual=null, aba="posts", vista="inicio", alertas={clientes:{},tarefas:{}}, pedFiltro="abertos";
-  let posts=[], decisoes={}, roteiros=[], stories=[], pedidos=[], anuncios=[], acessos=[], documentos=[];
+  let posts=[], decisoes={}, roteiros=[], stories=[], pedidos=[], pedNotas=[], anuncios=[], acessos=[], documentos=[];
 
   /* ---------- login ---------- */
   $("#login").addEventListener("submit",async e=>{
@@ -173,6 +200,7 @@
     {const nm=(cfg.nomeAdmin||session.user.email.split("@")[0]||"").trim(), h=new Date().getHours();
      $("#side-nome").textContent=nm.split(" ")[0]||"Olá";$("#side-sauda").textContent=(h<12?"Bom dia":h<18?"Boa tarde":"Boa noite")+",";$("#side-av").textContent=(nm[0]||"G").toUpperCase()}
     $("#login").hidden=true;$("#painel").hidden=false;$("#userbox").hidden=false;$("#useremail").textContent=session.user.email;
+    if(window.GlaraPerfil)GlaraPerfil.iniciar(sb,session,{botao:"#meu-perfil",av:"#perfil-av",nome:"#side-nome",sidebar:"#side-av"});
     await carregarClientes();
     await sb.rpc("gerar_recorrencias"); // cria as mensalidades do mês dos planos recorrentes
     if(vista==="inicio")abrirInicio();
@@ -206,6 +234,7 @@
     const {data,error}=await sb.from("clientes").select("*").order("nome");
     if(error)return falha("carregar os clientes",error);
     clientes=data;renderClientes();
+    if(window.GlaraPerfil){GlaraPerfil.fotosDosClientes(sb,clientes).then(m=>{fotosCli=m;renderClientes()}).catch(()=>{})}
     if(cliAtual)abrirCliente(cliAtual.id);
   }
   function renderClientes(){
@@ -228,13 +257,14 @@
   }
   /* ---------- Clientes: todos numa aba só ---------- */
   let cliBusca="", cliFiltro="ativos";
+  var fotosCli={};
   function gradeClientesHTML(){
     const q=cliBusca.trim().toLowerCase(), lista=clientes.filter(c=>(cliFiltro==="todos"||(cliFiltro==="ativos"?c.ativo:!c.ativo))&&(!q||c.nome.toLowerCase().includes(q)));
     if(!lista.length)return `<p class="note">${clientes.length?"Nenhum cliente encontrado.":"Nenhum cliente ainda. Adicione o primeiro acima."}</p>`;
     return lista.map(c=>{const a=(alertas.clientes||{})[c.id]||{}, n=(a.pedidos||0)+(a.ajustes||0)+(a.alteracoes||0), ini=c.nome.trim().split(/\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase();
       const info=[a.pedidos?`${a.pedidos} pedido${a.pedidos>1?"s":""} novo${a.pedidos>1?"s":""}`:"",a.ajustes?`${a.ajustes} ajuste${a.ajustes>1?"s":""} pedido${a.ajustes>1?"s":""}`:"",a.alteracoes?`${a.alteracoes} alteraç${a.alteracoes>1?"ões":"ão"}`:"",a.aprovados_24h?`${a.aprovados_24h} aprovad${a.aprovados_24h>1?"os":"o"} em 24 h`:""].filter(Boolean);
       return `<button type="button" class="clg-card${c.ativo?"":" off"}" data-cli="${c.id}">
-        <span class="clg-av" style="${c.cor_destaque&&/^#[0-9a-f]{3,8}$/i.test(c.cor_destaque)?`background:${c.cor_destaque}`:""}" aria-hidden="true">${esc(ini)}</span>
+        <span class="clg-av" style="${c.cor_destaque&&/^#[0-9a-f]{3,8}$/i.test(c.cor_destaque)?`background:${c.cor_destaque}`:""}" aria-hidden="true">${fotosCli[c.id]&&fotosCli[c.id].url?`<img src="${esc(fotosCli[c.id].url)}" alt="">`:esc(ini)}</span>
         <span class="clg-t"><b>${esc(c.nome)}</b><small>${esc(c.plano_nome||(c.ativo?"Cliente ativo":"Desativado"))}</small>${info.length?`<span class="clg-info">${esc(info.join(" · "))}</span>`:""}</span>
         ${bolha(n,info.join(" · "))}</button>`}).join("")}
   function abrirClientesLista(){vista="clientes";renderClientes();
@@ -367,6 +397,8 @@
     ciclos=data;
     const pq=await sb.from("pedidos").select("*").eq("cliente_id",id).order("criado_em",{ascending:false});
     pedidos=pq.error?[]:pq.data;
+    const nq=await sb.from("pedido_notas").select("*").eq("cliente_id",id).order("criado_em",{ascending:false});
+    pedNotas=nq.error?[]:nq.data;
     const aq=await sb.from("cliente_usuarios").select("*").eq("cliente_id",id).order("criado_em");acessos=aq.error?[]:aq.data;
     const dq=await sb.from("documentos").select("*").eq("cliente_id",id).order("criado_em",{ascending:false});documentos=dq.error?[]:dq.data;
     if(!cicloAtual||!ciclos.find(c=>c.id===cicloAtual.id))cicloAtual=ciclos[0]||null;
@@ -682,6 +714,14 @@
     if(t==="Outro"||typeof lim!=="number"){el.textContent=t==="Outro"?"Pedidos “Outro” não entram no plano: na cobrança automática, ficam como extra.":"";return}
     const u=usoPlano()[t];el.textContent=u+1>lim?`Atenção: ${u} de ${lim} ${NOME_TIPO[t].toLowerCase()} já usados neste mês. Na cobrança automática, este pedido fica como extra.`:`${u} de ${lim} ${NOME_TIPO[t].toLowerCase()} usados neste mês: este pedido entra no plano.`;
   }
+  function notasPedHTML(x){
+    const l=pedNotas.filter(n=>n.pedido_id===x.id);
+    return `<div class="pn-box" data-pn="${x.id}">
+      <div class="pn-head"><span class="pn-tag">Notas internas · só você vê</span><span class="note">${l.length?l.length+(l.length===1?" nota":" notas"):"Nenhuma nota ainda"}</span></div>
+      ${l.length?`<ul class="pn-list">${l.map(n=>`<li class="pn-item"><p>${esc(n.texto)}</p><div class="pn-meta"><span>${esc(n.autor||"Admin")} · ${fmtQuando(n.criado_em)}</span><button type="button" class="pn-rm" data-act="ped-nota-rm" data-nid="${n.id}">Apagar</button></div></li>`).join("")}</ul>`:""}
+      <div class="pn-add"><textarea data-pn-novo placeholder="Ex.: cliente prefere fundo claro; aguardando fotos até sexta." aria-label="Nova nota do pedido"></textarea><div class="actions" style="margin:0"><button type="button" class="btn small primary" data-act="ped-nota-add">Adicionar nota</button></div></div>
+    </div>`;
+  }
   function pedidosHTML(){
     const c=cliAtual, lim=c.limites||{}, uso=usoPlano(), tipos=TIPOS_PLANO.filter(t=>typeof lim[t]==="number"), mat=linkSeguro(c.materiais_link);
     const plano=`<article class="card"><div class="head"><h3>${esc(c.plano_nome||"Plano do cliente")} · uso em ${esc(cicloAtual.titulo)}</h3></div>
@@ -706,6 +746,7 @@
         ${x.status==="aprovacao"?`<p class="ped-esp">Esperando o cliente aprovar no portal. Quando ele aprovar, o pedido conclui sozinho.</p>`:""}
         ${x.aprovado_cliente_em?`<p class="ped-ok-cli">✓ Aprovado pelo cliente${x.aprovado_por?" ("+esc(x.aprovado_por)+")":""} em ${fmtQuando(x.aprovado_cliente_em)}</p>`:""}
         ${ckHTML(x)}
+        ${notasPedHTML(x)}
         <div class="grid2">
           <div><label class="label">Status</label><select data-pf="status">${Object.entries(ST_PED).map(([k,v])=>`<option value="${k}" ${x.status===k?"selected":""}>${v[0]}</option>`).join("")}</select></div>
           <div><label class="label">Cobrar à parte?</label><select data-pf="extra"><option value="false" ${!x.extra?"selected":""}>Não, está no plano</option><option value="true" ${x.extra?"selected":""}>Sim, é extra</option></select></div>
@@ -1025,6 +1066,14 @@
     if(a==="apagar-story"&&sc){if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Clique de novo para apagar";return}
       const {error}=await sb.from("stories").delete().eq("id",sc.dataset.sto);if(error)return falha("apagar",error);stories=stories.filter(x=>x.id!==sc.dataset.sto);render();return}
     const pc=b.closest("[data-ped]");
+    if(a==="ped-nota-add"&&pc){const i=pc.querySelector("[data-pn-novo]"),v=i.value.trim();if(!v){i.focus();return}
+      b.disabled=true;
+      const {data,error}=await sb.from("pedido_notas").insert({pedido_id:pc.dataset.ped,cliente_id:cliAtual.id,texto:v,autor:cfg.nomeAdmin||"Admin"}).select().single();
+      b.disabled=false;if(error)return falha(/pedido_notas/.test(error.message||"")?"salvar a nota (rode o arquivo 14 do banco no Supabase)":"salvar a nota",error);
+      pedNotas.unshift(data);render();toast("Nota adicionada. O cliente não vê.");return}
+    if(a==="ped-nota-rm"&&pc){if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Clique de novo";return}
+      const {error}=await sb.from("pedido_notas").delete().eq("id",b.dataset.nid);if(error)return falha("apagar a nota",error);
+      pedNotas=pedNotas.filter(n=>n.id!==b.dataset.nid);render();toast("Nota apagada.");return}
     if(a==="ped-ck-add"&&pc){const i=pc.querySelector("[data-ped-ck-novo]"),v=i.value.trim();if(!v){i.focus();return}return salvarChecklist(pc.dataset.ped,[...lerCk(pc),{t:v,ok:false}],"Etapa adicionada.")}
     if(a==="ped-ck-rm"&&pc){const l=lerCk(pc);l.splice(+b.dataset.k,1);return salvarChecklist(pc.dataset.ped,l,"Etapa removida.")}
     if(a==="ped-ck-padrao"&&pc){const x=pedidos.find(p=>p.id===pc.dataset.ped);return salvarChecklist(pc.dataset.ped,(ETAPAS_PED[x.tipo]||ETAPAS_PED.Outro).map(t=>({t,ok:false})),"Etapas padrão adicionadas.")}

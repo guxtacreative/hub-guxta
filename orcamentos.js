@@ -190,7 +190,7 @@
 
 
     /* ---------- loja online ---------- */
-    const linkLoja=()=>new URL("loja.html",location.href).href;
+    const linkLoja=()=>"https://loja.guxta.com.br/";
     const STL={carrinho:["Carrinho aberto","pend"],abandonado:["Abandonou","adj"],fechado:["Aguardando pagamento","pend"],pago:["Pago","ok"],cancelado:["Cancelado","prod"]};
     function lojaHTML(){
       if(!pedidos)return `<div class="empty">Rode o arquivo 19 do banco no Supabase para ligar a loja online.</div>`;

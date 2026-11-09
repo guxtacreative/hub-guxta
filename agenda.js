@@ -16,7 +16,7 @@
   const hora=iso=>{if(!iso)return"";const d=new Date(iso);return pad(d.getHours())+":"+pad(d.getMinutes())};
 
   const TIPOS={
-    compromisso:{nome:"Compromissos",cor:"#0075DE",ico:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>'},
+    compromisso:{nome:"Compromissos",cor:"#E30613",ico:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>'},
     post:{nome:"Posts",cor:"#8B5CF6",ico:'<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4"/>'},
     pedido:{nome:"Pedidos",cor:"#F59E0B",ico:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'},
     tarefa:{nome:"Tarefas",cor:"#2563EB",ico:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>'},
