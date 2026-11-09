@@ -1,0 +1,53 @@
+/* =====================================================================
+   Estilo visual inspirado na referência (fundo claro, tipografia forte,
+   botões em pílula, cartões bem arredondados e detalhes em cores vivas).
+   Só muda aparência: estrutura e textos continuam iguais.
+   Alertas seguem vermelhos. Carregar por último.
+   ===================================================================== */
+:root{
+  --bg:#F3F3F5; --surface:#FFFFFF; --soft:#F7F7F9; --line:#E6E6EA; --ch-bar:#D8D8DE;
+  --ink:#0E0E10; --muted:#6E6E76;
+  --brand:#0E0E10; --on-brand:#FFFFFF; --navy:#0E0E10; --navy-2:#2A2A30; --chumbo:#0E0E10;
+  --accent:#FF5A36; --accent-dark:#E0401F; --accent-2:#FF7AB6;
+  --accent-soft:#FFF1E6; --accent-soft2:#FFD9C7; --rosa:#FFEAF3;
+  --verde-cta:#0E0E10; --verde-cta-2:#000000;
+  --grad:linear-gradient(90deg,#FFC93C,#FF7AB6,#5B8CFF);
+  --grad-hero:#FFFFFF;
+  --sombra:0 1px 2px rgba(0,0,0,.03),0 14px 30px -22px rgba(0,0,0,.22);
+}
+body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Arial,sans-serif;letter-spacing:-.005em}
+h1{font-weight:800;letter-spacing:-.045em;line-height:1.02}
+h2{font-weight:700;letter-spacing:-.03em}
+
+/* botões em pílula: preto forte e contorno */
+.btn{border-radius:999px!important;font-weight:700;padding:11px 20px}
+.btn.primary{background:#0E0E10!important;border-color:#0E0E10!important;color:#FFFFFF!important;box-shadow:none!important}
+.btn.primary:hover{background:#2A2A30!important;border-color:#2A2A30!important}
+.btn.outline{border:1.5px solid #0E0E10;color:#0E0E10;background:transparent}
+.btn.ghost{color:#0E0E10}
+
+/* cabeçalho: branco, faixa colorida embaixo */
+.hero{position:relative;background:#FFFFFF!important;color:#0E0E10!important;border-radius:28px!important;box-shadow:var(--sombra)!important;border:0!important;padding-bottom:26px}
+.hero::before{display:none!important}
+.hero::after{display:block!important;content:"";position:absolute;left:24px;right:24px;bottom:0;height:5px;border-radius:999px;background:var(--grad);box-shadow:none!important;filter:none!important}
+.hero h1,.hero h2,.hero h3,.hero b,.hero strong{color:#0E0E10!important}
+.hero mark{color:#FF5A36!important;background:none!important;font-family:Georgia,"Times New Roman",serif;font-style:italic;font-weight:400}
+.hero p,.hero .intro,.hero .label{color:#5B5B63!important}
+.hero-tag{background:#FFC93C!important;color:#0E0E10!important;border-radius:999px!important;padding:6px 12px!important;letter-spacing:.02em}
+
+/* cartões: mais arredondados e leves */
+.card,.box,.kpi,.post,.doc,.cli,.acesso,.plano-card,.tk-card,.pl-card,.tk-col,.caption,.seg{
+  background:#FFFFFF;border:1px solid #ECECF0;border-radius:24px;box-shadow:var(--sombra)}
+.kpi{border-radius:24px}
+.box{border-radius:24px}
+
+/* marcação e detalhes */
+.eyebrow{font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:11px;color:#6E6E76}
+.eyebrow::before{background:linear-gradient(135deg,#FFC93C,#FF7AB6)!important;box-shadow:0 0 0 4px rgba(255,122,182,.18)!important}
+.topo-progresso i{background:linear-gradient(90deg,#FFC93C,#FF7AB6,#5B8CFF)!important}
+.cli{border-radius:999px}
+.cli[aria-current="true"]{background:#0E0E10;color:#FFFFFF;border-radius:999px;box-shadow:none}
+.cli[aria-current="true"] small{color:#C9C9D0}
+.tab[aria-selected="true"],.tab.active{color:#0E0E10;box-shadow:inset 0 -3px 0 #FF5A36}
+input,select,textarea{border-radius:14px!important;border-color:#DCDCE2}
+input:focus,select:focus,textarea:focus{border-color:#0E0E10!important;box-shadow:0 0 0 3px rgba(14,14,16,.12)!important}
