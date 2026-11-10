@@ -14,8 +14,8 @@ html[data-tema="escuro"]{
   --accent-soft:rgba(255,107,44,.14)!important; --accent-soft2:rgba(255,107,44,.3)!important; --rosa:rgba(255,107,44,.14)!important;
   --red:#FF6B2C!important; --red-d:#E85A1E!important; --verde-cta:#FF6B2C!important; --verde-cta-2:#E85A1E!important;
   --azul:#FF6B2C!important; --azul-hover:#E85A1E!important; --seg1:#FF6B2C!important;
-  --gold:#F5C542!important; --coral:#E8554E!important;
-  --grad:linear-gradient(90deg,#FF6B2C,#E8554E)!important;
+  --gold:#F5C542!important; --coral:#FF6B2C!important;
+  --grad:linear-gradient(90deg,#FF6B2C,#FF6B2C)!important;
   --grad-hero:linear-gradient(135deg,#1A2430 0%,#111820 60%)!important;
   --alerta:#EF4444!important; --sombra:none!important; color-scheme:dark;
 }
@@ -73,7 +73,7 @@ a{color:#FF8A5C}
 .kpi :has(> svg) svg{color:inherit!important}
 
 /* progresso, campos e tabelas */
-.topo-progresso i,.progresso>i,.bar>i,.barra>i,.ped-bar i{background:linear-gradient(90deg,#FF6B2C,#E8554E)!important}
+.topo-progresso i,.progresso>i,.bar>i,.barra>i,.ped-bar i{background:linear-gradient(90deg,#FF6B2C,#FF6B2C)!important}
 .progresso,.bar,.barra,.ped-bar{background:var(--soft)!important;border-radius:999px}
 input,select,textarea{background:#111820!important;border:1px solid var(--line)!important;border-radius:12px!important;color:var(--ink)!important}
 input::placeholder,textarea::placeholder{color:#6F7C8A!important}

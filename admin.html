@@ -180,6 +180,7 @@
     return fetch(url,{...(init||{}),headers:h});
   };
   sb=window.supabase.createClient(urlSupabase(cfg.supabaseUrl),String(cfg.supabaseAnonKey||"").trim(),{global:{fetch:fetchComSessao}});
+  window.__sbAdmin=sb;
 
   let avSino=null, finAbrir=null;
   let clientes=[], cliAtual=null, ciclos=[], cicloAtual=null, aba="posts", vista="inicio", alertas={clientes:{},tarefas:{}}, pedFiltro="abertos";
@@ -1143,5 +1144,6 @@
   iniciar();
 })();
 </script>
+<script src="ajuste-cores.js"></script>
 </body>
 </html>

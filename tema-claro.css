@@ -4,7 +4,7 @@
    arredondado, números em fonte mono e botões verdes de ação.
    ===================================================================== */
 :root{
-  --accent:#E30613; --accent-dark:#B8000B; --accent-2:#FF3B3B; --accent-soft:#FFF0F0; --accent-soft2:#FFD3D3;
+  --accent:#FF6B2C; --accent-dark:#FF6B2C; --accent-2:#FF6B2C; --accent-soft:#FFF0F0; --accent-soft2:#FFF1EB;
   --alerta:#E30613; --ok:#19A33B; --ok-txt:#137A2F; --verde-cta:#1BAA3D; --verde-cta-2:#13892F;
   --rosa:#EAF3FD; --warn-bg:#FFF3E6; --warn:#B4500F;
   --navy:#0A0A0A; --navy-2:#141414; --chumbo:#0A0A0A; --brand:#0A0A0A;
@@ -13,7 +13,7 @@
   --display:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --grad:linear-gradient(135deg,#1BAA3D 0%,#13892F 100%);
-  --grad-hero:radial-gradient(60% 90% at 88% 0%,rgba(255,140,140,.55) 0%,rgba(255,60,60,0) 60%),radial-gradient(55% 80% at 0% 120%,rgba(90,0,6,.95) 0%,rgba(90,0,6,0) 70%),linear-gradient(125deg,#6E0007 0%,#B5000C 32%,#E30613 62%,#FF3030 100%);
+  --grad-hero:radial-gradient(60% 90% at 88% 0%,rgba(255,107,44,.55) 0%,rgba(255,107,44,0) 60%),radial-gradient(55% 80% at 0% 120%,rgba(232,90,30,.95) 0%,rgba(232,90,30,0) 70%),linear-gradient(125deg,#E85A1E 0%,#FF6B2C 32%,#FF6B2C 62%,#FF6B2C 100%);
   --sombra:0 1px 2px rgba(0,0,0,.04),0 18px 40px -28px rgba(0,0,0,.35);
   --ch-bar:#DCDCDC;
 }
@@ -118,7 +118,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
 
 /* ---------- barras ---------- */
 .bar{background:#ECECEC;border-radius:999px;overflow:hidden}.bar i{background:var(--accent);border-radius:999px}.bar i.full{background:#111111}
-.topo-progresso{background:transparent}.topo-progresso i{background:linear-gradient(90deg,#E30613,#FF5A5A)}
+.topo-progresso{background:transparent}.topo-progresso i{background:linear-gradient(90deg,#FF6B2C,#FF6B2C)}
 .use-top{font-family:var(--font);text-transform:none;letter-spacing:0}
 
 /* ---------- contrato ---------- */
@@ -139,7 +139,7 @@ body.modo-auth{background:radial-gradient(70% 50% at 100% 0%,rgba(255,107,44,.14
 .auth-acoes .btn{border-radius:999px}
 .auth .plat{color:var(--accent)}
 .aspas{border-radius:24px;box-shadow:var(--sombra)!important}
-.aspas figcaption{background:linear-gradient(120deg,#8A0009,#E30613 60%,#FF3B3B)!important;color:#FFFFFF}
+.aspas figcaption{background:linear-gradient(120deg,#E85A1E,#FF6B2C 60%,#FF6B2C)!important;color:#FFFFFF}
 
 /* ---------- painel ---------- */
 .cli{border-radius:14px;border:1px solid #E7E7E7;background:var(--surface)}
