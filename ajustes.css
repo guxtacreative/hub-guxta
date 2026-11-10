@@ -1,7 +1,0 @@
-/* Ajustes de layout da aprovação por partes (sem alteração de cor) */
-.pt-linha{grid-template-columns:minmax(0,1fr)!important;align-items:stretch!important}
-.pt-nome{min-width:0;overflow-wrap:anywhere}
-.pt-nome small{display:block;white-space:normal}
-.pt-opcs{display:flex!important;flex-wrap:wrap;gap:6px;min-width:0}
-.pt-opc{white-space:nowrap;flex:0 0 auto}
-.pt-txt{grid-column:auto}
