@@ -275,8 +275,8 @@
   document.addEventListener("input",e=>{if(e.target.id==="cl-busca"){cliBusca=e.target.value;$("#cl-grade").innerHTML=gradeClientesHTML()}});
   let quadro=null;
   function abrirInicio(){vista="inicio";renderClientes();
-    $("#main").innerHTML=`<div id="arte-root"></div><div id="ini-root" class="list ini"></div>`;
-    if(window.GlaraArtes)GlaraArtes.admin(sb,$("#arte-root"),{clientes:()=>clientes,portalURL:tk=>portalURL(tk)}).catch(function(){});
+    $("#main").innerHTML=`<div id="ini-root" class="list ini"></div>`;
+
     window.GlaraInicio.criar($("#ini-root"),sb,{nome:cfg.nomeAdmin||"",plataforma:cfg.plataforma,
       abrirTarefas:()=>$("#btn-tarefas").click(),
       depois:root=>{const b=root.querySelector("#ini-ent");if(b&&window.GlaraOperacao)window.GlaraOperacao.entregas(b,sb,{abrirCliente:abrirCliTab})},
@@ -286,7 +286,8 @@
   $("#btn-meudia").addEventListener("click",()=>{vista="meudia";renderClientes();$("#main").innerHTML=`<div id="md-root" class="list md"></div>`;
     window.GlaraOperacao.meuDia($("#md-root"),sb,{nome:(cfg.nomeAdmin||"").split(" ")[0],clientes:()=>clientes,abrirCliente:abrirCliTab,ir:d=>{const b=$("#btn-"+d);b&&b.click()}});
     if(window.matchMedia("(max-width:860px)").matches)$("#main").scrollIntoView({block:"start"})});
-  $("#btn-aprovacoes").addEventListener("click",()=>{vista="aprovacoes";renderClientes();$("#main").innerHTML=`<div id="ap-root" class="list"></div>`;
+  $("#btn-aprovacoes").addEventListener("click",()=>{vista="aprovacoes";renderClientes();$("#main").innerHTML=`<div id="arte-root"></div><div id="ap-root" class="list"></div>`;
+    if(window.GlaraArtes)GlaraArtes.admin(sb,$("#arte-root"),{clientes:()=>clientes,portalURL:tk=>portalURL(tk)}).catch(function(){});
     window.GlaraOperacao.aprovacoes($("#ap-root"),sb,{clientes:()=>clientes,abrirCliente:abrirCliTab,portalURL,foneWa:v=>window.GlaraAvisos?window.GlaraAvisos.foneWa(v):""});
     if(window.matchMedia("(max-width:860px)").matches)$("#main").scrollIntoView({block:"start"})});
   $("#btn-inicio").addEventListener("click",()=>{abrirInicio();if(window.matchMedia("(max-width:860px)").matches)$("#main").scrollIntoView({block:"start"})});

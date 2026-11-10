@@ -73,7 +73,7 @@
     var r=await sb.from("artes_orcamento").select("*").order("enviado_em",{ascending:false}).limit(30);
     var artes=(r&&r.data)||[];
     var mapa={};clientes.forEach(function(c){mapa[c.id]=c});
-    var recentes=artes.filter(function(a){return a.status!=="enviado"});
+    var recentes=artes;
     var opcoes='<option value="">Cliente avulso (só orçamento)</option>'+clientes.map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.nome)+'</option>'}).join("");
     el.innerHTML='<section class="card arte-admin"><h2>Enviar arte para aprovação</h2>'+
       '<p class="note">O cliente vê no portal, confere o arquivo e aprova com os dois aceites.</p>'+
@@ -85,7 +85,7 @@
       '<div><label class="label" for="af-file">Arquivo (PDF, PNG, JPG)</label><input id="af-file" type="file" accept=".pdf,image/png,image/jpeg,image/webp" required></div>'+
       '<p class="note" id="af-msg" role="status"></p>'+
       '<div class="actions"><button type="submit" class="btn primary" id="af-enviar">Enviar arte ao cliente</button></div></form>'+
-      (recentes.length?'<h3 style="margin-top:18px">Respostas dos clientes</h3>'+recentes.map(function(a){return linhaAviso(a,mapa[a.cliente_id],opts)}).join(""):'')+
+      (recentes.length?'<h3 style="margin-top:18px">Andamento das artes</h3>'+recentes.map(function(a){return linhaAviso(a,mapa[a.cliente_id],opts)}).join(""):'')+
       '</section>';
     el.querySelector("#af-cli").addEventListener("change",function(){el.querySelector("#af-avulso").hidden=this.value!==""});
     el.querySelector("#arte-form").addEventListener("submit",async function(e){
@@ -125,7 +125,11 @@
     var nome=a.nome_cliente||(c?c.nome:"Cliente");var fone=foneWa(a.whatsapp||(c?c.whatsapp:""));
     var prim=String(nome).trim().split(/\s+/)[0];
     var txt;
-    if(a.status==="producao"){
+    if(a.status==="enviado"){
+      var link=new URL("aprovar.html?t="+a.token,location.href).href;
+      txt="Oi"+(prim?", "+prim:"")+"! A arte \""+a.titulo+"\" está aguardando a sua aprovação: "+link;
+      var tag='<span class="tag">Aguardando o cliente</span>';
+    }else if(a.status==="producao"){
       txt="Oi"+(prim?", "+prim:"")+"! Recebemos a sua aprovação da arte \""+a.titulo+"\". Já iniciamos a produção.";
       var tag='<span class="tag">Aprovada · em produção</span>';
     }else{

@@ -113,3 +113,10 @@ html:not([data-tema="escuro"]) .hero{box-shadow:0 30px 60px -36px rgba(40,0,0,.6
 
 /* ---------- fundo escuro sólido (sem degradê na página) ---------- */
 html[data-tema="escuro"] body,html[data-tema="escuro"],html[data-tema="escuro"] main{background:#000000!important;background-image:none!important}
+
+/* ---------- ajustes rodada: botão de aceite verde, ícones iguais, slogan preto, artes em Aprovações ---------- */
+.b.pri,button.b.pri,.acoes .b.pri{background:#1E9E2A!important;border-color:#1E9E2A!important;color:#FFFFFF!important;box-shadow:0 10px 22px -12px rgba(30,158,42,.75)!important}
+.b.pri:hover{background:#157A1F!important;border-color:#157A1F!important}
+.cli .cli-ico,.cli[aria-current="true"] .cli-ico{color:var(--ink)!important;background:transparent!important}
+.cli[aria-current="true"] small{color:#FFFFFF!important}
+.brandbar *:not(img){color:var(--ink)!important}
