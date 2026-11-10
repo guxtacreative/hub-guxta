@@ -116,3 +116,17 @@ html[data-tema="escuro"] .tips>*,html[data-tema="escuro"] .tips .tip,html[data-t
 html,html:not([data-tema]),html:not([data-tema="escuro"]){color-scheme:dark}
 [data-tema-btn]{display:none!important}
 .kpi :has(> svg),.cli-ico{background:#1A2430!important}
+
+/* ---------- ajustes da rodada: blocos translúcidos, campos e textos de botão ---------- */
+/* blocos de indicador translúcidos -> cartão slate sólido (como na imagem 2) */
+[class*="kpi"],[class*="stat"],[class*="metric"],[class*="indic"],.card,.box,.caption,.tk-card,.pl-card,.ped-card,.lj-card,.pr-card{
+  background:#1A2430!important;border:1px solid #2A3644!important;border-radius:16px!important;box-shadow:none!important}
+/* campos de texto e busca -> como na imagem 4 */
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),select,textarea{
+  background:#111820!important;border:1px solid #2A3644!important;border-radius:12px!important;color:#E6EBF1!important;box-shadow:none!important}
+input::placeholder,textarea::placeholder{color:#7E8B9A!important;opacity:1!important}
+input:focus,select:focus,textarea:focus{border-color:#FF6B2C!important;box-shadow:0 0 0 3px rgba(255,107,44,.18)!important}
+/* textos de todos os botões em branco */
+button,.btn,.btn *,.chip,.chip *,.tab,.seg button,.vis-seg button,.b,.b *{color:#FFFFFF!important}
+.btn.primary,.btn.primary *,.btn.yel,.btn.amarelo,.btn.amarelo *,.b.pri,.b.pri *{color:#FFFFFF!important;font-weight:700!important}
+.chip[aria-pressed="true"],.chip.on,.tab[aria-selected="true"],.tab.active,.seg button[aria-pressed="true"],.vis-seg button[aria-pressed="true"]{color:#FFFFFF!important}
