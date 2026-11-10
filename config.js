@@ -3,7 +3,7 @@
 window.GLARA_CONFIG = {
   supabaseUrl: "https://twysdmddthnvqhgdphhk.supabase.co",
   supabaseAnonKey: "sb_publishable_hDLw8RNhm5-7ErutimFJUg_jIeJOUPo",
-  marca: "Gustavo Lara",
+  marca: "GUXTA",
   plataforma: "Hub de Marketing",
-  nomeAdmin: "Gustavo Lara"            // seu nome no "Olá" do Início do painel
+  nomeAdmin: "Gustavo"            // seu nome no "Olá" do Início do painel
 };

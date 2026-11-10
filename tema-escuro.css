@@ -1,7 +1,7 @@
 /* Hub de Marketing · modo escuro no estilo V4 (preto com brilho vermelho). Liga com o botão de contraste: html[data-tema="escuro"] */
 html[data-tema="escuro"]{--bg:#060606; --surface:#111111; --surface-2:#1B1B1B; --line:#262626; --soft:#171717; --ink:#EDEDED; --muted:#9C9C9C; --accent:#FF2B2B; --accent-dark:#FF4D4D; --alerta:#FF2B2B; --accent-soft:rgba(255,43,43,.14); --accent-soft2:rgba(255,43,43,.32); --rosa:rgba(255,43,43,.14); --warn-bg:rgba(247,185,40,.14); --warn:#F7B928; --ok:#2BC452; --ok-txt:#4BE077; --ch-bar:#3A3A3A; --sombra:none; color-scheme:dark}
-html[data-tema="escuro"] body{background:radial-gradient(60% 50% at 0% 0%,rgba(37,99,235,.22),transparent 70%),radial-gradient(50% 40% at 100% 30%,rgba(37,99,235,.12),transparent 70%),var(--bg);background-attachment:fixed;color:var(--ink)}
-html[data-tema="escuro"] body.modo-auth{background:radial-gradient(60% 50% at 100% 0%,rgba(37,99,235,.25),transparent 70%),var(--bg)}
+html[data-tema="escuro"] body{background:radial-gradient(60% 50% at 0% 0%,rgba(225,6,0,.22),transparent 70%),radial-gradient(50% 40% at 100% 30%,rgba(225,6,0,.12),transparent 70%),var(--bg);background-attachment:fixed;color:var(--ink)}
+html[data-tema="escuro"] body.modo-auth{background:radial-gradient(60% 50% at 100% 0%,rgba(225,6,0,.25),transparent 70%),var(--bg)}
 html[data-tema="escuro"] h1,html[data-tema="escuro"] h2,html[data-tema="escuro"] h3,html[data-tema="escuro"] b,html[data-tema="escuro"] strong{color:var(--ink)}
 html[data-tema="escuro"] .hero h1,html[data-tema="escuro"] .hero mark{color:#FFFFFF}
 html[data-tema="escuro"] .eyebrow{color:var(--ink)}
@@ -13,7 +13,7 @@ html[data-tema="escuro"] .caption{color:#D2D2D2}
 html[data-tema="escuro"] .empty{border-style:dashed}
 html[data-tema="escuro"] input[type=text],html[data-tema="escuro"] input[type=date],html[data-tema="escuro"] input[type=datetime-local],html[data-tema="escuro"] input[type=tel],html[data-tema="escuro"] input[type=email],html[data-tema="escuro"] input[type=password],html[data-tema="escuro"] input[type=number],html[data-tema="escuro"] input[type=url],html[data-tema="escuro"] input[type=search],html[data-tema="escuro"] select,html[data-tema="escuro"] textarea,html[data-tema="escuro"] .auth input{background:var(--surface-2)!important;border-color:#2C2C2C!important;color:var(--ink)}
 html[data-tema="escuro"] input::placeholder,html[data-tema="escuro"] textarea::placeholder{color:#7C7C7C}
-html[data-tema="escuro"] input:focus,html[data-tema="escuro"] select:focus,html[data-tema="escuro"] textarea:focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(37,99,235,.25)}
+html[data-tema="escuro"] input:focus,html[data-tema="escuro"] select:focus,html[data-tema="escuro"] textarea:focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(225,6,0,.25)}
 html[data-tema="escuro"] select option{background:var(--surface);color:var(--ink)}
 html[data-tema="escuro"] .label,html[data-tema="escuro"] .intro,html[data-tema="escuro"] .note,html[data-tema="escuro"] .meta,html[data-tema="escuro"] .ck-count,html[data-tema="escuro"] .tk-cli,html[data-tema="escuro"] .tk-prog small{color:var(--muted)}
 html[data-tema="escuro"] .tab{background:#161616;border-color:#2A2A2A;color:#CFCFCF}
@@ -23,17 +23,17 @@ html[data-tema="escuro"] .meta .day{color:var(--accent)}
 html[data-tema="escuro"] .btn.outline{background:transparent;border-color:#333333;color:var(--ink)}
 html[data-tema="escuro"] .btn.outline:hover{border-color:var(--accent);color:#FFFFFF}
 html[data-tema="escuro"] .btn:not(.primary):not(.outline):not(.danger):not(.ghost){background:#1E1E1E;color:var(--ink)}
-html[data-tema="escuro"] .btn.danger{background:transparent;border-color:#1D4ED8;color:#2563EB}
-html[data-tema="escuro"] .btn.ghost{color:#2563EB}
+html[data-tema="escuro"] .btn.danger{background:transparent;border-color:#B00000;color:#E10600}
+html[data-tema="escuro"] .btn.ghost{color:#E10600}
 html[data-tema="escuro"] .chip[aria-pressed="true"]{background:#FFFFFF!important;border-color:#FFFFFF!important;color:#000000}
 html[data-tema="escuro"] .seg button[aria-pressed="true"]{background:#FFFFFF;color:#000000}
 html[data-tema="escuro"] .status.ok{background:rgba(43,196,82,.16);color:#4BE077}
 html[data-tema="escuro"] .status.adj{background:var(--warn-bg);color:var(--warn)}
-html[data-tema="escuro"] .status.pend{background:rgba(37,99,235,.14);color:#2563EB}
+html[data-tema="escuro"] .status.pend{background:rgba(225,6,0,.14);color:#E10600}
 html[data-tema="escuro"] .status.prod{background:#1E1E1E;color:var(--ink)}
-html[data-tema="escuro"] .sticker{background:rgba(37,99,235,.14);color:#2563EB}
-html[data-tema="escuro"] .tip,html[data-tema="escuro"] .extrabox{background:rgba(37,99,235,.08);color:var(--ink)}
-html[data-tema="escuro"] .tip b{color:#2563EB}
+html[data-tema="escuro"] .sticker{background:rgba(225,6,0,.14);color:#E10600}
+html[data-tema="escuro"] .tip,html[data-tema="escuro"] .extrabox{background:rgba(225,6,0,.08);color:var(--ink)}
+html[data-tema="escuro"] .tip b{color:#E10600}
 html[data-tema="escuro"] .warnbox{background:var(--warn-bg);color:var(--ink)}
 html[data-tema="escuro"] .bar{background:#242424}
 html[data-tema="escuro"] .bar i.full{background:#EDEDED}
@@ -68,4 +68,4 @@ html[data-tema="escuro"] .tk-prazo.today{background:#FDE68A!important;color:#5A2
 html[data-tema="escuro"] .tk-prazo.soon{background:rgba(253,230,138,.18)!important;color:#FDE68A}
 html[data-tema="escuro"] .dl.neutro,html[data-tema="escuro"] .dl.eq{background:#1E1E1E;color:#A5A5A5}
 html[data-tema="escuro"] .kpi{background:#080808;border-color:#222222}
-html[data-tema="escuro"] .caption{background:rgba(37,99,235,.09)!important;border:0!important;border-left:3px solid #2563EB!important;color:#EAF3FD}
+html[data-tema="escuro"] .caption{background:rgba(225,6,0,.09)!important;border:0!important;border-left:3px solid #E10600!important;color:#EAF3FD}

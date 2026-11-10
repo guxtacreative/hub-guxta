@@ -14,6 +14,10 @@
 <link rel="stylesheet" href="tema-escuro.css">
 <link rel="stylesheet" href="componentes.css">
 <link rel="stylesheet" href="leve.css">
+<link rel="stylesheet" href="padrao-v4.css">
+<link rel="stylesheet" href="monocromatico.css">
+<link rel="stylesheet" href="notion-visual.css">
+<link rel="stylesheet" href="visual-guxta.css">
 <script src="tema.js"></script>
 <style>
   .cli-acoes{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -63,15 +67,16 @@
   .pill-sm{font-size:12px}
   .toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--brand);color:var(--on-brand);padding:10px 16px;border-radius:10px;font-weight:600;font-size:14px;z-index:20;max-width:90vw}
 </style>
-<link rel="stylesheet" href="direcao-hub.css">
+<link rel="stylesheet" href="v4-degrade.css">
+<link rel="stylesheet" href="v4-final.css">
 </head>
 <body>
 <div class="wrap">
   <div class="top">
-    <div class="brandbar"><img class="logo" src="logo.png" alt="Gustavo Lara" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='logo.svg'}else{this.remove()}"><span class="eyebrow marca-tag" id="marca">Onde estratégia, criação e gestão se encontram</span></div>
+    <div class="brandbar"><img class="logo" src="logo.png" alt="GUXTA HUB" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='logo.svg'}else{this.remove()}"><span class="eyebrow marca-tag" id="marca">Onde estratégia, criação e gestão se encontram</span></div>
     <div class="actions"><div class="sino-box av-box" id="av-box" hidden></div><button type="button" class="tema-btn" data-tema-btn></button><div class="actions" id="userbox" hidden><span class="perfil-av" id="perfil-av" aria-hidden="true"></span><button class="btn small ghost" id="meu-perfil" hidden>Meu perfil</button><span class="note" id="useremail"></span><button class="btn small" id="sair">Sair</button></div></div>
   </div>
-  <header class="hero hero-sm"><span class="hero-tag">Uso interno · Gustavo Lara</span><h1>Painel de <mark>gestão</mark></h1><p class="intro" id="hero-sub">Hub de Marketing · clientes, planejamento, aprovações, resultados, anúncios e pedidos num lugar só.</p></header>
+  <header class="hero hero-sm"><span class="hero-tag">Uso interno · GUXTA</span><h1>Painel de <mark>gestão</mark></h1><p class="intro" id="hero-sub">Hub de Marketing · clientes, planejamento, aprovações, resultados, anúncios e pedidos num lugar só.</p></header>
 
   <!-- LOGIN -->
   <form id="login" class="card" style="max-width:420px" hidden>
@@ -139,7 +144,7 @@
   const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const urlSupabase=u=>{u=String(u||"").trim();let m=u.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);if(m)return "https://"+m[1]+".supabase.co";m=u.match(/^(?:https?:\/\/)?([a-z0-9-]+\.supabase\.(?:co|in))/i);if(m)return "https://"+m[1].toLowerCase();return u.replace(/\/+$/,"")};
   const cfg=window.GLARA_CONFIG||{};
-  const PADRAO_COR=["","#2563EB","#2563EB","#2563EB","#C0703A","#3D4BFF","#0F8A4A","#0866FF","#1877F2"];
+  const PADRAO_COR=["","#E10600","#E10600","#E10600","#C0703A","#3D4BFF","#0F8A4A","#0866FF","#1877F2"];
   $("#hero-sub").textContent=(cfg.plataforma||"Hub de Marketing")+" · clientes, planejamento, aprovações, resultados, anúncios e pedidos num lugar só.";
   let toastT=null;
   const AVISO_NAO_SUCESSO=/^(Não|Preencha|Escreva|Escolha|Envie|Informe|Digite|O nome não|O link precisa|Este e-mail|Nada novo|Lendo|Excluindo|Selecionei|Publique|Cliente não|Erro|Falha)/i;
@@ -391,7 +396,7 @@
       bt.disabled=false;bt.textContent="Criar senha provisória";
       if(error){const m=String(error.message||"");toast(/admin_senha_temporaria|function/i.test(m)&&/not find|does not exist|schema cache/i.test(m)?"Rode o arquivo 08 do banco no Supabase primeiro.":/email_de_admin/.test(m)?"Este e-mail é de administrador: troque a senha pelo Supabase.":/email_sem_acesso/.test(m)?"Este e-mail não tem acesso liberado.":"Não deu para criar a senha. "+m);return}
       u.senha_temp_em=new Date().toISOString();
-      const msg=`Olá${u.nome?", "+u.nome.split(" ")[0]:""}! Seu acesso ao ${cfg.plataforma||"Hub de Marketing"} da ${cfg.marca||"Gustavo Lara"} está pronto.\n\n1. Acesse: ${loginURL()}\n2. E-mail: ${u.email}\n3. Senha provisória: ${senha}\n\nNo primeiro acesso o sistema vai pedir para você criar a sua própria senha.`;
+      const msg=`Olá${u.nome?", "+u.nome.split(" ")[0]:""}! Seu acesso ao ${cfg.plataforma||"Hub de Marketing"} da ${cfg.marca||"GUXTA"} está pronto.\n\n1. Acesse: ${loginURL()}\n2. E-mail: ${u.email}\n3. Senha provisória: ${senha}\n\nNo primeiro acesso o sistema vai pedir para você criar a sua própria senha.`;
       const ok=$("#st-ok");ok.hidden=false;ok.innerHTML=`<p class="ok-txt" style="margin:0 0 8px;font-weight:700">✓ Senha provisória ${data==="criado"?"criada":"definida"}. Envie para a pessoa:</p>
         <textarea id="st-msg" style="min-height:150px" readonly>${esc(msg)}</textarea>
         <div class="actions" style="margin-top:8px"><button type="button" class="btn small" data-st="copiar">Copiar mensagem</button><a class="btn small primary" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">Abrir no WhatsApp</a></div>`;
@@ -998,7 +1003,7 @@
       acessos=acessos.filter(u=>u.email!==em);render();toast("Acesso removido. Essa pessoa não vê mais este cliente.");return}
     if(a==="senha-temp"){abrirSenhaTemp(acessos.find(u=>u.email===b.dataset.email));return}
     if(a==="copiar-convite"){const nomes=acessos.map(u=>u.nome||u.email);
-      const t=`Olá${nomes.length===1?", "+nomes[0]:""}! Seu acesso ao ${cfg.plataforma||"Hub de Marketing"} da ${cfg.marca||"Gustavo Lara"} está liberado.\n\n1. Acesse: ${loginURL()}\n2. Clique em “Primeiro acesso? Criar minha senha”\n3. Use o e-mail ${acessos.length===1?acessos[0].email:"que você nos passou"} e crie sua senha\n4. Confirme pelo e-mail que vai chegar e pronto!\n\nLá você aprova os conteúdos do mês, vê os roteiros, acompanha os resultados e faz pedidos.`;
+      const t=`Olá${nomes.length===1?", "+nomes[0]:""}! Seu acesso ao ${cfg.plataforma||"Hub de Marketing"} da ${cfg.marca||"GUXTA"} está liberado.\n\n1. Acesse: ${loginURL()}\n2. Clique em “Primeiro acesso? Criar minha senha”\n3. Use o e-mail ${acessos.length===1?acessos[0].email:"que você nos passou"} e crie sua senha\n4. Confirme pelo e-mail que vai chegar e pronto!\n\nLá você aprova os conteúdos do mês, vê os roteiros, acompanha os resultados e faz pedidos.`;
       try{await navigator.clipboard.writeText(t);toast("Convite copiado. Cole no WhatsApp ou no e-mail.")}catch(err){prompt("Copie o convite:",t)}return}
     if(a==="pausar"){const {data,error}=await sb.from("clientes").update({ativo:!cliAtual.ativo}).eq("id",cliAtual.id).select().single();if(error)return falha("mudar o link",error);Object.assign(cliAtual,data);renderClientes();render();toast(data.ativo?"Cliente reativado: o acesso voltou.":"Cliente desativado. O histórico continua guardado.");return}
     if(a==="excluir-cliente"){

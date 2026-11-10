@@ -16,7 +16,7 @@
   const hora=iso=>{if(!iso)return"";const d=new Date(iso);return pad(d.getHours())+":"+pad(d.getMinutes())};
 
   const TIPOS={
-    compromisso:{nome:"Compromissos",cor:"#2563EB",ico:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>'},
+    compromisso:{nome:"Compromissos",cor:"#E30613",ico:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>'},
     post:{nome:"Posts",cor:"#8B5CF6",ico:'<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4"/>'},
     pedido:{nome:"Pedidos",cor:"#F59E0B",ico:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'},
     tarefa:{nome:"Tarefas",cor:"#2563EB",ico:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>'},
@@ -128,7 +128,7 @@
       const prox=d=>{const x=new Date(d+"T12:00");x.setDate(x.getDate()+1);return isoLocal(x).replace(/-/g,"")};
       const fim=(d,h,min)=>{const x=new Date(d+"T"+h+":00");x.setMinutes(x.getMinutes()+(min||60));return isoLocal(x).replace(/-/g,"")+"T"+pad(x.getHours())+pad(x.getMinutes())+"00"};
       const agora=new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
-      const linhas=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Gustavo Lara//Hub de Marketing//PT-BR","CALSCALE:GREGORIAN","X-WR-CALNAME:Hub de Marketing","X-WR-TIMEZONE:America/Sao_Paulo"];
+      const linhas=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//GUXTA//Hub de Marketing//PT-BR","CALSCALE:GREGORIAN","X-WR-CALNAME:Hub de Marketing","X-WR-TIMEZONE:America/Sao_Paulo"];
       ls.forEach(e=>{const t=TIPOS[e.tipo];linhas.push("BEGIN:VEVENT","UID:"+e.tipo+"-"+e.ref+"-"+e.data+"@hub-guxta","DTSTAMP:"+agora,
         ...(e.hora?["DTSTART;TZID=America/Sao_Paulo:"+dt(e.data,e.hora),"DTEND;TZID=America/Sao_Paulo:"+fim(e.data,e.hora,e.raw&&e.raw.duracao_min)]:["DTSTART;VALUE=DATE:"+dt(e.data),"DTEND;VALUE=DATE:"+prox(e.data)]),
         "SUMMARY:"+z((e.tipo==="compromisso"?"":t.nome.replace(/s$/,"").replace("Retornos do CRM","Retorno")+": ")+e.titulo),...(e.sub?["DESCRIPTION:"+z(e.sub)]:[]),...(e.raw&&e.raw.local?["LOCATION:"+z(e.raw.local)]:[]),"END:VEVENT")});

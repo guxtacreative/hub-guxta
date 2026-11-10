@@ -36,7 +36,7 @@
   .box b{font-size:15px}
   .box p{margin:0;font-size:13px;white-space:pre-line}
   .box.inv{background:#0A0A0A;color:#fff}
-  .box.inv .rot{color:#2563EB}
+  .box.inv .rot{color:#E10600}
   .box.inv b{font:900 24px var(--font)}
   .box.inv small{display:block;color:#BDBDBD;font-size:12px}
   table{width:100%;border-collapse:collapse;font-size:12.5px}
@@ -63,7 +63,7 @@
   @media print{html,body{background:#fff}.bar{display:none!important}.palco{padding:0}.folha{box-shadow:none;transform:none!important;min-height:200mm}.escala{height:auto!important}}
   @media (max-width:820px){.palco{padding:12px 8px 40px;justify-content:flex-start}}
 </style>
-<link rel="stylesheet" href="direcao-hub.css">
+<link rel="stylesheet" href="v4-final.css">
 </head>
 <body>
 <div class="bar" id="bar" hidden>
@@ -84,7 +84,7 @@
   const dmy=iso=>{if(!iso)return"";const [y,m,d]=String(iso).slice(0,10).split("-");return d+"/"+m+"/"+y};
   const slug=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-zA-Z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40);
   const cfg=window.GLARA_CONFIG||{};
-  const cor=c=>window.GlaraPlanoMidia?window.GlaraPlanoMidia.corCanal(c):"#2563EB";
+  const cor=c=>window.GlaraPlanoMidia?window.GlaraPlanoMidia.corCanal(c):"#E30613";
   const urlSupabase=u=>{u=String(u||"").trim();let m=u.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);if(m)return "https://"+m[1]+".supabase.co";m=u.match(/^(?:https?:\/\/)?([a-z0-9-]+\.supabase\.(?:co|in))/i);if(m)return "https://"+m[1].toLowerCase();return u.replace(/\/+$/,"")};
   const erro=t=>{$("#root").className="msg";$("#root").innerHTML=t};
   const qs=new URLSearchParams(location.search), id=qs.get("id"), tk=qs.get("t");
@@ -98,7 +98,7 @@
     if(!cli&&p.cliente_id){const c=await sb.from("clientes").select("nome").eq("id",p.cliente_id).maybeSingle();if(c.data)cli=c.data.nome}
     $("#voltar").hidden=false}
   else return erro("Link incompleto.");
-  const emp=e.nome||cfg.marca||"Gustavo Lara", linhas=p.linhas||[], tot=linhas.reduce((s,l)=>s+N(l.verba),0), taxa=N(p.taxa_gestao);
+  const emp=e.nome||cfg.marca||"GUXTA", linhas=p.linhas||[], tot=linhas.reduce((s,l)=>s+N(l.verba),0), taxa=N(p.taxa_gestao);
   const por={};linhas.forEach(l=>{por[l.canal]=(por[l.canal]||0)+N(l.verba)});const dist=Object.entries(por).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);
   document.title=`Plano-de-midia-${slug(cli)||"cliente"}`;
   $("#root").className="folha";

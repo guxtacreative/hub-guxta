@@ -31,7 +31,7 @@
   function criar(el,sb,ctx){
     let C=[], eventos={}, orcsDe={}, vista="funil", busca="", origemF="", soAcao=false, soOfertas=false, ed=null, arrastando=null;
     const toast=ctx.toast||(m=>console.log(m)), falha=ctx.falha||((a,e)=>toast("Não deu para "+a+"."));
-    const cfg=ctx.cfg||{}, eu=(cfg.nomeAdmin||"Gustavo"), marca=(cfg.marca||"Gustavo Lara");
+    const cfg=ctx.cfg||{}, eu=(cfg.nomeAdmin||"Gustavo"), marca=(cfg.marca||"GUXTA");
     const clientes=()=>(ctx.clientes&&ctx.clientes())||[];
     const MODELOS=[
       ["primeiro","Primeiro contato",c=>`Olá, ${pn(c)}! Aqui é o ${eu}, da ${marca}. ${c.interesse?`Vi que você tem interesse em ${c.interesse.toLowerCase()}. `:""}Posso te fazer algumas perguntas rápidas para entender o que você precisa?`],

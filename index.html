@@ -15,6 +15,10 @@
 <link rel="stylesheet" href="componentes.css">
 <link rel="stylesheet" href="leve.css">
 <link rel="stylesheet" href="ajustes.css">
+<link rel="stylesheet" href="visual-guxta.css">
+<link rel="stylesheet" href="padrao-v4.css">
+<link rel="stylesheet" href="monocromatico.css">
+<link rel="stylesheet" href="notion-visual.css">
 <script src="tema.js"></script>
 <style>
   .toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
@@ -50,12 +54,13 @@
   .cycle{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .cycle select{width:auto;min-width:240px}
 </style>
-<link rel="stylesheet" href="direcao-hub.css">
+<link rel="stylesheet" href="v4-degrade.css">
+<link rel="stylesheet" href="v4-final.css">
 </head>
 <body>
 <div class="topo-progresso" aria-hidden="true"><i id="progresso"></i></div>
 <div class="wrap">
-  <div class="brandbar"><img class="logo" src="logo.png" alt="Gustavo Lara" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='logo.svg'}else{this.remove()}"><span class="eyebrow marca-tag" id="eyebrow">Onde estratégia, criação e gestão se encontram</span>
+  <div class="brandbar"><img class="logo" src="logo.png" alt="GUXTA HUB" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='logo.svg'}else{this.remove()}"><span class="eyebrow marca-tag" id="eyebrow">Onde estratégia, criação e gestão se encontram</span>
     <div class="sino-box" id="sino-box" hidden>
       <button type="button" class="sino" id="sino" aria-expanded="false" aria-controls="sino-pop" aria-label="Novidades"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge" id="sino-n" hidden></span></button>
       <div class="sino-pop" id="sino-pop" hidden role="dialog" aria-label="Novidades"></div>
@@ -932,7 +937,7 @@
     try{await sb.rpc("portal_senha_definida")}catch(_){}
     history.replaceState(null,"",base());nota("Senha nova salva!");entrar()});
 
-  {const M=cfg.marca||"Gustavo Lara",PL=cfg.plataforma||"Hub de Marketing";$("#auth-marca").textContent=M;document.querySelector(".auth .plat").textContent=PL;
+  {const M=cfg.marca||"GUXTA",PL=cfg.plataforma||"Hub de Marketing";$("#auth-marca").textContent=M;document.querySelector(".auth .plat").textContent=PL;
    $("#auth-assina").textContent=M+" · "+PL;$("#auth-rodape").textContent="© "+new Date().getFullYear()+" "+M+" · "+PL;}
   if(!window.supabase||!cfg.supabaseUrl||/SEU-PROJETO/.test(cfg.supabaseUrl)){erro("O site ainda não foi configurado.");return}
   const fetchComSessao=async(url,init)=>{
