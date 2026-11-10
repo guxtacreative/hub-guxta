@@ -102,3 +102,28 @@ table td{border-top:1px solid var(--dh-line2)!important}
 /* relatório: sem cards vermelhos */
 .relatorio .kpi{background:var(--dh-bg)!important;border-color:var(--dh-line)!important}
 .relatorio .kpi .v,.relatorio .kpi .num,.relatorio .kpi .valor{color:var(--dh-ink)!important}
+
+/* ---------- variáveis de cor da base: vermelho vira azul de interação (alertas seguem em --alerta) ---------- */
+:root,html:not([data-tema="escuro"]),html[data-tema="escuro"]{
+  --accent:#2563EB!important; --accent-dark:#1D4ED8!important; --accent-2:#60A5FA!important;
+  --accent-soft:#EFF6FF!important; --accent-soft2:#BFDBFE!important; --rosa:#EFF6FF!important;
+  --red:#2563EB!important; --red-d:#1D4ED8!important;
+  --verde-cta:#2563EB!important; --verde-cta-2:#1D4ED8!important;
+  --azul:#2563EB!important; --azul-hover:#1D4ED8!important;
+  --grad:linear-gradient(90deg,#2563EB,#60A5FA)!important;
+  --grad-hero:#FFFFFF!important;
+  --seg1:#2563EB!important;
+}
+html[data-tema="escuro"]{
+  --accent:#3B82F6!important; --accent-dark:#2563EB!important; --accent-2:#93C5FD!important;
+  --accent-soft:rgba(59,130,246,.14)!important; --accent-soft2:rgba(59,130,246,.3)!important; --rosa:rgba(59,130,246,.14)!important;
+  --red:#3B82F6!important; --red-d:#2563EB!important;
+  --verde-cta:#3B82F6!important; --verde-cta-2:#2563EB!important;
+  --grad:linear-gradient(90deg,#3B82F6,#93C5FD)!important;
+  --grad-hero:#0F1113!important; --seg1:#3B82F6!important;
+}
+/* barras de progresso e destaques de página (gradientes próprios) */
+.topo-progresso i,.aspas figcaption,.progresso>i,.bar>i{background:linear-gradient(90deg,#2563EB,#60A5FA)!important;color:#FFFFFF!important}
+.aspas figcaption{background:#111827!important}
+html[data-tema="escuro"] .aspas figcaption{background:#1F2326!important}
+.hero{background-image:none!important}

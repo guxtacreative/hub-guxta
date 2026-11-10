@@ -84,7 +84,7 @@
   const dmy=iso=>{if(!iso)return"";const [y,m,d]=String(iso).slice(0,10).split("-");return d+"/"+m+"/"+y};
   const slug=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-zA-Z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40);
   const cfg=window.GLARA_CONFIG||{};
-  const cor=c=>window.GlaraPlanoMidia?window.GlaraPlanoMidia.corCanal(c):"#E30613";
+  const cor=c=>window.GlaraPlanoMidia?window.GlaraPlanoMidia.corCanal(c):"#2563EB";
   const urlSupabase=u=>{u=String(u||"").trim();let m=u.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);if(m)return "https://"+m[1]+".supabase.co";m=u.match(/^(?:https?:\/\/)?([a-z0-9-]+\.supabase\.(?:co|in))/i);if(m)return "https://"+m[1].toLowerCase();return u.replace(/\/+$/,"")};
   const erro=t=>{$("#root").className="msg";$("#root").innerHTML=t};
   const qs=new URLSearchParams(location.search), id=qs.get("id"), tk=qs.get("t");
