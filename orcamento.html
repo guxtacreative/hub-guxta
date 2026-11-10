@@ -73,6 +73,7 @@
   @media (max-width:820px){.palco{padding:12px 8px 40px;justify-content:flex-start}}
 </style>
 <link rel="stylesheet" href="v4-final.css">
+<link rel="stylesheet" href="direcao-hub.css">
 </head>
 <body>
 <div class="bar" id="bar" hidden>
@@ -115,7 +116,7 @@
   let cliNome=o.cliente_nome;
   if(o.cliente_id){const c=await sb.from("clientes").select("nome").eq("id",o.cliente_id).maybeSingle();if(c.data&&!cliNome)cliNome=c.data.nome}
   const t=window.GlaraOrcamentos?window.GlaraOrcamentos.totais(o.itens,o.desconto):{sub:N(o.subtotal),total:N(o.total)};
-  const emp=e.nome||cfg.marca||"GUXTA";
+  const emp=e.nome||cfg.marca||"Gustavo Lara";
   const contatos=[e.telefone,e.email,e.site,e.endereco].filter(Boolean);
   document.title=`Orcamento-${nro(o.numero)}-${slug(cliNome)||"cliente"}`;
 

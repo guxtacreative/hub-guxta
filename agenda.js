@@ -128,7 +128,7 @@
       const prox=d=>{const x=new Date(d+"T12:00");x.setDate(x.getDate()+1);return isoLocal(x).replace(/-/g,"")};
       const fim=(d,h,min)=>{const x=new Date(d+"T"+h+":00");x.setMinutes(x.getMinutes()+(min||60));return isoLocal(x).replace(/-/g,"")+"T"+pad(x.getHours())+pad(x.getMinutes())+"00"};
       const agora=new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
-      const linhas=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//GUXTA//Hub de Marketing//PT-BR","CALSCALE:GREGORIAN","X-WR-CALNAME:Hub de Marketing","X-WR-TIMEZONE:America/Sao_Paulo"];
+      const linhas=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Gustavo Lara//Hub de Marketing//PT-BR","CALSCALE:GREGORIAN","X-WR-CALNAME:Hub de Marketing","X-WR-TIMEZONE:America/Sao_Paulo"];
       ls.forEach(e=>{const t=TIPOS[e.tipo];linhas.push("BEGIN:VEVENT","UID:"+e.tipo+"-"+e.ref+"-"+e.data+"@hub-guxta","DTSTAMP:"+agora,
         ...(e.hora?["DTSTART;TZID=America/Sao_Paulo:"+dt(e.data,e.hora),"DTEND;TZID=America/Sao_Paulo:"+fim(e.data,e.hora,e.raw&&e.raw.duracao_min)]:["DTSTART;VALUE=DATE:"+dt(e.data),"DTEND;VALUE=DATE:"+prox(e.data)]),
         "SUMMARY:"+z((e.tipo==="compromisso"?"":t.nome.replace(/s$/,"").replace("Retornos do CRM","Retorno")+": ")+e.titulo),...(e.sub?["DESCRIPTION:"+z(e.sub)]:[]),...(e.raw&&e.raw.local?["LOCATION:"+z(e.raw.local)]:[]),"END:VEVENT")});

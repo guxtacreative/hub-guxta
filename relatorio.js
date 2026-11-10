@@ -13,7 +13,7 @@
     opt=opt||{};
     const {ciclo,cliente}=D, posts=D.posts||[], dec=D.dec||{}, pedidos=D.pedidos||[], anuncios=D.anuncios||[], ciclos=D.ciclos||[];
     const GM=window.GlaraMetricas, GA=window.GlaraAnuncios;
-    const MARCA=opt.marca||"GUXTA", PLAT=opt.plataforma||"Hub de Marketing";
+    const MARCA=opt.marca||"Gustavo Lara", PLAT=opt.plataforma||"Hub de Marketing";
     const aprovado=p=>{const d=dec[p.id];return d&&d.versao===p.versao&&d.decisao==="aprovado"};
     const nApr=posts.filter(aprovado).length;
     const nRot=D.nRoteiros||0, nSto=D.nStories||0;

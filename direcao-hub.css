@@ -1,0 +1,104 @@
+/* =====================================================================
+   DIREÇÃO VISUAL DO HUB (produtividade / gestão)
+   - Base monocromática: branco, grafite e cinzas claros
+   - Azul só para interação (botões principais, links, seleção, progresso)
+   - Vermelho só para erros, alertas e pendências críticas
+   - Sem gradientes, sombras pesadas ou cores decorativas
+   Carregar por último.
+   ===================================================================== */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root{
+  --dh-bg:#FFFFFF; --dh-bg2:#F8F9FA; --dh-line:#E5E7EB; --dh-line2:#EEF0F2;
+  --dh-ink:#111827; --dh-muted:#6B7280; --dh-soft-txt:#9CA3AF;
+  --dh-blue:#2563EB; --dh-blue-hover:#1D4ED8; --dh-blue-soft:#EFF6FF; --dh-blue-line:#BFDBFE;
+  --dh-red:#DC2626; --dh-red-soft:#FEF2F2;
+  --dh-gray-soft:#F3F4F6;
+  --font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --display:var(--font); --mono:var(--font);
+}
+html[data-tema="escuro"]{
+  --dh-bg:#0F1113; --dh-bg2:#15181B; --dh-line:#262B30; --dh-line2:#1D2226;
+  --dh-ink:#F3F4F6; --dh-muted:#9CA3AF; --dh-soft-txt:#6B7280;
+  --dh-blue:#3B82F6; --dh-blue-hover:#2563EB; --dh-blue-soft:rgba(59,130,246,.14); --dh-blue-line:rgba(59,130,246,.35);
+  --dh-red:#F87171; --dh-red-soft:rgba(248,113,113,.12);
+  --dh-gray-soft:#1F2326;
+}
+
+/* base */
+html,body,html[data-tema="escuro"] body,html:not([data-tema="escuro"]) body{background:var(--dh-bg)!important;color:var(--dh-ink)!important;font-family:var(--font)!important;letter-spacing:-.005em}
+h1,h2,h3,h4{font-family:var(--font)!important;color:var(--dh-ink)!important;font-weight:600!important;letter-spacing:-.02em!important;line-height:1.25!important}
+h1{font-size:26px!important} h2{font-size:20px!important} h3{font-size:16px!important}
+mark,h1 mark,h2 mark,h3 mark,.destaque-v4{color:inherit!important;background:none!important;font-style:normal!important;font-weight:inherit!important;text-decoration:none!important}
+p,li,td,th,label,dd,dt,span,small{color:inherit}
+.note,small,.kpi small,.muted{color:var(--dh-muted)!important}
+a{color:var(--dh-blue)}
+
+/* cabeçalhos: sem bloco colorido, só hierarquia */
+.hero{background:var(--dh-bg)!important;background-image:none!important;color:var(--dh-ink)!important;border:0!important;border-bottom:1px solid var(--dh-line)!important;border-radius:0!important;box-shadow:none!important;text-align:left!important;padding:24px 0!important;align-items:flex-start!important}
+.hero::before,.hero::after{display:none!important}
+.hero h1,.hero h2,.hero h3,.hero b,.hero strong{color:var(--dh-ink)!important}
+.hero p,.hero .intro,.hero .label{color:var(--dh-muted)!important;margin-left:0!important;margin-right:0!important;max-width:70ch}
+.hero-tag,.hero .eyebrow{background:var(--dh-gray-soft)!important;color:var(--dh-muted)!important;border:0!important;border-radius:6px!important;font-size:12px!important;font-weight:500!important;padding:4px 10px!important;letter-spacing:0!important;text-transform:none!important}
+.hero-tag::before{display:none!important}
+.eyebrow{font-size:12px;font-weight:500;color:var(--dh-muted);text-transform:none;letter-spacing:0}
+.eyebrow::before{background:var(--dh-blue)!important;box-shadow:none!important}
+
+/* cartões: fundo branco, borda sutil, sem sombra */
+.card,.box,.kpi,.post,.doc,.acesso,.plano-card,.tk-card,.pl-card,.caption,.seg,.ini-box,.ini-card,.arte-item,.cli,.tk-col{
+  background:var(--dh-bg)!important;border:1px solid var(--dh-line)!important;border-radius:10px!important;box-shadow:none!important;color:var(--dh-ink)!important}
+.tk-col{background:var(--dh-bg2)!important;border-color:var(--dh-line2)!important}
+
+/* botões: azul sólido (principal) e secundário discreto */
+.btn{border-radius:8px!important;font-weight:500;font-size:14px;padding:8px 14px;font-family:var(--font);box-shadow:none!important;transition:background .15s,border-color .15s}
+.btn.primary,.btn.yel,.btn.amarelo{background:var(--dh-blue)!important;border:1px solid var(--dh-blue)!important;color:#FFFFFF!important}
+.btn.primary:hover{background:var(--dh-blue-hover)!important;border-color:var(--dh-blue-hover)!important}
+.btn.outline,.btn.ghost,.btn:not(.primary):not(.yel):not(.amarelo):not(.danger){background:var(--dh-bg)!important;border:1px solid var(--dh-line)!important;color:var(--dh-ink)!important}
+.btn.outline:hover,.btn.ghost:hover,.btn:not(.primary):not(.yel):not(.amarelo):not(.danger):hover{background:var(--dh-bg2)!important}
+.btn.danger,.btn.perigo{background:var(--dh-bg)!important;border:1px solid var(--dh-red)!important;color:var(--dh-red)!important}
+.btn:disabled{opacity:.5}
+
+/* menu: neutro; item ativo com destaque azul sutil */
+.cli{border:0!important;background:transparent!important;border-radius:8px!important;color:var(--dh-muted)!important}
+.cli:hover{background:var(--dh-bg2)!important;color:var(--dh-ink)!important}
+.cli[aria-current="true"]{background:var(--dh-blue-soft)!important;color:var(--dh-blue)!important;box-shadow:none!important}
+.cli[aria-current="true"] small,.cli[aria-current="true"] .cli-ico{color:var(--dh-blue)!important}
+.cli-ico{background:transparent!important;color:var(--dh-muted)!important;width:auto!important;height:auto!important;border-radius:0!important}
+
+/* seleção: azul muito claro */
+.tab,.seg button,.vis-seg button,.chip{color:var(--dh-muted)!important;background:transparent!important;border:0!important;border-radius:8px!important;font-weight:500}
+.tab[aria-selected="true"],.tab.active,.seg button[aria-pressed="true"],.vis-seg button[aria-pressed="true"],.chip[aria-pressed="true"],.chip.on{background:var(--dh-blue-soft)!important;color:var(--dh-blue)!important;box-shadow:none!important}
+.chip:not([aria-pressed="true"]):not(.on){border:1px solid var(--dh-line)!important;background:var(--dh-bg)!important;color:var(--dh-ink)!important;border-radius:999px!important}
+
+/* indicadores: números em grafite, rótulo discreto, ícone cinza */
+.kpi .k,.box .k,.kpi .label,.kpi small,.kpi .d,.box .d,.kpi .sub{font-size:13px!important;font-weight:500!important;color:var(--dh-muted)!important;text-transform:none!important;letter-spacing:0!important;opacity:1!important}
+.kpi .v,.box .v,.kpi .valor,.kpi .num,.box .num{font-family:var(--font)!important;font-size:28px!important;font-weight:600!important;color:var(--dh-ink)!important;letter-spacing:-.02em!important}
+.kpi :has(> svg){background:var(--dh-gray-soft)!important;color:var(--dh-muted)!important;border-radius:8px!important;width:30px!important;height:30px!important}
+.kpi :has(> svg) svg{color:inherit!important}
+
+/* progresso e campos */
+.topo-progresso i,.progresso>i,.bar>i,.barra>i,.ped-bar i{background:var(--dh-blue)!important}
+.progresso,.bar,.barra,.ped-bar{background:var(--dh-gray-soft)!important;border-radius:999px}
+input,select,textarea{border:1px solid var(--dh-line)!important;border-radius:8px!important;background:var(--dh-bg)!important;color:var(--dh-ink)!important;font-family:var(--font)!important}
+input:focus,select:focus,textarea:focus{border-color:var(--dh-blue)!important;box-shadow:0 0 0 3px rgba(37,99,235,.15)!important;outline:none}
+table th{font-size:12px!important;font-weight:500!important;color:var(--dh-muted)!important;text-transform:none!important;letter-spacing:0!important}
+table td{border-top:1px solid var(--dh-line2)!important}
+
+/* etiquetas de estado: cinza neutro, azul para em andamento, vermelho só para alerta */
+.status{border-radius:6px!important;font-weight:500!important;font-size:12px!important;padding:2px 8px!important;background:var(--dh-gray-soft)!important;color:var(--dh-muted)!important}
+.status.ok,.status.pend{background:var(--dh-gray-soft)!important;color:var(--dh-ink)!important}
+.status.adj{background:var(--dh-blue-soft)!important;color:var(--dh-blue)!important}
+.status.atraso,.status.atrasado,.status.erro{background:var(--dh-red-soft)!important;color:var(--dh-red)!important}
+
+/* alertas: vermelho */
+.badge,.badge.calma,.sino-dot{background:var(--dh-red)!important;color:#FFFFFF!important}
+.confirma-card.erro{border-color:var(--dh-red)!important;background:var(--dh-red-soft)!important}
+.confirma-card.erro .pd-ok-ico{background:var(--dh-red)!important}
+.confirma-card.erro h2{color:var(--dh-red)!important}
+
+/* quadro: colunas neutras */
+.tk-col:nth-child(n){background:var(--dh-bg2)!important}
+
+/* relatório: sem cards vermelhos */
+.relatorio .kpi{background:var(--dh-bg)!important;border-color:var(--dh-line)!important}
+.relatorio .kpi .v,.relatorio .kpi .num,.relatorio .kpi .valor{color:var(--dh-ink)!important}

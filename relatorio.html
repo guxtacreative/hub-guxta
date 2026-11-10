@@ -47,6 +47,7 @@
 </style>
 <link rel="stylesheet" href="v4-degrade.css">
 <link rel="stylesheet" href="v4-final.css">
+<link rel="stylesheet" href="direcao-hub.css">
 </head>
 <body>
 <div class="wrap">
@@ -69,7 +70,7 @@
   const $=s=>document.querySelector(s);
   const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const urlSupabase=u=>{u=String(u||"").trim();let m=u.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);if(m)return "https://"+m[1]+".supabase.co";m=u.match(/^(?:https?:\/\/)?([a-z0-9-]+\.supabase\.(?:co|in))/i);if(m)return "https://"+m[1].toLowerCase();return u.replace(/\/+$/,"")};
-  const cfg=window.GLARA_CONFIG||{}, MARCA=cfg.marca||"GUXTA";
+  const cfg=window.GLARA_CONFIG||{}, MARCA=cfg.marca||"Gustavo Lara";
   const erro=m=>{$("#erro").textContent=m;$("#erro").hidden=false};
 
   const q=new URLSearchParams(location.search);

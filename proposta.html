@@ -102,10 +102,11 @@
 </style>
 <link rel="stylesheet" href="v4-degrade.css">
 <link rel="stylesheet" href="v4-final.css">
+<link rel="stylesheet" href="direcao-hub.css">
 </head>
 <body>
 <header class="topo"><div class="topo-in">
-  <div id="logo"><img src="logo-escuro.png" alt="" onerror="this.parentNode.innerHTML='<span class=nome-emp>GUXTA</span>'"></div>
+  <div id="logo"><img src="logo-escuro.png" alt="" onerror="this.parentNode.innerHTML='<span class=nome-emp>Gustavo Lara</span>'"></div>
   <div><p class="eyebrow" id="eyebrow">Proposta</p><h1 id="titulo">Carregando a proposta…</h1><p id="sub"></p></div>
 </div></header>
 <main id="main" aria-live="polite"><section class="card msg">Carregando…</section></main>
@@ -134,7 +135,7 @@
   const sb=window.supabase.createClient(urlSupabase(cfg.supabaseUrl),String(cfg.supabaseAnonKey||"").trim(),{auth:{persistSession:false}});
   const {data:o,error}=await sb.rpc("proposta_ver",{p_token:token});
   if(error||!o)return msg("Proposta não encontrada","Este link não está mais ativo. Fale com quem enviou a proposta para receber um novo.");
-  const e=o.empresa||{}, emp=e.nome||cfg.marca||"GUXTA";
+  const e=o.empresa||{}, emp=e.nome||cfg.marca||"Gustavo Lara";
   document.title=`Proposta Nº ${nro(o.numero)} · ${emp}`;
   $("#eyebrow").textContent=`Proposta Nº ${nro(o.numero)} · ${emp}`;
   $("#titulo").textContent=o.titulo||"Sua proposta";

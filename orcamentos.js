@@ -285,7 +285,7 @@
       return `<form class="card orc-emp" id="emp-form">
         <div class="head"><div><h2>Dados que aparecem no PDF</h2><p class="note" style="margin:4px 0 0">O logo do PDF é o mesmo do painel.</p></div></div>
         <div class="grid2">
-          ${f("nome","Nome da empresa",e.nome,"GUXTA")}${f("doc","CNPJ ou CPF",e.documento,"00.000.000/0001-00")}
+          ${f("nome","Nome da empresa",e.nome,"Gustavo Lara")}${f("doc","CNPJ ou CPF",e.documento,"00.000.000/0001-00")}
           ${f("tel","WhatsApp / telefone",e.telefone,"(21) 90000-0000")}${f("email","E-mail",e.email,"contato@guxta.com.br")}
           ${f("site","Site ou Instagram",e.site,"@guxta")}${f("end","Cidade / endereço",e.endereco,"Duque de Caxias · RJ")}
           ${f("pix","Chave Pix",e.pix,"")}${f("val","Validade padrão (dias)",e.validade_dias??15,"15",'inputmode="numeric"')}
@@ -683,7 +683,7 @@
     el.addEventListener("submit",async e=>{
       e.preventDefault();
       if(e.target.id==="emp-form"){const v=s=>el.querySelector(s).value.trim();
-        const campos={id:1,nome:v("#em-nome")||"GUXTA",documento:v("#em-doc"),telefone:v("#em-tel"),email:v("#em-email"),site:v("#em-site"),endereco:v("#em-end"),pix:v("#em-pix"),
+        const campos={id:1,nome:v("#em-nome")||"Gustavo Lara",documento:v("#em-doc"),telefone:v("#em-tel"),email:v("#em-email"),site:v("#em-site"),endereco:v("#em-end"),pix:v("#em-pix"),
           validade_dias:Math.max(1,parseInt(v("#em-val"))||15),orcamento_expira_dias:Math.max(0,parseInt(v("#em-exp"))||0),lucro_padrao:r2(parseNum(v("#em-lucro"))),condicoes:v("#em-cond"),observacoes:v("#em-obs"),
           retirada_endereco:v("#em-ret"),retirada_info:v("#em-reti"),entrega_ativa:el.querySelector("#em-entr").checked,entrega_valor:Math.max(0,r2(parseNum(v("#em-entv")))),entrega_custo:v("#em-entc")?Math.max(0,r2(parseNum(v("#em-entc")))):null,entrega_info:v("#em-enti")};
         const {data,error}=await sb.from("empresa").upsert(campos).select().single();if(error)return falha("salvar os dados",error);
