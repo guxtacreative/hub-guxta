@@ -5,7 +5,8 @@
    ===================================================================== */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
-:root,html,html[data-tema],html[data-tema="escuro"],html:not([data-tema]){
+html[data-tema="escuro"],html[data-tema="escuro"] body{}
+html[data-tema="escuro"]{
   --bg:#111820!important; --surface:#1A2430!important; --soft:#1E2A36!important; --line:#2A3644!important; --ch-bar:#3A4A5C!important;
   --ink:#F2F4F7!important; --muted:#9AA7B4!important;
   --brand:#FF6B2C!important; --on-brand:#111820!important; --navy:#F2F4F7!important; --navy-2:#1E2A36!important; --chumbo:#F2F4F7!important;
@@ -16,8 +17,20 @@
   --gold:#F5C542!important; --coral:#E8554E!important;
   --grad:linear-gradient(90deg,#FF6B2C,#E8554E)!important;
   --grad-hero:linear-gradient(135deg,#1A2430 0%,#111820 60%)!important;
-  --alerta:#EF4444!important; --sombra:none!important;
-  color-scheme:dark;
+  --alerta:#EF4444!important; --sombra:none!important; color-scheme:dark;
+}
+html:not([data-tema="escuro"]){
+  --bg:#F5F6F8!important; --surface:#FFFFFF!important; --soft:#EEF1F4!important; --line:#E1E6EC!important; --ch-bar:#C9D1DA!important;
+  --ink:#111820!important; --muted:#5F6B78!important;
+  --brand:#FF6B2C!important; --on-brand:#FFFFFF!important; --navy:#111820!important; --navy-2:#EEF1F4!important; --chumbo:#111820!important;
+  --accent:#FF6B2C!important; --accent-dark:#E85A1E!important; --accent-2:#FF8A5C!important;
+  --accent-soft:#FFF1EB!important; --accent-soft2:#FFD6C2!important; --rosa:#FFF1EB!important;
+  --red:#FF6B2C!important; --red-d:#E85A1E!important; --verde-cta:#FF6B2C!important; --verde-cta-2:#E85A1E!important;
+  --azul:#FF6B2C!important; --azul-hover:#E85A1E!important; --seg1:#FF6B2C!important;
+  --gold:#E0A100!important; --coral:#E8554E!important;
+  --grad:linear-gradient(90deg,#FF6B2C,#E8554E)!important;
+  --grad-hero:linear-gradient(135deg,#1A2430 0%,#111820 60%)!important;
+  --alerta:#EF4444!important; --sombra:0 1px 2px rgba(17,24,32,.05)!important; color-scheme:light;
 }
 html,body{background:var(--bg)!important;color:var(--ink)!important;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif!important;letter-spacing:-.005em}
 h1,h2,h3,h4{color:var(--ink)!important;font-family:Inter,system-ui,sans-serif!important;font-weight:700!important;letter-spacing:-.025em!important}
@@ -25,7 +38,7 @@ mark,h1 mark,h2 mark,h3 mark{color:#FF8A5C!important;background:none!important;f
 p,li,td,th,label,dd,dt,span,small{color:inherit}
 .note,small,.muted{color:var(--muted)!important}
 a{color:#FF8A5C}
-[data-tema-btn]{display:none!important}
+
 
 /* banner de cabeçalho (estilo do topo da referência, com brilho laranja) */
 .hero{position:relative!important;overflow:hidden!important;border:1px solid var(--line)!important;border-radius:20px!important;box-shadow:none!important;background:
@@ -98,3 +111,17 @@ table td{border-top:1px solid var(--line)!important}
 
 /* loja e proposta: caixas com o mesmo padrão */
 .lj-card,.pr-card,.proposta,.total,.ped-card{background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:16px!important}
+
+/* ---------- modo claro: cartões e textos com o mesmo padrão ---------- */
+html:not([data-tema="escuro"]) body{background:#F5F6F8!important;color:#111820!important}
+html:not([data-tema="escuro"]) .card,html:not([data-tema="escuro"]) .box,html:not([data-tema="escuro"]) .kpi,html:not([data-tema="escuro"]) .post,html:not([data-tema="escuro"]) .doc,html:not([data-tema="escuro"]) .acesso,html:not([data-tema="escuro"]) .plano-card,html:not([data-tema="escuro"]) .tk-card,html:not([data-tema="escuro"]) .caption,html:not([data-tema="escuro"]) .seg,html:not([data-tema="escuro"]) .arte-item,html:not([data-tema="escuro"]) .cli{background:#FFFFFF!important;color:#111820!important;border-color:#E1E6EC!important}
+html:not([data-tema="escuro"]) .kpi .v,html:not([data-tema="escuro"]) .box .v,html:not([data-tema="escuro"]) .kpi .num,html:not([data-tema="escuro"]) .box .num{color:#111820!important}
+html:not([data-tema="escuro"]) .cli{background:transparent!important;border:0!important}
+html:not([data-tema="escuro"]) .cli[aria-current="true"]{background:#FFF1EB!important;color:#E85A1E!important}
+html:not([data-tema="escuro"]) .cli-ico{background:#EEF1F4!important;color:#5F6B78!important}
+html:not([data-tema="escuro"]) .tab,html:not([data-tema="escuro"]) .seg button,html:not([data-tema="escuro"]) .vis-seg button,html:not([data-tema="escuro"]) .chip{color:#5F6B78!important}
+html:not([data-tema="escuro"]) .chip:not([aria-pressed="true"]):not(.on){color:#111820!important;background:#FFFFFF!important}
+html:not([data-tema="escuro"]) input,html:not([data-tema="escuro"]) select,html:not([data-tema="escuro"]) textarea{background:#FFFFFF!important;color:#111820!important}
+html:not([data-tema="escuro"]) .btn:not(.primary):not(.yel):not(.amarelo):not(.danger){color:#111820!important}
+html:not([data-tema="escuro"]) .btn.primary,html:not([data-tema="escuro"]) .btn.yel,html:not([data-tema="escuro"]) .btn.amarelo{color:#111820!important}
+html:not([data-tema="escuro"]) .eyebrow{color:#E85A1E!important}
