@@ -1,0 +1,94 @@
+/* =====================================================================
+   Estilo minimalista monocromático (inspirado no Notion).
+   Preto, cinza e branco. Detalhes em degradê preto→cinza.
+   Alertas continuam vermelhos. Carregar por último.
+   ===================================================================== */
+:root,html[data-tema="escuro"]{
+  --bg:#191919; --surface:#202020; --soft:#2A2A2A; --line:#303030; --ch-bar:#444444;
+  --ink:#EBEBEB; --muted:#9B9B9B;
+  --brand:#EBEBEB; --on-brand:#191919;
+  --accent:#EBEBEB; --accent-dark:#D0D0D0; --accent-2:#B5B5B5;
+  --accent-soft:#2A2A2A; --accent-soft2:#353535; --rosa:#2A2A2A;
+  --verde-cta:#EBEBEB; --verde-cta-2:#D0D0D0;
+  --navy:#EBEBEB; --navy-2:#2A2A2A; --chumbo:#EBEBEB;
+  --grad-ink:linear-gradient(135deg,#F2F2F2 0%,#7A7A7A 100%);
+  --grad-btn:linear-gradient(135deg,#F2F2F2 0%,#BDBDBD 100%);
+  --grad-hero:linear-gradient(135deg,#2B2B2B 0%,#0F0F0F 100%);
+  --grad:var(--grad-ink);
+  --alerta:#F43F5E;
+  --sombra:none;
+}
+html:not([data-tema="escuro"]){
+  --bg:#F7F6F3; --surface:#FFFFFF; --soft:#F1F1EF; --line:#E9E9E7; --ch-bar:#CFCFCC;
+  --ink:#37352F; --muted:#787774;
+  --brand:#37352F; --on-brand:#FFFFFF;
+  --accent:#37352F; --accent-dark:#191919; --accent-2:#6B6B6B;
+  --accent-soft:#F1F1EF; --accent-soft2:#E3E3E0; --rosa:#F1F1EF;
+  --verde-cta:#37352F; --verde-cta-2:#191919;
+  --navy:#37352F; --navy-2:#F1F1EF; --chumbo:#37352F;
+  --grad-ink:linear-gradient(135deg,#111111 0%,#8A8A8A 100%);
+  --grad-btn:linear-gradient(135deg,#111111 0%,#3A3A3A 100%);
+  --grad-hero:linear-gradient(135deg,#111111 0%,#4A4A4A 100%);
+  --grad:var(--grad-ink);
+  --alerta:#E11D48;
+  --sombra:none;
+}
+html,body{background:var(--bg)!important;color:var(--ink)}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;letter-spacing:-.005em}
+
+/* cartões: borda fina, sem sombra */
+.card,.box,.kpi,.post,.doc,.cli,.acesso,.plano-card,.tk-card,.pl-card,.tk-col,.caption,.seg,.ini-box,.ini-card,.arte-item{
+  background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:10px!important;box-shadow:none!important}
+
+/* botões: retangulares e discretos, primário em degradê preto/cinza */
+.btn{border-radius:6px!important;font-weight:500;padding:7px 14px}
+.btn.primary,.btn.yel,.btn.amarelo{background:var(--grad-btn)!important;border-color:transparent!important;color:var(--on-brand)!important;box-shadow:none!important}
+.btn.primary:hover{opacity:.9}
+.btn.outline{background:transparent!important;border:1px solid var(--line)!important;color:var(--ink)!important}
+.btn.ghost{color:var(--ink)!important}
+
+/* menu: item selecionado com fundo suave e barra em degradê */
+.cli{border-radius:6px!important;background:transparent}
+.cli[aria-current="true"],.side-item.on,.nav-item.on{background:var(--soft)!important;color:var(--ink)!important;border-color:var(--line)!important;box-shadow:inset 2px 0 0 #7A7A7A!important}
+.cli[aria-current="true"] small{color:var(--muted)}
+.cli-ico{background:var(--grad-ink)!important;color:var(--on-brand)!important;border-radius:6px!important;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+
+/* seleção de abas e segmentos */
+.tab[aria-selected="true"],.tab.active{background:var(--soft)!important;color:var(--ink)!important;box-shadow:inset 0 -2px 0 var(--ink)!important}
+.tab:not([aria-selected="true"]){color:var(--muted)!important;border-color:transparent!important;background:transparent!important}
+.seg button[aria-pressed="true"],.vis-seg button[aria-pressed="true"],.chip[aria-pressed="true"],.chip.on{background:var(--grad-btn)!important;color:var(--on-brand)!important;box-shadow:none!important}
+
+/* cabeçalho em degradê preto/cinza */
+.hero{background:var(--grad-hero)!important;color:#F5F5F5!important;border-radius:12px!important;border:0!important;box-shadow:none!important}
+.hero::before,.hero::after{display:none!important}
+.hero h1,.hero h2,.hero h3,.hero b,.hero strong{color:#FFFFFF!important}
+.hero mark{color:#FFFFFF!important;background:none!important;font-style:italic}
+.hero p,.hero .intro,.hero .label{color:rgba(255,255,255,.72)!important}
+.hero-tag{background:var(--grad-ink)!important;color:#FFFFFF!important;border-radius:4px!important;font-weight:600;letter-spacing:.02em}
+
+/* indicadores: ícone em pequeno quadrado em degradê cinza, sem cores */
+.kpi .k,.box .k,.kpi .label,.kpi small{font-size:13px;font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0}
+.kpi .v,.box .v,.kpi .valor,.kpi .num,.box .num{font-size:28px;font-weight:600;color:var(--ink);letter-spacing:-.02em}
+.kpi .d,.box .d,.kpi .sub{font-size:12px;color:var(--muted)}
+.kpi :has(> svg){background:var(--grad-ink)!important;color:var(--on-brand)!important;width:30px;height:30px;border-radius:7px!important;display:inline-flex;align-items:center;justify-content:center}
+.kpi :has(> svg) svg{color:inherit!important}
+
+/* barras de progresso em degradê */
+.topo-progresso i,.progresso>i,.bar>i,.barra>i,.ped-bar i{background:var(--grad-ink)!important}
+.progresso,.bar,.barra,.ped-bar{background:var(--soft);border-radius:999px}
+
+/* alertas: vermelho */
+.badge,.badge.calma{background:var(--alerta)!important;color:#FFFFFF!important}
+
+/* detalhes e campos */
+.eyebrow{font-size:12px;font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0}
+.eyebrow::before{background:var(--grad-ink)!important;box-shadow:none!important}
+input,select,textarea{border-radius:6px!important;border-color:var(--line)!important;background:var(--surface);color:var(--ink)}
+input:focus,select:focus,textarea:focus{border-color:#7A7A7A!important;box-shadow:0 0 0 3px rgba(122,122,122,.2)!important}
+table th{font-size:12px;color:var(--muted);font-weight:500}
+table td{border-top:1px solid var(--line)}
+
+/* blocos de dica, resumo e roteiro: texto na cor principal do tema */
+.tip,.extrabox,.record q,.warnbox,.pt-dica,.beat .t,.beat .fala,.beat .tela,.orc-resumo,.orc-resumo *:not(.ok-txt):not(.neg){color:var(--ink)!important}
+.tip,.extrabox,.record q,.warnbox,.orc-resumo{background:var(--soft)!important}
+[data-b="tempo"],.brow input,.rows input{color:var(--ink)!important}
