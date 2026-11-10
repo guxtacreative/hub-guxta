@@ -147,7 +147,25 @@
   const PADRAO_COR=["","#E10600","#E10600","#E10600","#C0703A","#3D4BFF","#0F8A4A","#0866FF","#1877F2"];
   $("#hero-sub").textContent=(cfg.plataforma||"Hub de Marketing")+" · clientes, planejamento, aprovações, resultados, anúncios e pedidos num lugar só.";
   let toastT=null;
-  const toast=m=>{const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)};
+  const AVISO_NAO_SUCESSO=/^(Não|Preencha|Escreva|Escolha|Envie|Informe|Digite|O nome não|O link precisa|Este e-mail|Nada novo|Lendo|Excluindo|Selecionei|Publique|Cliente não|Erro|Falha)/i;
+  function tituloConfirma(m){
+    if(/apag/i.test(m))return "Apagado";
+    if(/copi/i.test(m))return "Copiado!";
+    if(/enviad|envi/i.test(m))return "Enviado!";
+    if(/criad|novo/i.test(m))return "Criado!";
+    if(/atualiz/i.test(m))return "Atualizado!";
+    if(/salv|registr/i.test(m))return "Salvo!";
+    return "Pronto!";
+  }
+  const toast=m=>{
+    const t=$("#toast");
+    if(window.GlaraConfirma&&m){
+      if(!AVISO_NAO_SUCESSO.test(m)){GlaraConfirma.mostrar({titulo:tituloConfirma(m),texto:m,ms:6000});return}
+      var erro=/^(Não deu|Erro|Falha|O link precisa|Não achei|Não encontrei|Cliente não)/i.test(m);
+      GlaraConfirma.mostrar({titulo:erro?"Não deu certo":"Atenção",texto:m,tipo:"erro",ms:7000});
+      return;
+    }
+    t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)};
   const falha=(acao,error)=>{console.error(error);toast("Não deu para "+acao+". "+(error&&error.message?error.message:"Tente de novo."))};
   const portalURL=t=>new URL("index.html?c="+t,location.href).href;
   const loginURL=()=>new URL("index.html",location.href).href;

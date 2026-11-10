@@ -120,3 +120,8 @@ html[data-tema="escuro"] body,html[data-tema="escuro"],html[data-tema="escuro"] 
 .cli .cli-ico,.cli[aria-current="true"] .cli-ico{color:var(--ink)!important;background:transparent!important}
 .cli[aria-current="true"] small{color:#FFFFFF!important}
 .brandbar *:not(img){color:var(--ink)!important}
+
+/* ---------- cartão de erro/aviso: vermelho ---------- */
+.confirma-card.erro{border-color:#E10600!important;background:#FDECEC!important}
+.confirma-card.erro .pd-ok-ico{background:#E10600!important;color:#FFFFFF!important}
+.confirma-card.erro h2{color:#E10600!important}
