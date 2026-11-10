@@ -1,0 +1,127 @@
+/* =====================================================================
+   PADRÃO V4 COMPANY (site inteiro, claro e escuro)
+   Fonte: Inter (títulos pesados, texto limpo) + IBM Plex Mono (números)
+   Cores: preto/off-white, vermelho V4 nos destaques, verde nos botões
+   Alertas continuam vermelhos. Carregar por último.
+   ===================================================================== */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500;600&display=swap");
+
+:root{
+  --display:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --v4-red:#E10600; --v4-red-2:#FF4D3D; --v4-green:#1E9E2A; --v4-green-2:#157A1F;
+  --radius:16px;
+}
+/* ---------- modo escuro (padrão V4: preto com brilho vermelho) ---------- */
+html[data-tema="escuro"],:root{
+  --bg:#000000; --surface:#0D0D0D; --soft:#141414; --line:#1E1E1E; --ch-bar:#2A2A2A;
+  --ink:#FFFFFF; --muted:#9A9A9A;
+  --brand:#FFFFFF; --on-brand:#000000; --navy:#FFFFFF; --navy-2:#141414; --chumbo:#FFFFFF;
+  --accent:#E10600; --accent-dark:#B00000; --accent-2:#FF4D3D;
+  --accent-soft:rgba(225,6,0,.14); --accent-soft2:rgba(225,6,0,.3); --rosa:rgba(225,6,0,.14);
+  --verde-cta:#1E9E2A; --verde-cta-2:#157A1F;
+  --grad:linear-gradient(90deg,#E10600,#FF4D3D); --grad-hero:linear-gradient(120deg,#000 0%,#3A0004 55%,#6B0008 100%);
+  --alerta:#FF2A1F; --sombra:none;
+}
+html[data-tema="escuro"] body{background:radial-gradient(circle at 8% 0%,rgba(225,6,0,.22) 0%,rgba(225,6,0,0) 38%),radial-gradient(circle at 100% 100%,rgba(225,6,0,.14) 0%,rgba(225,6,0,0) 34%),#000000!important;color:#FFFFFF}
+
+/* ---------- modo claro (padrão V4: off-white com cartões quase brancos) ---------- */
+html:not([data-tema="escuro"]){
+  --bg:#F5F3EF; --surface:#FBFAF7; --soft:#EFECE6; --line:#E6E4DF; --ch-bar:#CFCBC3;
+  --ink:#0A0A0A; --muted:#5C5C5C;
+  --brand:#0A0A0A; --on-brand:#FFFFFF; --navy:#0A0A0A; --navy-2:#EFECE6; --chumbo:#0A0A0A;
+  --accent:#E10600; --accent-dark:#B00000; --accent-2:#FF4D3D;
+  --accent-soft:#FDECEC; --accent-soft2:#F5C9C6; --rosa:#FDECEC;
+  --verde-cta:#1E9E2A; --verde-cta-2:#157A1F;
+  --grad:linear-gradient(90deg,#E10600,#FF4D3D); --grad-hero:linear-gradient(120deg,#000 0%,#3A0004 55%,#6B0008 100%);
+  --alerta:#E10600; --sombra:0 1px 2px rgba(0,0,0,.04);
+}
+html:not([data-tema="escuro"]) body{background:#F5F3EF!important;color:#0A0A0A}
+
+/* ---------- tipografia ---------- */
+body,button,input,select,textarea{font-family:var(--font);letter-spacing:-.01em}
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;letter-spacing:-.04em;line-height:1.05;color:var(--ink)}
+h1{font-size:clamp(34px,5vw,56px)} h2{font-size:clamp(26px,3.4vw,36px)} h3{font-size:20px;letter-spacing:-.02em}
+p{line-height:1.6}
+mark,h1 mark,h2 mark,h3 mark,.destaque-v4{color:var(--v4-red)!important;background:none!important;font-style:normal;font-weight:inherit}
+.eyebrow{font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--v4-red)}
+.eyebrow::before{background:var(--v4-red)!important;box-shadow:none!important}
+.note,small{color:var(--muted)}
+
+/* ---------- cartões ---------- */
+.card,.box,.kpi,.post,.doc,.acesso,.plano-card,.tk-card,.pl-card,.tk-col,.caption,.seg,.ini-box,.ini-card,.arte-item,.cli{
+  background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:var(--radius)!important;box-shadow:var(--sombra)!important}
+html[data-tema="escuro"] .card,html[data-tema="escuro"] .box,html[data-tema="escuro"] .kpi,html[data-tema="escuro"] .post,html[data-tema="escuro"] .acesso{background:#0D0D0D!important;border-color:#1E1E1E!important}
+
+/* ---------- botões: verde V4 com texto branco; contorno discreto ---------- */
+.btn{border-radius:999px!important;font-weight:700;padding:11px 20px;font-family:var(--font)}
+.btn.primary,.btn.yel,.btn.amarelo,html[data-tema="escuro"] .btn.primary{background:var(--v4-green)!important;border-color:var(--v4-green)!important;color:#FFFFFF!important;box-shadow:0 10px 22px -12px rgba(30,158,42,.75)!important}
+.btn.primary:hover{background:var(--v4-green-2)!important;border-color:var(--v4-green-2)!important}
+.btn.outline{background:transparent!important;border:1.5px solid var(--ink)!important;color:var(--ink)!important}
+.btn.outline:hover{background:var(--ink)!important;color:var(--bg)!important}
+.btn.ghost{color:var(--ink)!important}
+
+/* ---------- seleção: vermelho com texto branco ---------- */
+.tab[aria-selected="true"],.tab.active,.vis-seg button[aria-pressed="true"],.seg button[aria-pressed="true"],.chip[aria-pressed="true"],.chip.on{background:var(--v4-red)!important;color:#FFFFFF!important;border-color:var(--v4-red)!important;box-shadow:none!important}
+.tab:not([aria-selected="true"]),.chip:not([aria-pressed="true"]):not(.on){color:var(--ink)!important}
+.chip:not([aria-pressed="true"]):not(.on){background:transparent!important;border:1px solid var(--line)!important;border-radius:999px!important}
+.cli[aria-current="true"]{background:var(--v4-red)!important;color:#FFFFFF!important;box-shadow:none!important;border-color:var(--v4-red)!important;border-radius:12px!important}
+.cli[aria-current="true"] small,.cli[aria-current="true"] .cli-ico{color:#FFFFFF!important}
+.cli[aria-current="true"] .cli-ico{background:transparent!important}
+
+/* ---------- cabeçalhos: degradê preto→vermelho, texto centralizado ---------- */
+.hero{background:var(--grad-hero)!important;color:#FFFFFF!important;border:0!important;border-radius:24px!important;text-align:center;box-shadow:none!important}
+.hero::before,.hero::after{display:none!important}
+.hero h1,.hero h2,.hero h3,.hero b,.hero strong{color:#FFFFFF!important}
+.hero p,.hero .intro,.hero .label{color:rgba(255,255,255,.82)!important;margin-left:auto;margin-right:auto}
+.hero-tag{background:var(--v4-red)!important;color:#FFFFFF!important;border-radius:4px!important;font-weight:800}
+
+/* ---------- indicadores: rótulo preto/cinza, número em vermelho monoespaçado ---------- */
+.kpi .k,.box .k,.kpi .label,.kpi small,.kpi .d,.box .d,.kpi .sub{font-size:12px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--ink);opacity:.85}
+.kpi .v,.box .v,.kpi .valor,.kpi .num,.box .num{font-family:var(--mono)!important;font-size:34px;font-weight:600;color:var(--v4-red)!important;letter-spacing:-.02em}
+
+/* ---------- campos, tabelas, barras ---------- */
+input,select,textarea{border-radius:12px!important;border-color:var(--line)!important;background:var(--surface);color:var(--ink)}
+input:focus,select:focus,textarea:focus{border-color:var(--v4-red)!important;box-shadow:0 0 0 3px rgba(225,6,0,.18)!important}
+table th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+table td{border-top:1px solid var(--line)}
+.topo-progresso i,.progresso>i,.bar>i,.barra>i,.ped-bar i{background:var(--grad)!important}
+.progresso,.bar,.barra,.ped-bar{background:var(--soft);border-radius:999px}
+.badge,.badge.calma{background:var(--alerta)!important;color:#FFFFFF!important}
+
+/* ---------- relatório: só o número em vermelho ---------- */
+.relatorio .kpi{background:#FDECEC!important;border-color:#F5C9C6!important}
+.relatorio .kpi *:not(.v):not(.num):not(.valor){color:#0A0A0A!important}
+.relatorio .kpi .v,.relatorio .kpi .num,.relatorio .kpi .valor{color:var(--v4-red)!important}
+
+/* ---------- cabeçalho no estilo da V4 (card de boas-vindas e cabeçalhos de página) ---------- */
+.hero{
+  padding:64px 48px!important;border-radius:28px!important;position:relative;overflow:hidden;
+  background:
+    radial-gradient(circle at 92% 110%,rgba(225,6,0,.55) 0%,rgba(225,6,0,0) 55%),
+    radial-gradient(circle at 0% 0%,rgba(225,6,0,.18) 0%,rgba(225,6,0,0) 40%),
+    linear-gradient(135deg,#000000 0%,#1A0003 45%,#4A0005 100%)!important;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+}
+.hero h1{font-size:clamp(38px,5.4vw,64px)!important;font-weight:900!important;letter-spacing:-.045em!important;line-height:1.02!important;margin:0!important;color:#FFFFFF!important}
+.hero h1 mark,.hero mark{color:#FF4D3D!important;background:none!important;text-decoration:none!important;font-style:italic;font-weight:800!important}
+.hero p,.hero .intro,.hero .label{font-size:17px;line-height:1.55;max-width:58ch;color:rgba(255,255,255,.86)!important;margin:0!important}
+.hero-tag{font-size:11px!important;letter-spacing:.08em;text-transform:uppercase;padding:7px 14px!important;background:transparent!important;border:1.5px solid #E10600!important;color:#FFFFFF!important;border-radius:999px!important}
+.hero-tag::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#E10600;margin-right:8px;vertical-align:1px}
+html:not([data-tema="escuro"]) .hero{box-shadow:0 30px 60px -36px rgba(40,0,0,.6)!important}
+
+/* ---------- fundo escuro sólido (sem degradê na página) ---------- */
+html[data-tema="escuro"] body,html[data-tema="escuro"],html[data-tema="escuro"] main{background:#000000!important;background-image:none!important}
+
+/* ---------- ajustes rodada: botão de aceite verde, ícones iguais, slogan preto, artes em Aprovações ---------- */
+.b.pri,button.b.pri,.acoes .b.pri{background:#1E9E2A!important;border-color:#1E9E2A!important;color:#FFFFFF!important;box-shadow:0 10px 22px -12px rgba(30,158,42,.75)!important}
+.b.pri:hover{background:#157A1F!important;border-color:#157A1F!important}
+.cli .cli-ico,.cli[aria-current="true"] .cli-ico{color:var(--ink)!important;background:transparent!important}
+.cli[aria-current="true"] small{color:#FFFFFF!important}
+.brandbar *:not(img){color:var(--ink)!important}
+
+/* ---------- cartão de erro/aviso: vermelho ---------- */
+.confirma-card.erro{border-color:#E10600!important;background:#FDECEC!important}
+.confirma-card.erro .pd-ok-ico{background:#E10600!important;color:#FFFFFF!important}
+.confirma-card.erro h2{color:#E10600!important}
