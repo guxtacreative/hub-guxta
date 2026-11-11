@@ -176,3 +176,43 @@ html:not([data-tema]) .hero,html[data-tema="escuro"] .hero{border-radius:0!impor
 .relatorio .kpi,.relatorio .kpi *,.relatorio .box,.relatorio .box *,.relatorio .card,.relatorio .card *{color:#FFFFFF!important}
 .relatorio .kpi,.relatorio .box,.relatorio .card{background:#141414!important;border:1px solid #262626!important}
 .relatorio .kpi .k,.relatorio .kpi .label,.relatorio .kpi small,.relatorio .kpi .d{color:#A3A3A3!important}
+
+/* ---------- ajuste final (imagens): títulos dos cabeçalhos brancos nos dois modos; relatório com números visíveis ---------- */
+html body .topo h1,html body .topo h1 *,html body .hero h1,html body .hero h1 *,html body .cab h1,html body .cab h1 *,html body .plano-hero h1,html body .plano-hero h1 *,
+html body .topo h2,html body .hero h2,html body .cab h2,html body .topo-in h1,html body .topo-in h1 *{color:#FFFFFF!important}
+html body .topo .lead,html body .topo p,html body .topo-in p,html body .hero p,html body .cab p{color:rgba(255,255,255,.88)!important}
+html body .topo .eyebrow,html body .topo p.eyebrow,html body .hero .eyebrow{color:#FFFFFF!important}
+/* relatório: blocos e números visíveis (classes usadas pelo relatório: m, n, t, grade) */
+html body .relatorio .grade .m,html body .relatorio .m{background:#141414!important;border:1px solid #262626!important;border-radius:16px!important}
+html body .relatorio .grade .m *,html body .relatorio .m *,html body .relatorio .m .n,html body .relatorio .m .t{color:#FFFFFF!important;opacity:1!important}
+html body .relatorio .m .t,html body .relatorio .m small{color:#A3A3A3!important}
+html body .relatorio .m .n{font-family:Inter,sans-serif!important;font-size:30px!important;font-weight:700!important}
+html body .relatorio .sec h2,html body .relatorio h2{color:#FFFFFF!important}
+
+/* ---------- proposta: cabeçalho e barra de total com o degradê padrão V4 ---------- */
+html body .topo,html body header.topo,html body .topo-in,html body .cab,html body header.cab{
+  background:radial-gradient(circle at 100% 100%,rgba(227,6,19,.95) 0%,rgba(227,6,19,0) 58%),linear-gradient(135deg,#0A0A0A 0%,#2A0003 45%,#5C0005 100%)!important;
+  color:#FFFFFF!important}
+html body .topo-in{background:transparent!important}
+html body .tots .t,html body .tot,html body .total-bar,html body .tots > .t:last-child{
+  background:radial-gradient(circle at 100% 100%,rgba(227,6,19,.95) 0%,rgba(227,6,19,0) 60%),linear-gradient(135deg,#0A0A0A 0%,#2A0003 50%,#5C0005 100%)!important;
+  color:#FFFFFF!important;border-radius:14px!important}
+
+/* ---------- planos de mídia: cabeçalho com o degradê padrão V4 ---------- */
+html body header.cab{
+  background:radial-gradient(circle at 100% 100%,rgba(227,6,19,.95) 0%,rgba(227,6,19,0) 58%),linear-gradient(135deg,#0A0A0A 0%,#2A0003 45%,#5C0005 100%)!important;
+  color:#FFFFFF!important;border-bottom:0!important;border-radius:24px!important;padding:28px 32px!important}
+html body header.cab h1,html body header.cab h2,html body header.cab p,html body header.cab .eyebrow,html body header.cab strong{color:#FFFFFF!important}
+html body header.cab .eyebrow::before{background:#FFFFFF!important}
+
+/* ---------- itens selecionados (filtros, abas, segmentos): o texto recebe a cor do fundo da página ---------- */
+html body .chip[aria-pressed="true"],html body .chip.on,html body .tab[aria-selected="true"],html body .tab.active,
+html body .seg button[aria-pressed="true"],html body .vis-seg button[aria-pressed="true"],html body button[aria-pressed="true"]:not(.cli){
+  background:var(--ink)!important;border-color:var(--ink)!important;color:var(--bg)!important;box-shadow:none!important}
+html body .chip[aria-pressed="true"] *,html body .chip.on *,html body .tab[aria-selected="true"] *,html body .tab.active *,
+html body .seg button[aria-pressed="true"] *,html body .vis-seg button[aria-pressed="true"] *{color:var(--bg)!important}
+
+/* ---------- cabeçalho do portal (hero): degradê V4 aplicado na camada de imagem (corrige o fundo chapado) ---------- */
+html body .hero,html body header.hero,html body .plano-hero,html body header.topo,html body .topo,html body header.cab{
+  background-image:radial-gradient(circle at 100% 100%,rgba(227,6,19,.95) 0%,rgba(227,6,19,0) 58%),linear-gradient(135deg,#0A0A0A 0%,#2A0003 45%,#5C0005 100%)!important;
+  background-color:#0A0A0A!important}
