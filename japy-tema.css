@@ -263,3 +263,15 @@ html body .topo-progresso i,html body .progresso>i,html body .bar>i,html body .p
 /* campos escuros com foco vermelho */
 html body input,html body select,html body textarea{background:#0A0A0A!important;border:1px solid #2A2A2A!important;color:#FFFFFF!important;border-radius:12px!important}
 html body input:focus,html body select:focus,html body textarea:focus{border-color:#E30613!important;box-shadow:0 0 0 3px rgba(227,6,19,.2)!important}
+
+/* ---------- topo do card (hero do portal) no estilo da imagem: centralizado, card recuado, etiqueta com contorno ---------- */
+html body .hero,html body header.hero{
+  margin-left:0!important;margin-right:0!important;width:auto!important;max-width:none!important;
+  border-radius:24px!important;padding:64px 48px!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  text-align:center!important;gap:18px!important;min-height:260px;box-shadow:0 24px 50px -30px rgba(0,0,0,.6)!important}
+html body .hero p,html body .hero .intro,html body .hero .label{margin-left:auto!important;margin-right:auto!important;text-align:center!important;max-width:60ch!important;font-size:17px!important;line-height:1.55!important;color:rgba(255,255,255,.88)!important}
+html body .hero h1{font-size:clamp(40px,5.6vw,64px)!important;font-weight:900!important;letter-spacing:-.04em!important;line-height:1.02!important;margin:0!important;text-align:center!important}
+html body .hero h1 mark,html body .hero mark{color:#FF4D3D!important;background:none!important;font-style:normal!important;font-weight:900!important;text-decoration:none!important}
+html body .hero-tag,html body .hero .eyebrow{display:inline-flex!important;align-items:center!important;gap:8px!important;background:transparent!important;color:#FFFFFF!important;border:1.5px solid #E30613!important;border-radius:999px!important;padding:8px 16px!important;font-size:11px!important;font-weight:800!important;letter-spacing:.06em!important;text-transform:uppercase!important;margin:0!important}
+html body .hero-tag::before,html body .hero .eyebrow::before{content:"";display:inline-block!important;width:6px!important;height:6px!important;border-radius:50%!important;background:#E30613!important;box-shadow:none!important}
