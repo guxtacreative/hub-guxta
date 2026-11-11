@@ -107,14 +107,30 @@
         '<button type="button" data-a="limpar" style="flex:1;border:1px solid #2A2A2A;background:transparent;color:#fff;border-radius:10px;padding:10px;cursor:pointer">Limpar</button></div>'+
         '<button type="button" data-a="v4" style="width:100%;margin-top:8px;border:0;background:transparent;color:#A3A3A3;padding:8px;cursor:pointer;font-size:12px">Voltar tudo ao padrão V4</button>'+
         '<p data-m style="margin:10px 0 0;font-size:12px;color:#A3A3A3"></p>';
-      painelEd.querySelectorAll("input[data-p]").forEach(function(i){i.addEventListener("input",function(){el.style.setProperty(i.getAttribute("data-p"),i.value,"important")})});
+      painelEd.querySelectorAll("input[data-p],input[data-t]").forEach(function(i){i.addEventListener("input",function(){
+        var prop=i.getAttribute("data-p")||i.getAttribute("data-t");
+        var tv=painelEd.querySelector('[data-tv="'+prop+'"]'); var t=painelEd.querySelector('input[data-t="'+prop+'"]');
+        if(tv) tv.textContent=t.value+"%";
+        el.style.setProperty(prop,valorDe(prop),"important");
+      })});
       painelEd.onclick=function(ev){var a=ev.target.getAttribute("data-a");if(!a)return;ev.stopPropagation();acao(a)};
     }
     function cor(v){
       var m=String(v).match(/\d+/g); if(!m) return "#000000";
       return "#"+m.slice(0,3).map(function(n){return ("0"+parseInt(n,10).toString(16)).slice(-2)}).join("");
     }
-    function linha(rot,prop,val){return '<label style="display:flex;justify-content:space-between;align-items:center;margin:8px 0;gap:10px"><span>'+rot+'</span><input type="color" data-p="'+prop+'" value="'+val+'" style="width:44px;height:30px;border:0;background:none;cursor:pointer"></label>'}
+    function linha(rot,prop,val){return '<label style="display:flex;justify-content:space-between;align-items:center;margin:8px 0;gap:8px"><span style="min-width:90px">'+rot+'</span><span style="display:flex;align-items:center;gap:8px"><input type="color" data-p="'+prop+'" value="'+val+'" style="width:40px;height:30px;border:0;background:none;cursor:pointer"><input type="range" min="0" max="100" value="100" data-t="'+prop+'" title="Transparência: 0 = invisível, 100 = sólido" style="width:90px;accent-color:#E30613;cursor:pointer"><span data-tv="'+prop+'" style="font-size:12px;color:#A3A3A3;width:34px">100%</span></span></label>'}
+    function hexRgba(hex,pct){
+      var h=String(hex||"#000000").replace("#","");
+      if(h.length===3) h=h.split("").map(function(c){return c+c}).join("");
+      var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);
+      if(pct>=100) return "#"+h.toUpperCase();
+      return "rgba("+r+","+g+","+b+","+(Math.max(0,pct)/100).toFixed(2)+")";
+    }
+    function valorDe(prop){
+      var c=painelEd.querySelector('input[data-p="'+prop+'"]'), t=painelEd.querySelector('input[data-t="'+prop+'"]');
+      return hexRgba(c.value, t?parseInt(t.value,10):100);
+    }
     function msg(t){var m=painelEd&&painelEd.querySelector("[data-m]");if(m)m.textContent=t}
     async function acao(a){
       var c=clienteSb();
@@ -129,7 +145,7 @@
       if(a==="salvar"){
         var seletor=seletorDe(alvo);
         var linhas=[];
-        painelEd.querySelectorAll("input[data-p]").forEach(function(i){linhas.push({pagina:PAGINA,seletor:seletor,propriedade:i.getAttribute("data-p"),valor:i.value})});
+        painelEd.querySelectorAll("input[data-p]").forEach(function(i){var p=i.getAttribute("data-p");linhas.push({pagina:PAGINA,seletor:seletor,propriedade:p,valor:valorDe(p)})});
         msg("Salvando…");
         // troca só as regras deste seletor nesta página
         await c.from("tema_regras").delete().eq("pagina",PAGINA).eq("seletor",seletor);
