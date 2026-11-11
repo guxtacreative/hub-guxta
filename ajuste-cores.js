@@ -5,7 +5,7 @@
 (function(){
   var cfg=window.GLARA_CONFIG||{};
   var URL_=String(cfg.supabaseUrl||"").trim(), KEY_=String(cfg.supabaseAnonKey||"").trim();
-  var V4={fundo:"#0A0A0A",cartao:"#141414",texto:"#FFFFFF",textoSec:"#A3A3A3",bordas:"#262626",campo:"#141414",botao:"#1877F2",textoBotao:"#FFFFFF",destaque:"#1877F2"};
+  var V4={fundo:"#0A0A0A",cartao:"#141414",texto:"#FFFFFF",textoSec:"#A3A3A3",bordas:"#262626",campo:"#141414",botao:"#E30613",textoBotao:"#FFFFFF",destaque:"#E30613"};
   var PAGINA=location.host+location.pathname;
   var sb=null, regrasLocais=[];
 
@@ -83,7 +83,7 @@
     btn.style.cssText="position:fixed;right:16px;bottom:16px;z-index:2147483646;border:1px solid #2A2A2A;background:#141414;color:#fff;border-radius:999px;padding:10px 16px;font:600 13px Inter,system-ui,sans-serif;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.4)";
     document.body.appendChild(btn);
     var ativo=false;
-    function marcar(el){if(hover&&hover!==el)hover.style.outline="";if(el){el.style.outline="2px dashed #1877F2";el.style.outlineOffset="2px"}hover=el}
+    function marcar(el){if(hover&&hover!==el)hover.style.outline="";if(el){el.style.outline="2px dashed #E30613";el.style.outlineOffset="2px"}hover=el}
     function ignorar(el){return !el||el.closest("[id^='ce-']")||el===document.body||el===document.documentElement}
     function mover(e){if(!ativo)return;var el=document.elementFromPoint(e.clientX,e.clientY);if(ignorar(el)){marcar(null);return}marcar(el)}
     function clicar(e){
@@ -103,7 +103,7 @@
       painelEd.innerHTML='<strong id="ce-t" style="display:block;margin-bottom:10px">Elemento selecionado</strong>'+
         '<div style="font-size:12px;color:#A3A3A3;margin-bottom:10px;word-break:break-all">'+esc(el.tagName.toLowerCase())+(el.className&&typeof el.className==="string"?"."+esc(el.className.trim().split(/\s+/).slice(0,2).join(".")):"")+'</div>'+
         linha("Cor do texto","color",cor(cs.color))+linha("Cor do fundo","background-color",cor(cs.backgroundColor))+linha("Cor da borda","border-color",cor(cs.borderTopColor))+
-        '<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button type="button" data-a="salvar" style="flex:1;border:0;background:#1877F2;color:#fff;border-radius:10px;padding:10px;font-weight:700;cursor:pointer">Salvar para todos</button>'+
+        '<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button type="button" data-a="salvar" style="flex:1;border:0;background:#E30613;color:#fff;border-radius:10px;padding:10px;font-weight:700;cursor:pointer">Salvar para todos</button>'+
         '<button type="button" data-a="limpar" style="flex:1;border:1px solid #2A2A2A;background:transparent;color:#fff;border-radius:10px;padding:10px;cursor:pointer">Limpar</button></div>'+
         '<button type="button" data-a="v4" style="width:100%;margin-top:8px;border:0;background:transparent;color:#A3A3A3;padding:8px;cursor:pointer;font-size:12px">Voltar tudo ao padrão V4</button>'+
         '<p data-m style="margin:10px 0 0;font-size:12px;color:#A3A3A3"></p>';
@@ -119,7 +119,7 @@
       var m=String(v).match(/\d+/g); if(!m) return "#000000";
       return "#"+m.slice(0,3).map(function(n){return ("0"+parseInt(n,10).toString(16)).slice(-2)}).join("");
     }
-    function linha(rot,prop,val){return '<label style="display:flex;justify-content:space-between;align-items:center;margin:8px 0;gap:8px"><span style="min-width:90px">'+rot+'</span><span style="display:flex;align-items:center;gap:8px"><input type="color" data-p="'+prop+'" value="'+val+'" style="width:40px;height:30px;border:0;background:none;cursor:pointer"><input type="range" min="0" max="100" value="100" data-t="'+prop+'" title="Transparência: 0 = invisível, 100 = sólido" style="width:90px;accent-color:#1877F2;cursor:pointer"><span data-tv="'+prop+'" style="font-size:12px;color:#A3A3A3;width:34px">100%</span></span></label>'}
+    function linha(rot,prop,val){return '<label style="display:flex;justify-content:space-between;align-items:center;margin:8px 0;gap:8px"><span style="min-width:90px">'+rot+'</span><span style="display:flex;align-items:center;gap:8px"><input type="color" data-p="'+prop+'" value="'+val+'" style="width:40px;height:30px;border:0;background:none;cursor:pointer"><input type="range" min="0" max="100" value="100" data-t="'+prop+'" title="Transparência: 0 = invisível, 100 = sólido" style="width:90px;accent-color:#E30613;cursor:pointer"><span data-tv="'+prop+'" style="font-size:12px;color:#A3A3A3;width:34px">100%</span></span></label>'}
     function hexRgba(hex,pct){
       var h=String(hex||"#000000").replace("#","");
       if(h.length===3) h=h.split("").map(function(c){return c+c}).join("");
@@ -158,7 +158,7 @@
     function alternar(){
       ativo=!ativo;
       btn.textContent=ativo?"Sair da edição":"Editar cores";
-      btn.style.background=ativo?"#1877F2":"#141414";
+      btn.style.background=ativo?"#E30613":"#141414";
       if(!ativo){marcar(null);if(painelEd){painelEd.remove();painelEd=null}}
     }
     btn.addEventListener("click",alternar);
@@ -182,7 +182,7 @@
     box.innerHTML='<strong style="display:block;margin-bottom:8px">Entrar para editar cores</strong>'+
       '<input id="ce-em" type="email" placeholder="e-mail" style="width:100%;padding:9px;border-radius:8px;border:1px solid #2A2A2A;background:#0A0A0A;color:#fff;margin-bottom:6px">'+
       '<input id="ce-sn" type="password" placeholder="senha" style="width:100%;padding:9px;border-radius:8px;border:1px solid #2A2A2A;background:#0A0A0A;color:#fff">'+
-      '<button id="ce-ok" type="button" style="width:100%;margin-top:8px;border:0;background:#1877F2;color:#fff;border-radius:8px;padding:10px;font-weight:700;cursor:pointer">Entrar</button>'+
+      '<button id="ce-ok" type="button" style="width:100%;margin-top:8px;border:0;background:#E30613;color:#fff;border-radius:8px;padding:10px;font-weight:700;cursor:pointer">Entrar</button>'+
       '<p id="ce-er" style="margin:8px 0 0;font-size:12px;color:#A3A3A3"></p>';
     document.body.appendChild(box);
     box.querySelector("#ce-ok").onclick=async function(){
