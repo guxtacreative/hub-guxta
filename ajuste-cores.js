@@ -69,6 +69,13 @@
     }
     return partes.join(" > ");
   }
+  function botaoLogin(){
+    var b=document.createElement("button");
+    b.id="ce-abrir";b.type="button";b.textContent="Editar cores";
+    b.style.cssText="position:fixed;right:16px;bottom:16px;z-index:2147483646;border:1px solid #2A2A2A;background:#141414;color:#fff;border-radius:999px;padding:10px 16px;font:600 13px Inter,system-ui,sans-serif;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.4)";
+    b.addEventListener("click",function(){pedirLogin()});
+    document.body.appendChild(b);
+  }
   function montarEditor(){
     var painelEd=null, alvo=null, hover=null;
     var btn=document.createElement("button");
@@ -179,8 +186,7 @@
     document.addEventListener("DOMContentLoaded",function(){
       clienteSb();
       verificarAdmin().then(function(ok){
-        if(ok) montarEditor();
-        else if(false) pedirLogin();
+        if(ok) montarEditor(); else botaoLogin();
       });
     });
   });
