@@ -216,3 +216,12 @@ html body .seg button[aria-pressed="true"] *,html body .vis-seg button[aria-pres
 html body .hero,html body header.hero,html body .plano-hero,html body header.topo,html body .topo,html body header.cab{
   background-image:radial-gradient(circle at 100% 100%,rgba(227,6,19,.95) 0%,rgba(227,6,19,0) 58%),linear-gradient(135deg,#0A0A0A 0%,#2A0003 45%,#5C0005 100%)!important;
   background-color:#0A0A0A!important}
+
+/* ---------- somente tema escuro (padrão da imagem): preto, cartões escuros, degradê vermelho, botões vermelho e preto ---------- */
+html,html[data-tema],html[data-tema="escuro"],html:not([data-tema]){color-scheme:dark}
+html body,html[data-tema] body{background:#0A0A0A!important;color:#FFFFFF!important}
+html body .card,html body .box,html body .kpi,html body .caption,html body .tk-card,html body .pl-card,html body .tk-col,html body .arte-item,html body .plano-card{background:#141414!important;border:1px solid #262626!important;color:#FFFFFF!important}
+html body .btn.primary,html body .btn.yel,html body .btn.amarelo{background:#E30613!important;border-color:#E30613!important;color:#FFFFFF!important;font-weight:700!important}
+html body .btn.primary:hover{background:#B8000E!important;border-color:#B8000E!important}
+html body .btn:not(.primary):not(.yel):not(.amarelo):not(.danger){background:#111111!important;border:1px solid #262626!important;color:#FFFFFF!important}
+html body [data-tema-btn]{display:none!important}
